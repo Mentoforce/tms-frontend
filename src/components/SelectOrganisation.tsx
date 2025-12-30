@@ -4,8 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useOrganisation } from "@/context/OrganisationProvider";
 import api from "@/lib/axios";
-import { Button, Card, Group, Text, Title, CopyButton } from "@mantine/core";
-import { IconCheck } from "@tabler/icons-react";
 
 export default function SelectOrganisation() {
   const [code, setCode] = useState("");
@@ -66,52 +64,5 @@ export default function SelectOrganisation() {
         </button>
       </div>
     </div>
-  );
-}
-
-function TicketSuccess({
-  ticketNumber,
-  onClose,
-  onReset,
-}: {
-  ticketNumber: string;
-  onClose: () => void;
-  onReset: () => void;
-}) {
-  return (
-    <Card shadow="md" radius="md" p="xl">
-      <Group justify="center" mb="md">
-        <IconCheck size={48} color="green" />
-      </Group>
-
-      <Title order={3} ta="center">
-        Ticket Created Successfully
-      </Title>
-
-      <Text ta="center" mt="sm" mb="md">
-        Please save your ticket number for future reference.
-      </Text>
-
-      <Card withBorder p="md" radius="md" mt="sm">
-        <Group justify="space-between">
-          <Text fw={600}>{ticketNumber}</Text>
-
-          <CopyButton value={ticketNumber}>
-            {({ copied, copy }) => (
-              <Button size="xs" onClick={copy}>
-                {copied ? "Copied" : "Copy"}
-              </Button>
-            )}
-          </CopyButton>
-        </Group>
-      </Card>
-
-      <Group mt="lg" justify="center">
-        <Button variant="outline" onClick={onReset}>
-          Raise Another Ticket
-        </Button>
-        <Button onClick={onClose}>Close</Button>
-      </Group>
-    </Card>
   );
 }

@@ -1,3 +1,4 @@
+"use client";
 import { OrganisationContextType } from "@/types/context-types";
 import {
   createContext,

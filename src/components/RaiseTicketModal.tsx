@@ -13,6 +13,8 @@ type Subject = {
   }[];
 };
 
+const TOTAL_STEPS = 6;
+
 export default function RaiseTicketModal({
   open,
   onClose,
@@ -28,13 +30,13 @@ export default function RaiseTicketModal({
   const [successTicket, setSuccessTicket] = useState<string | null>(null);
   const [counter, setCounter] = useState(5);
 
-  const [draft, setDraft] = useState<any>({
+  const [draft, setDraft] = useState({
     username: "",
     subject_id: "",
     sub_subject_id: "",
     description: "",
-    audio: null,
-    files: [],
+    audio: null as Blob | null,
+    files: [] as { file: File; name: string }[],
     return_channel: "email",
   });
 
@@ -51,7 +53,7 @@ export default function RaiseTicketModal({
     }
   }, [step, counter]);
 
-  /* ---------------- Audio ---------------- */
+  /* ---------------- Audio Recording ---------------- */
   const mediaRecorder = useRef<MediaRecorder | null>(null);
 
   const startRecording = async () => {
@@ -61,7 +63,10 @@ export default function RaiseTicketModal({
 
     recorder.ondataavailable = (e) => chunks.push(e.data);
     recorder.onstop = () =>
-      setDraft({ ...draft, audio: new Blob(chunks, { type: "audio/webm" }) });
+      setDraft((d) => ({
+        ...d,
+        audio: new Blob(chunks, { type: "audio/webm" }),
+      }));
 
     recorder.start();
     mediaRecorder.current = recorder;
@@ -73,16 +78,20 @@ export default function RaiseTicketModal({
   const submitTicket = async () => {
     const fd = new FormData();
 
-    Object.entries(draft).forEach(([k, v]: any) => {
-      if (k === "files" || k === "audio") return;
-      fd.append(k, v);
+    fd.append("username", draft.username);
+    fd.append("subject_id", draft.subject_id);
+    fd.append("sub_subject_id", draft.sub_subject_id);
+    fd.append("description", draft.description);
+    fd.append("return_channel", draft.return_channel);
+
+    if (draft.audio) {
+      fd.append("audio", draft.audio);
+    }
+
+    draft.files.forEach((f) => {
+      fd.append("files", f.file, f.name);
     });
 
-    if (draft.audio) fd.append("audio", draft.audio);
-
-    draft.files.forEach((f: any) => fd.append("files", f.file, f.name));
-    console.log(draft);
-    console.log(fd);
     const res = await api.post("/tickets/create", fd);
     setSuccessTicket(res.data.data.ticket_number);
   };
@@ -91,7 +100,7 @@ export default function RaiseTicketModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-      <div className="bg-blue-900 w-full max-w-3xl rounded-lg shadow-lg p-6">
+      <div className="bg-blue-950 w-full max-w-3xl rounded-lg shadow-lg p-6">
         {/* HEADER */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Raise a Ticket</h2>
@@ -110,13 +119,14 @@ export default function RaiseTicketModal({
           />
         ) : (
           <>
-            {/* BODY */}
-            <div className="min-h-75">
+            {/* STEP CONTENT */}
+            <div className="min-h-65">
+              {/* STEP 0 – BASIC INFO */}
               {step === 0 && (
                 <>
                   <input
-                    placeholder="Username"
                     className="input"
+                    placeholder="Username"
                     value={draft.username}
                     onChange={(e) =>
                       setDraft({ ...draft, username: e.target.value })
@@ -125,6 +135,7 @@ export default function RaiseTicketModal({
 
                   <select
                     className="input mt-3"
+                    value={draft.subject_id}
                     onChange={(e) => {
                       const subject = subjects.find(
                         (s) => s._id === e.target.value
@@ -148,6 +159,7 @@ export default function RaiseTicketModal({
                   <select
                     className="input mt-3"
                     disabled={!draft.subject_id}
+                    value={draft.sub_subject_id}
                     onChange={(e) => {
                       const ss = subSubjects.find(
                         (x) => x._id === e.target.value
@@ -169,10 +181,11 @@ export default function RaiseTicketModal({
                 </>
               )}
 
+              {/* STEP 1 – INFO NOTE */}
               {step === 1 && (
                 <>
                   <p className="text-sm text-gray-600">
-                    Please read this important note carefully.
+                    Please read this information carefully before continuing.
                   </p>
                   <button
                     disabled={counter > 0}
@@ -184,6 +197,7 @@ export default function RaiseTicketModal({
                 </>
               )}
 
+              {/* STEP 2 – DESCRIPTION + AUDIO */}
               {step === 2 && (
                 <>
                   <textarea
@@ -195,7 +209,7 @@ export default function RaiseTicketModal({
                   />
                   <div className="mt-3 space-x-2">
                     <button className="btn" onClick={startRecording}>
-                      Record
+                      Record Audio
                     </button>
                     <button className="btn-danger" onClick={stopRecording}>
                       Stop
@@ -204,28 +218,28 @@ export default function RaiseTicketModal({
                 </>
               )}
 
+              {/* STEP 3 – FILES */}
               {step === 3 && (
-                <>
-                  <input
-                    type="file"
-                    multiple
-                    onChange={(e) =>
-                      setDraft({
-                        ...draft,
-                        files: Array.from(e.target.files || []).map((f) => ({
-                          file: f,
-                          name: f.name,
-                        })),
-                      })
-                    }
-                  />
-                </>
+                <input
+                  type="file"
+                  multiple
+                  onChange={(e) =>
+                    setDraft({
+                      ...draft,
+                      files: Array.from(e.target.files || []).map((f) => ({
+                        file: f,
+                        name: f.name,
+                      })),
+                    })
+                  }
+                />
               )}
 
+              {/* STEP 4 – RETURN CHANNEL */}
               {step === 4 && (
                 <div className="space-y-2">
                   {["whatsapp", "telegram", "telephone", "email"].map((c) => (
-                    <label key={c} className="flex items-center gap-2">
+                    <label key={c} className="flex gap-2 items-center">
                       <input
                         type="radio"
                         checked={draft.return_channel === c}
@@ -239,6 +253,7 @@ export default function RaiseTicketModal({
                 </div>
               )}
 
+              {/* STEP 5 – PREVIEW */}
               {step === 5 && (
                 <div className="text-sm space-y-2">
                   <p>User: {draft.username}</p>
@@ -258,7 +273,7 @@ export default function RaiseTicketModal({
                 Back
               </button>
 
-              {step < 5 ? (
+              {step < TOTAL_STEPS - 1 ? (
                 <button className="btn" onClick={() => setStep(step + 1)}>
                   Next
                 </button>
@@ -292,9 +307,6 @@ function SuccessScreen({
       <div className="border rounded p-3 font-mono">{ticket}</div>
 
       <div className="flex justify-center gap-3">
-        <button className="btn-outline" onClick={onReset}>
-          Raise Another
-        </button>
         <button className="btn" onClick={onClose}>
           Close
         </button>

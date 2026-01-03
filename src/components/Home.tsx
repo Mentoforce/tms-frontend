@@ -7,7 +7,7 @@ import RaiseTicketModal from "@/components/RaiseTicketModal";
 import { FeatureConfig } from "@/types/context-types";
 import { handleFeatureAction } from "@/lib/featureHandler";
 import Navbar from "./Navbar";
-import QuickAccess from "./QuickAccess";
+// import QuickAccess from "./QuickAccess";
 import { useOrganisation } from "@/context/OrganisationProvider";
 
 /**
@@ -76,7 +76,7 @@ export default function Home() {
           lineColor: primaryColor,
         }}
       />
-      <QuickAccess />
+      {/* <QuickAccess /> */}
 
       <RaiseTicketModal
         open={openModals.RAISE_TICKET}

@@ -1,5 +1,9 @@
 "use client";
-import { OrganisationContextType } from "@/types/context-types";
+import api from "@/lib/axios";
+import {
+  OrganisationConfig,
+  OrganisationContextType,
+} from "@/types/context-types";
 import {
   createContext,
   useEffect,
@@ -13,15 +17,37 @@ const OrganisationContext = createContext<OrganisationContextType | undefined>(
 );
 
 export const OrganisationProvider = ({ children }: { children: ReactNode }) => {
-  const [organisation, setOrganisation] = useState<string | null>(null);
+  const [organisation, setOrganisation] = useState<OrganisationConfig | null>(
+    null
+  );
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const storedOrg = localStorage.getItem("org_code");
-    if (storedOrg) {
-      setOrganisation(storedOrg);
-    }
-    setLoading(false);
+    const fetchOrganisation = async () => {
+      const storedOrg = localStorage.getItem("org_code");
+
+      if (!storedOrg) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await api.post(
+          "/check-org",
+          { code: storedOrg.trim() },
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        setOrganisation(res.data.data);
+      } catch (error) {
+        console.error("Failed to fetch organisation", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrganisation();
   }, []);
 
   return (

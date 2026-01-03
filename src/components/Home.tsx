@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import FeatureCard from "@/components/FeatureCard";
 import RaiseTicketModal from "@/components/RaiseTicketModal";
 import { handleFeatureAction } from "@/lib/featureHandler";
+import Navbar from "./Navbar";
+import QuickAccess from "./QuickAccess";
+import { useOrganisation } from "@/context/OrganisationProvider";
 import { FEATURES } from "@/mockdata/features";
 import RequestCallbackModal from "./CallbackRequestModal";
 import SearchTicket from "./SearchTicket";
@@ -16,6 +19,9 @@ import SearchTicket from "./SearchTicket";
 
 export default function Home() {
   const router = useRouter();
+  const { organisation } = useOrganisation();
+  const { logo, primaryColor } = organisation!;
+  console.log(organisation);
 
   /**
    * Central modal registry
@@ -34,6 +40,14 @@ export default function Home() {
 
   return (
     <>
+      <Navbar
+        config={{
+          logoUrl: logo,
+          lineColor: primaryColor,
+        }}
+      />
+      <QuickAccess />
+
       <RaiseTicketModal
         open={openModals.RAISE_TICKET}
         onClose={() => closeModal("RAISE_TICKET")}
@@ -43,11 +57,11 @@ export default function Home() {
         onClose={() => closeModal("REQUEST_CALLBACK")}
       />
 
-      {/* Header */}
+      {/* Header
       <div className="p-6">
         <h1 className="text-2xl font-semibold">How can we help you?</h1>
         <p className="text-gray-600 mt-1">Choose one of the options below</p>
-      </div>
+      </div> */}
 
       {/* Feature Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">

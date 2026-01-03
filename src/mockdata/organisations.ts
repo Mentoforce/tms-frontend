@@ -1,6 +1,6 @@
 import { OrganisationConfig } from "../types/context-types";
 
-export const ORGANISATIONS: Record<string, OrganisationConfig> = {
+export const ORGANISATIONS: Record<string, any> = {
   MTF: {
     code: "MTF",
     name: "Mentoforce Technologies",
@@ -29,3 +29,4 @@ export interface TicketDraft {
   }[];
   returnChannel: "whatsapp" | "telegram" | "telephone" | "email" | null;
 }
+

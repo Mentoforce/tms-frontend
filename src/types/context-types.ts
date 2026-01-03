@@ -1,17 +1,16 @@
 import { Dispatch, SetStateAction } from "react";
 
 export interface OrganisationContextType {
-  organisation: string | null;
-  setOrganisation: Dispatch<SetStateAction<string | null>>;
+  organisation: OrganisationConfig | null;
+  setOrganisation: Dispatch<SetStateAction<OrganisationConfig | null>>;
   loading: boolean;
 }
 
 export interface OrganisationConfig {
   code: string;
   name: string;
-  logoUrl: string;
+  logo: string;
   primaryColor: string;
-  supportEmail: string;
 }
 
 export type FeatureActionType = "modal" | "redirect";

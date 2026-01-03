@@ -83,12 +83,6 @@ export default function Home() {
         onClose={() => closeModal("RAISE_TICKET")}
       />
 
-      {/* Header
-      <div className="p-6">
-        <h1 className="text-2xl font-semibold">How can we help you?</h1>
-        <p className="text-gray-600 mt-1">Choose one of the options below</p>
-      </div> */}
-
       {/* Feature Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
         {FEATURES.map((feature) => (
@@ -101,16 +95,6 @@ export default function Home() {
           />
         ))}
       </div>
-
-      {/* Modals */}
-
-      {/* Placeholder for future */}
-      {/* 
-      <RequestCallbackModal
-        opened={openModals.REQUEST_CALLBACK}
-        onClose={() => closeModal("REQUEST_CALLBACK")}
-      /> 
-      */}
     </>
   );
 }

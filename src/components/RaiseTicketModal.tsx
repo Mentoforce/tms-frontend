@@ -22,8 +22,6 @@ export default function RaiseTicketModal({
   open: boolean;
   onClose: () => void;
 }) {
-  if (!open) return null;
-
   const [step, setStep] = useState(0);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [subSubjects, setSubSubjects] = useState<any[]>([]);
@@ -96,6 +94,8 @@ export default function RaiseTicketModal({
     setSuccessTicket(res.data.data.ticket_number);
   };
 
+  if (!open) return null;
+
   /* ================================================= */
 
   return (
@@ -109,14 +109,7 @@ export default function RaiseTicketModal({
 
         {/* SUCCESS */}
         {successTicket ? (
-          <SuccessScreen
-            ticket={successTicket}
-            onClose={onClose}
-            onReset={() => {
-              setSuccessTicket(null);
-              setStep(0);
-            }}
-          />
+          <SuccessScreen ticket={successTicket} onClose={onClose} />
         ) : (
           <>
             {/* STEP CONTENT */}
@@ -295,11 +288,9 @@ export default function RaiseTicketModal({
 function SuccessScreen({
   ticket,
   onClose,
-  onReset,
 }: {
   ticket: string;
   onClose: () => void;
-  onReset: () => void;
 }) {
   return (
     <div className="text-center space-y-4">

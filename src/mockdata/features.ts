@@ -1,6 +1,6 @@
 import { FeatureConfig } from "@/types/context-types";
 
-const FEATURES: FeatureConfig[] = [
+export const FEATURES: FeatureConfig[] = [
   {
     id: "raise-ticket",
     title: "Raise a Ticket",

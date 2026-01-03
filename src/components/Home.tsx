@@ -4,45 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import FeatureCard from "@/components/FeatureCard";
 import RaiseTicketModal from "@/components/RaiseTicketModal";
-import { FeatureConfig } from "@/types/context-types";
 import { handleFeatureAction } from "@/lib/featureHandler";
+import { FEATURES } from "@/mockdata/features";
+import RequestCallbackModal from "./CallbackRequestModal";
+import SearchTicket from "./SearchTicket";
 
 /**
  * Dummy data for now
  * Later → fetch from backend
  */
-const FEATURES: FeatureConfig[] = [
-  {
-    id: "raise-ticket",
-    title: "Raise a Ticket",
-    subtitle: "Report an issue or request support",
-    icon: "🎫",
-    action: {
-      type: "modal",
-      target: "RAISE_TICKET",
-    },
-  },
-  {
-    id: "request-callback",
-    title: "Request Callback",
-    subtitle: "Ask us to call you back",
-    icon: "📞",
-    action: {
-      type: "modal",
-      target: "REQUEST_CALLBACK",
-    },
-  },
-  {
-    id: "track-ticket",
-    title: "Track Ticket",
-    subtitle: "Check your ticket status",
-    icon: "🔍",
-    action: {
-      type: "redirect",
-      target: "/track-ticket",
-    },
-  },
-];
 
 export default function Home() {
   const router = useRouter();
@@ -68,6 +38,10 @@ export default function Home() {
         open={openModals.RAISE_TICKET}
         onClose={() => closeModal("RAISE_TICKET")}
       />
+      <RequestCallbackModal
+        open={openModals.REQUEST_CALLBACK}
+        onClose={() => closeModal("REQUEST_CALLBACK")}
+      />
 
       {/* Header */}
       <div className="p-6">
@@ -87,16 +61,7 @@ export default function Home() {
           />
         ))}
       </div>
-
-      {/* Modals */}
-
-      {/* Placeholder for future */}
-      {/* 
-      <RequestCallbackModal
-        opened={openModals.REQUEST_CALLBACK}
-        onClose={() => closeModal("REQUEST_CALLBACK")}
-      /> 
-      */}
+      <SearchTicket />
     </>
   );
 }

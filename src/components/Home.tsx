@@ -6,11 +6,13 @@ import FeatureCard from "@/components/FeatureCard";
 import RaiseTicketModal from "@/components/RaiseTicketModal";
 import { handleFeatureAction } from "@/lib/featureHandler";
 import Navbar from "./Navbar";
-import QuickAccess from "./QuickAccess";
+// import QuickAccess from "./QuickAccess";
 import { useOrganisation } from "@/context/OrganisationProvider";
 import { FEATURES } from "@/mockdata/features";
 import RequestCallbackModal from "./CallbackRequestModal";
 import SearchTicket from "./SearchTicket";
+import BonusClaimModal from "./BonusClaimModal";
+import UploadFileModal from "./UploadFileModal";
 
 /**
  * Dummy data for now
@@ -21,7 +23,6 @@ export default function Home() {
   const router = useRouter();
   const { organisation } = useOrganisation();
   const { logo, primaryColor } = organisation!;
-  console.log(organisation);
 
   /**
    * Central modal registry
@@ -30,6 +31,8 @@ export default function Home() {
   const [openModals, setOpenModals] = useState<Record<string, boolean>>({
     RAISE_TICKET: false,
     REQUEST_CALLBACK: false,
+    BONUS_CLAIM: false,
+    UPLOAD_FILE: false,
   });
 
   const openModal = (key: string) =>
@@ -46,7 +49,7 @@ export default function Home() {
           lineColor: primaryColor,
         }}
       />
-      <QuickAccess />
+      {/* <QuickAccess /> */}
 
       <RaiseTicketModal
         open={openModals.RAISE_TICKET}
@@ -55,6 +58,14 @@ export default function Home() {
       <RequestCallbackModal
         open={openModals.REQUEST_CALLBACK}
         onClose={() => closeModal("REQUEST_CALLBACK")}
+      />
+      <BonusClaimModal
+        open={openModals.BONUS_CLAIM}
+        onClose={() => closeModal("BONUS_CLAIM")}
+      />
+      <UploadFileModal
+        open={openModals.UPLOAD_FILE}
+        onClose={() => closeModal("UPLOAD_FILE")}
       />
 
       {/* Header

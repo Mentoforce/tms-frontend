@@ -36,7 +36,7 @@ export default function RequestCallbackModal({
       fd.append("audio", draft.audio);
     }
 
-    const res = await api.post("/tickets/request-callback", fd);
+    const res = await api.post("/tickets/create/request-callback", fd);
     setSuccessModal(true);
   };
 

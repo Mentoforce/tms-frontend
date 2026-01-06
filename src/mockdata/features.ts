@@ -22,13 +22,23 @@ export const FEATURES: FeatureConfig[] = [
     },
   },
   {
-    id: "track-ticket",
-    title: "Track Ticket",
-    subtitle: "Check your ticket status",
+    id: "bonus-claim",
+    title: "Bonus Claim",
+    subtitle: "Claim your Bonus",
     icon: "🔍",
     action: {
-      type: "redirect",
-      target: "/track-ticket",
+      type: "modal",
+      target: "BONUS_CLAIM",
+    },
+  },
+  {
+    id: "upload-file",
+    title: "Upload File",
+    subtitle: "Upload File to existing Ticket",
+    icon: "🔍",
+    action: {
+      type: "modal",
+      target: "UPLOAD_FILE",
     },
   },
 ];

@@ -37,3 +37,36 @@ body {
 .btn-danger {
   @apply bg-red-600 text-white px-4 py-2 rounded;
 }
+/* Hide default select arrow */
+.select-clean {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Dropdown options – default state */
+.select-clean option {
+  background-color: #000000;      /* black dropdown */
+  color: var(--accent);           /* primary color text */
+  padding: 14px 16px;             /* increased spacing */
+  line-height: 1.6;               /* more breathing room */
+}
+
+/* Hover state – NO BLUE, text turns white */
+.select-clean option:hover {
+  background-color: #111111;
+  color: #ffffff;
+}
+
+/* Selected option – kill blue highlight */
+.select-clean option:checked {
+  background-color: #000000;
+  color: var(--accent);
+}
+
+/* Focused option (Firefox fix) */
+.select-clean option:focus {
+  background-color: #111111;
+  color: #ffffff;
+}
+

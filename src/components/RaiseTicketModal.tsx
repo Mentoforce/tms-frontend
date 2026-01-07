@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { IconCopy, IconCheck } from "@tabler/icons-react";
 import api from "@/lib/axios";
 
 type Subject = {
@@ -56,26 +57,195 @@ export default function RaiseTicketModal({
     }
   }, [step, counter]);
 
+  /* ================= SUCCESS ================= */
+
+  function SuccessScreen({
+    ticket,
+    onClose,
+  }: {
+    ticket: string;
+    onClose: () => void;
+  }) {
+    const [copied, setCopied] = useState(false);
+
+    const copyTicket = async () => {
+      await navigator.clipboard.writeText(ticket);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+    };
+
+    return (
+      <div className="w-full max-w-md mx-auto px-6 pt-4 pb-9 text-white text-left space-y-5">
+        {/* PRIMARY LINE */}
+        <p
+          className="text-sm mb-3  font-medium"
+          style={{ color: "var(--accent)" }}
+        >
+          Your request has been received.
+        </p>
+
+        {/* DESCRIPTION */}
+        <p className="text-sm text-white/60 leading-relaxed">
+          Your request will be reviewed and resolved as soon as possible. Please
+          keep your Request ID until the process is complete.
+        </p>
+
+        {/* TICKET ID */}
+        <div
+          className="flex items-center justify-center gap-3 rounded-lg px-4 py-3"
+          style={{
+            backgroundColor: "rgba(173, 158, 112, 0.2)", // primary @ 20%
+          }}
+        >
+          <span className="font-mono font-bold text-white text-base">
+            {ticket}
+          </span>
+
+          <button
+            onClick={copyTicket}
+            className="text-white/80 hover:text-white transition"
+            aria-label="Copy ticket ID"
+          >
+            {copied ? (
+              <IconCheck size={18} stroke={2} />
+            ) : (
+              <IconCopy size={18} stroke={2} />
+            )}
+          </button>
+        </div>
+
+        {/* CTA BUTTON */}
+        <button
+          onClick={handleClose}
+          className="w-full py-3 rounded-lg text-sm font-bold text-black transition hover:opacity-90"
+          style={{ backgroundColor: "var(--accent)" }}
+        >
+          Go to the Website →
+        </button>
+      </div>
+    );
+  }
+
   /* ---------------- Audio Recording ---------------- */
   const mediaRecorder = useRef<MediaRecorder | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const recordingInterval = useRef<NodeJS.Timeout | null>(null);
 
+  const MAX_RECORDING_TIME = 120; // 2 minutes
+
+  const [isRecording, setIsRecording] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+
+  const [recordingElapsed, setRecordingElapsed] = useState(0); // seconds
+  const [recordedDuration, setRecordedDuration] = useState(0); // final duration
+
+  const [playProgress, setPlayProgress] = useState(0);
+
+  // time formatter
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
+
+  /* ---------- START RECORDING ---------- */
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
     const chunks: BlobPart[] = [];
 
     recorder.ondataavailable = (e) => chunks.push(e.data);
-    recorder.onstop = () =>
-      setDraft((d) => ({
-        ...d,
-        audio: new Blob(chunks, { type: "audio/webm" }),
-      }));
+
+    recorder.onstop = () => {
+      const audioBlob = new Blob(chunks, { type: "audio/webm" });
+
+      setDraft((d) => ({ ...d, audio: audioBlob }));
+      setAudioUrl(URL.createObjectURL(audioBlob));
+      setRecordedDuration(recordingElapsed);
+
+      setIsRecording(false);
+      setRecordingElapsed(0);
+
+      stream.getTracks().forEach((t) => t.stop());
+      if (recordingInterval.current) clearInterval(recordingInterval.current);
+    };
 
     recorder.start();
     mediaRecorder.current = recorder;
+
+    setIsRecording(true);
+    setRecordingElapsed(0);
+
+    recordingInterval.current = setInterval(() => {
+      setRecordingElapsed((prev) => {
+        if (prev + 1 >= MAX_RECORDING_TIME) {
+          recorder.stop();
+          return MAX_RECORDING_TIME;
+        }
+        return prev + 1;
+      });
+    }, 1000);
   };
 
-  const stopRecording = () => mediaRecorder.current?.stop();
+  /* ---------- STOP RECORDING ---------- */
+  const stopRecording = () => {
+    mediaRecorder.current?.stop();
+    if (recordingInterval.current) clearInterval(recordingInterval.current);
+  };
+
+  /* ---------- DELETE RECORDING ---------- */
+  const deleteRecording = () => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+
+    setDraft((d) => ({ ...d, audio: null }));
+    setAudioUrl(null);
+    setRecordedDuration(0);
+    setPlayProgress(0);
+    setIsPlaying(false);
+  };
+
+  /* ---------- PLAY / PAUSE AUDIO ---------- */
+  const togglePlayAudio = () => {
+    if (!audioUrl) return;
+
+    if (!audioRef.current) {
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+
+      audio.ontimeupdate = () => {
+        setPlayProgress(audio.currentTime);
+      };
+
+      audio.onended = () => {
+        setIsPlaying(false);
+        setPlayProgress(0);
+      };
+    }
+
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      audio.play();
+      setIsPlaying(true);
+    }
+  };
+
+  /* ---------- PROGRESS ---------- */
+  const recordingPercent = (recordingElapsed / MAX_RECORDING_TIME) * 100;
+  const playPercent =
+    recordedDuration > 0 ? (playProgress / recordedDuration) * 100 : 0;
+
+  /* ---------- CONTINUE ---------- */
+  const isTextValid = draft.description.trim().length >= 20;
+  const isAudioValid = !!draft.audio;
+  const canContinue = isTextValid || isAudioValid;
 
   /* ---------------- Submit ---------------- */
   const submitTicket = async () => {
@@ -108,6 +278,22 @@ export default function RaiseTicketModal({
   const usernameRegex = /^[a-zA-Z0-9]{4,}$/;
   const isUsernameValid = usernameRegex.test(draft.username);
 
+  const handleClose = () => {
+    setStep(0);
+    setDraft({
+      username: "",
+      subject_id: "",
+      sub_subject_id: "",
+      description: "",
+      audio: null,
+      files: [],
+      return_channel: "email",
+    });
+    setSuccessTicket(null);
+    setCounter(5);
+    onClose(); // call the original close function
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4"
@@ -124,7 +310,7 @@ export default function RaiseTicketModal({
               Request for Quick Support
             </h2>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="text-white hover:text-white/70 text-2xl pt-3"
             >
               ✕
@@ -143,7 +329,7 @@ export default function RaiseTicketModal({
         </div>
 
         {successTicket ? (
-          <SuccessScreen ticket={successTicket} onClose={onClose} />
+          <SuccessScreen ticket={successTicket} onClose={handleClose} />
         ) : (
           <>
             {/* STEP 0 – BASIC INFO */}
@@ -332,7 +518,7 @@ export default function RaiseTicketModal({
                   />
                 </div>
 
-                {/* OR SEPARATOR */}
+                {/* OR */}
                 <div className="flex items-center gap-3">
                   <div
                     className="flex-1 h-px"
@@ -345,23 +531,110 @@ export default function RaiseTicketModal({
                   />
                 </div>
 
-                {/* RECORD AUDIO — SECONDARY */}
-                <button
-                  onClick={startRecording}
-                  className="w-full py-3 rounded-lg text-sm font-medium text-white transition"
-                  style={{
-                    border: "1px solid var(--accent)",
-                  }}
-                >
-                  🎙 Record Audio
-                </button>
+                {/* START RECORD */}
+                {!isRecording && !draft.audio && (
+                  <button
+                    onClick={startRecording}
+                    className="w-full py-3 rounded-lg text-sm font-medium text-black"
+                    style={{ backgroundColor: "var(--accent)" }}
+                  >
+                    🎙 Start Recording
+                  </button>
+                )}
 
-                {/* CONTINUE — PRIMARY */}
+                {/* RECORDING */}
+                {isRecording && (
+                  <>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={stopRecording}
+                        className="flex-1 py-3 rounded-lg text-sm font-medium text-black"
+                        style={{ backgroundColor: "var(--accent)" }}
+                      >
+                        ⏹ Stop Recording
+                      </button>
+
+                      <button
+                        onClick={deleteRecording}
+                        className="flex-1 py-3 rounded-lg text-sm font-medium text-white bg-red-500"
+                      >
+                        🗑 Delete
+                      </button>
+                    </div>
+
+                    {/* RECORDING PROGRESS */}
+                    <div className="space-y-1">
+                      <div className="h-1 bg-white/30 rounded overflow-hidden">
+                        <div
+                          className="h-full transition-[width] duration-200"
+                          style={{
+                            width: `${recordingPercent}%`,
+                            backgroundColor: "var(--accent)",
+                          }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-xs text-white/60">
+                        <span>{formatTime(recordingElapsed)}</span>
+                        <span>{formatTime(MAX_RECORDING_TIME)}</span>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* PLAYBACK */}
+                {draft.audio && audioUrl && (
+                  <>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={togglePlayAudio}
+                        className="flex-1 py-3 rounded-lg text-sm font-medium text-black"
+                        style={{ backgroundColor: "var(--accent)" }}
+                      >
+                        {isPlaying ? "⏸ Pause" : "▶ Play Recording"}
+                      </button>
+
+                      <button
+                        onClick={deleteRecording}
+                        className="flex-1 py-3 rounded-lg text-sm font-medium"
+                        style={{
+                          border: "1px solid var(--accent)",
+                          color: "var(--accent)",
+                          background: "transparent",
+                        }}
+                      >
+                        🗑 Record Again
+                      </button>
+                    </div>
+
+                    {/* PLAYBACK PROGRESS */}
+                    <div className="space-y-1">
+                      <div className="h-1 bg-white/30 rounded overflow-hidden">
+                        <div
+                          className="h-full transition-[width] duration-200"
+                          style={{
+                            width: `${playPercent}%`,
+                            backgroundColor: "var(--accent)",
+                          }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-xs text-white/60">
+                        <span>00:00</span>
+                        <span>{formatTime(recordedDuration)}</span>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* CONTINUE */}
                 <button
+                  disabled={!canContinue}
                   onClick={() => setStep(3)}
-                  className="w-full py-3 rounded-lg text-base font-bold text-black transition"
+                  className="w-full py-3 rounded-lg text-base font-bold transition"
                   style={{
-                    backgroundColor: "var(--accent)",
+                    backgroundColor: canContinue
+                      ? "var(--accent)"
+                      : "rgba(255,255,255,0.2)",
+                    color: canContinue ? "#000" : "#999",
                   }}
                 >
                   Continue →
@@ -603,7 +876,7 @@ export default function RaiseTicketModal({
 
                   <div className="flex gap-3">
                     <span className="w-44 text-white/50">Request Details:</span>
-                    <span className="text-white line-clamp-2">
+                    <span className="text-white whitespace-pre-line">
                       {draft.description || "-"}
                     </span>
                   </div>
@@ -643,85 +916,18 @@ export default function RaiseTicketModal({
   );
 }
 
-/* ================= SUCCESS ================= */
-
-function SuccessScreen({
-  ticket,
-  onClose,
-}: {
-  ticket: string;
-  onClose: () => void;
-}) {
-  return (
-    <div className="text-center space-y-4 p-6">
-      <h3 className="text-lg font-semibold">Ticket Created 🎉</h3>
-      <div className="border rounded p-3 font-mono">{ticket}</div>
-      <button className="btn" onClick={onClose}>
-        Close
-      </button>
-    </div>
-  );
-}
-
-// "use client";
-
-// import { useEffect, useRef, useState } from "react";
-// import api from "@/lib/axios";
-
-// type Subject = {
-//   _id: string;
-//   title: string;
-//   sub_subjects: {
-//     _id: string;
-//     title: string;
-//     predefined_text: string;
-//   }[];
-// };
-
-// const TOTAL_STEPS = 6;
-// const DEFAULT_PRIMARY = "#AD9E70";
-
-// export default function RaiseTicketModal({
-//   open,
-//   onClose,
-//   primarycolor,
-// }: {
-//   open: boolean;
-//   onClose: () => void;
-//   primarycolor: string;
-// }) {
-//   const accent = primarycolor || DEFAULT_PRIMARY;
-//   const [step, setStep] = useState(0);
-//   const [subjects, setSubjects] = useState<Subject[]>([]);
-//   const [subSubjects, setSubSubjects] = useState<any[]>([]);
-//   const [successTicket, setSuccessTicket] = useState<string | null>(null);
-//   const [counter, setCounter] = useState(5);
-
-//   const [draft, setDraft] = useState({
-//     username: "",
-//     subject_id: "",
-//     sub_subject_id: "",
-//     description: "",
-//     audio: null as Blob | null,
-//     files: [] as { file: File; name: string }[],
-//     return_channel: "email",
-//   });
-
-//   /* ---------------- Fetch Subjects ---------------- */
-//   useEffect(() => {
-//     api.get("/subjects").then((res) => setSubjects(res.data.data));
-//   }, []);
-
-//   /* ---------------- Step 2 Timer ---------------- */
-//   useEffect(() => {
-//     if (step === 1 && counter > 0) {
-//       const t = setTimeout(() => setCounter((c) => c - 1), 1000);
-//       return () => clearTimeout(t);
-//     }
-//   }, [step, counter]);
-
-//   /* ---------------- Audio Recording ---------------- */
+// /* ---------------- Audio Recording ---------------- */
 //   const mediaRecorder = useRef<MediaRecorder | null>(null);
+//   const [isRecording, setIsRecording] = useState(false);
+//   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+//   const MAX_RECORDING_TIME = 120; // 2 minutes
+
+//   const recordingTimer = useRef<NodeJS.Timeout | null>(null);
+//   const recordingStart = useRef<number>(0);
+
+//   const audioRef = useRef<HTMLAudioElement | null>(null);
+//   const [playProgress, setPlayProgress] = useState(0);
+//   const [playDuration, setPlayDuration] = useState(0);
 
 //   const startRecording = async () => {
 //     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -729,251 +935,178 @@ function SuccessScreen({
 //     const chunks: BlobPart[] = [];
 
 //     recorder.ondataavailable = (e) => chunks.push(e.data);
-//     recorder.onstop = () =>
-//       setDraft((d) => ({
-//         ...d,
-//         audio: new Blob(chunks, { type: "audio/webm" }),
-//       }));
+
+//     recorder.onstop = () => {
+//       const audioBlob = new Blob(chunks, { type: "audio/webm" });
+
+//       setDraft((d) => ({ ...d, audio: audioBlob }));
+//       setAudioUrl(URL.createObjectURL(audioBlob));
+//       setIsRecording(false);
+
+//       stream.getTracks().forEach((t) => t.stop());
+//       if (recordingTimer.current) clearTimeout(recordingTimer.current);
+//     };
 
 //     recorder.start();
 //     mediaRecorder.current = recorder;
+//     setIsRecording(true);
+
+//     recordingStart.current = Date.now();
+//     recordingTimer.current = setTimeout(() => {
+//       recorder.stop();
+//     }, MAX_RECORDING_TIME * 1000);
 //   };
 
-//   const stopRecording = () => mediaRecorder.current?.stop();
-
-//   /* ---------------- Submit ---------------- */
-//   const submitTicket = async () => {
-//     const fd = new FormData();
-
-//     fd.append("username", draft.username);
-//     fd.append("subject_id", draft.subject_id);
-//     fd.append("sub_subject_id", draft.sub_subject_id);
-//     fd.append("description", draft.description);
-//     fd.append("return_channel", draft.return_channel);
-
-//     if (draft.audio) {
-//       fd.append("audio", draft.audio);
-//     }
-
-//     draft.files.forEach((f) => {
-//       fd.append("files", f.file, f.name);
-//     });
-
-//     const res = await api.post("/tickets/create", fd);
-//     setSuccessTicket(res.data.data.ticket_number);
+//   const stopRecording = () => {
+//     mediaRecorder.current?.stop();
+//     if (recordingTimer.current) clearTimeout(recordingTimer.current);
 //   };
 
-//   if (!open) return null;
+//   const deleteRecording = () => {
+//     setDraft((d) => ({ ...d, audio: null }));
+//     setAudioUrl(null);
+//   };
 
-//   /* ================================================= */
+//   const isTextValid = draft.description.trim().length >= 20;
+//   const isAudioValid = !!draft.audio;
 
-//   return (
-//     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-//       <div className="bg-blue-950 w-full max-w-3xl rounded-lg shadow-lg p-6">
-//         {/* HEADER */}
-//         <div className="flex justify-between items-center mb-4">
-//           <h2 className="text-xl font-semibold">Request for Quick Support</h2>
-//           <button onClick={onClose}>✕</button>
-//         </div>
+//   const canContinue = isTextValid || isAudioValid;
 
-//         {/* SUCCESS */}
-//         {successTicket ? (
-//           <SuccessScreen ticket={successTicket} onClose={onClose} />
-//         ) : (
-//           <>
-//             {/* STEP CONTENT */}
-//             <div className="min-h-65">
-//               {/* STEP 0 – BASIC INFO */}
-//               {step === 0 && (
-//                 <>
-//                   <h3>Your Username</h3>
-//                   <input
-//                     className="input mb-3"
-//                     placeholder="Enter your username"
-//                     value={draft.username}
-//                     onChange={(e) =>
-//                       setDraft({ ...draft, username: e.target.value })
-//                     }
-//                   />
+//   const playAudio = () => {
+//     if (!audioUrl) return;
 
-//                   <h3>Main Topic</h3>
-//                   <select
-//                     className="input mb-3"
-//                     value={draft.subject_id}
-//                     onChange={(e) => {
-//                       const subject = subjects.find(
-//                         (s) => s._id === e.target.value
-//                       );
-//                       setSubSubjects(subject?.sub_subjects || []);
-//                       setDraft({
-//                         ...draft,
-//                         subject_id: e.target.value,
-//                         sub_subject_id: "",
-//                       });
-//                     }}
-//                   >
-//                     <option value="">Choose a main topic</option>
-//                     {subjects.map((s) => (
-//                       <option key={s._id} value={s._id}>
-//                         {s.title}
-//                       </option>
-//                     ))}
-//                   </select>
+//     const audio = new Audio(audioUrl);
+//     audioRef.current = audio;
 
-//                   <h3>Sub Topic</h3>
-//                   <select
-//                     className="input mb-3"
-//                     disabled={!draft.subject_id}
-//                     value={draft.sub_subject_id}
-//                     onChange={(e) => {
-//                       const ss = subSubjects.find(
-//                         (x) => x._id === e.target.value
-//                       );
-//                       setDraft({
-//                         ...draft,
-//                         sub_subject_id: e.target.value,
-//                         description: ss?.predefined_text || "",
-//                       });
-//                     }}
-//                   >
-//                     <option value="">First, choose the main topic</option>
-//                     {subSubjects.map((ss) => (
-//                       <option key={ss._id} value={ss._id}>
-//                         {ss.title}
-//                       </option>
-//                     ))}
-//                   </select>
-//                 </>
-//               )}
+//     audio.onloadedmetadata = () => {
+//       setPlayDuration(audio.duration);
+//     };
 
-//               {/* STEP 1 – INFO NOTE */}
-//               {step === 1 && (
-//                 <>
-//                   <p className="text-sm text-gray-600">
-//                     Please read this information carefully before continuing.
-//                   </p>
-//                   <button
-//                     disabled={counter > 0}
-//                     className="btn mt-4"
-//                     onClick={() => setStep(2)}
-//                   >
-//                     Continue {counter > 0 && `(${counter})`}
-//                   </button>
-//                 </>
-//               )}
+//     audio.ontimeupdate = () => {
+//       setPlayProgress(audio.currentTime);
+//     };
 
-//               {/* STEP 2 – DESCRIPTION + AUDIO */}
-//               {step === 2 && (
-//                 <>
-//                   <textarea
-//                     className="input h-32"
-//                     value={draft.description}
-//                     onChange={(e) =>
-//                       setDraft({ ...draft, description: e.target.value })
-//                     }
-//                   />
-//                   <div className="mt-3 space-x-2">
-//                     <button className="btn" onClick={startRecording}>
-//                       Record Audio
-//                     </button>
-//                     <button className="btn-danger" onClick={stopRecording}>
-//                       Stop
-//                     </button>
-//                   </div>
-//                 </>
-//               )}
+//     audio.onended = () => {
+//       setPlayProgress(0);
+//     };
 
-//               {/* STEP 3 – FILES */}
-//               {step === 3 && (
-//                 <input
-//                   type="file"
-//                   multiple
-//                   onChange={(e) =>
-//                     setDraft({
-//                       ...draft,
-//                       files: Array.from(e.target.files || []).map((f) => ({
-//                         file: f,
-//                         name: f.name,
-//                       })),
-//                     })
-//                   }
-//                 />
-//               )}
+//     audio.play();
+//   };
 
-//               {/* STEP 4 – RETURN CHANNEL */}
-//               {step === 4 && (
-//                 <div className="space-y-2">
-//                   {["whatsapp", "telegram", "telephone", "email"].map((c) => (
-//                     <label key={c} className="flex gap-2 items-center">
-//                       <input
-//                         type="radio"
-//                         checked={draft.return_channel === c}
-//                         onChange={() =>
-//                           setDraft({ ...draft, return_channel: c })
-//                         }
-//                       />
-//                       {c}
-//                     </label>
-//                   ))}
-//                 </div>
-//               )}
+//   const [recordProgress, setRecordProgress] = useState(0);
 
-//               {/* STEP 5 – PREVIEW */}
-//               {step === 5 && (
-//                 <div className="text-sm space-y-2">
-//                   <p>User: {draft.username}</p>
-//                   <p>Channel: {draft.return_channel}</p>
-//                   <p>Files: {draft.files.length}</p>
-//                 </div>
-//               )}
-//             </div>
+//   useEffect(() => {
+//     if (!isRecording) return;
 
-//             {/* FOOTER */}
-//             <div className="flex justify-between mt-6">
-//               <button
-//                 disabled={step === 0}
-//                 onClick={() => setStep(step - 1)}
-//                 className="btn-outline"
-//               >
-//                 Back
-//               </button>
+//     const interval = setInterval(() => {
+//       const elapsed = (Date.now() - recordingStart.current) / 1000;
+//       setRecordProgress(Math.min((elapsed / MAX_RECORDING_TIME) * 100, 100));
+//     }, 200);
 
-//               {step < TOTAL_STEPS - 1 ? (
-//                 <button className="btn" onClick={() => setStep(step + 1)}>
-//                   Next
-//                 </button>
-//               ) : (
-//                 <button className="btn" onClick={submitTicket}>
-//                   Submit
-//                 </button>
-//               )}
-//             </div>
-//           </>
-//         )}
-//       </div>
+//     return () => clearInterval(interval);
+//   }, [isRecording]);
+
+//---------------------------------------------------------------------
+{
+  /* RECORD STATES*/
+}
+// {!isRecording && !draft.audio && (
+//   <button
+//     onClick={startRecording}
+//     className="w-full py-3 rounded-lg text-sm font-medium text-black"
+//     style={{ backgroundColor: "var(--accent)" }}
+//   >
+//     🎙 Start Recording
+//   </button>
+// )}
+
+// {isRecording && (
+//   <>
+//     <div className="flex gap-3">
+//       <button
+//         onClick={stopRecording}
+//         className="flex-1 py-3 rounded-lg text-sm font-medium text-black"
+//         style={{ backgroundColor: "var(--accent)" }}
+//       >
+//         ⏹ Stop Recording
+//       </button>
+
+//       <button
+//         onClick={deleteRecording}
+//         className="flex-1 py-3 rounded-lg text-sm font-medium text-white bg-red-500"
+//       >
+//         🗑 Delete Recording
+//       </button>
 //     </div>
-//   );
-// }
 
-// /* ================= SUCCESS ================= */
-
-// function SuccessScreen({
-//   ticket,
-//   onClose,
-// }: {
-//   ticket: string;
-//   onClose: () => void;
-// }) {
-//   return (
-//     <div className="text-center space-y-4">
-//       <h3 className="text-lg font-semibold">Ticket Created 🎉</h3>
-//       <div className="border rounded p-3 font-mono">{ticket}</div>
-
-//       <div className="flex justify-center gap-3">
-//         <button className="btn" onClick={onClose}>
-//           Close
-//         </button>
-//       </div>
+//     {/* RECORDING TIMER BAR */}
+//     <div className="h-1 bg-white/20 rounded overflow-hidden">
+//       <div
+//         className="h-full"
+//         style={{
+//           width: `${Math.min(
+//             ((Date.now() - recordingStart.current) /
+//               1000 /
+//               MAX_RECORDING_TIME) *
+//               100,
+//             100
+//           )}%`,
+//           backgroundColor: "var(--accent)",
+//         }}
+//       />
 //     </div>
-//   );
-// }
+//   </>
+// )}
+
+// {draft.audio && audioUrl && (
+//   <>
+//     <div className="flex gap-3">
+//       <button
+//         onClick={playAudio}
+//         className="flex-1 py-3 rounded-lg text-sm font-medium text-black"
+//         style={{ backgroundColor: "var(--accent)" }}
+//       >
+//         ▶ Play Recording
+//       </button>
+
+//       <button
+//         onClick={deleteRecording}
+//         className="flex-1 py-3 rounded-lg text-sm font-medium"
+//         style={{
+//           border: "1px solid var(--accent)",
+//           color: "var(--accent)",
+//           background: "transparent",
+//         }}
+//       >
+//         🗑 Record Again
+//       </button>
+//     </div>
+
+//     {/* PLAYBACK PROGRESS */}
+//     <div className="h-1 bg-white/20 rounded overflow-hidden">
+//       <div
+//         className="h-full"
+//         style={{
+//           width: `${(playProgress / playDuration) * 100 || 0}%`,
+//           backgroundColor: "var(--accent)",
+//         }}
+//       />
+//     </div>
+//   </>
+// )}
+
+// {/* CONTINUE */}
+// <button
+//   disabled={!canContinue}
+//   onClick={() => setStep(3)}
+//   className="w-full py-3 rounded-lg text-base font-bold transition"
+//   style={{
+//     backgroundColor: canContinue
+//       ? "var(--accent)"
+//       : "rgba(255,255,255,0.2)",
+//     color: canContinue ? "#000" : "#999",
+//     cursor: canContinue ? "pointer" : "not-allowed",
+//   }}
+// >
+//   Continue →
+// </button>

@@ -41,4 +41,14 @@ export const FEATURES: FeatureConfig[] = [
       target: "UPLOAD_FILE",
     },
   },
+  {
+    id: "send-whatsapp",
+    title: "Send Whatsapp",
+    subtitle: "Send whatsapp to us",
+    icon: "🔍",
+    action: {
+      type: "redirect",
+      target: "https://wa.me/919899598446",
+    },
+  },
 ];

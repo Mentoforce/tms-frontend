@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import api from "@/lib/axios";
+import { IconSearch } from "@tabler/icons-react";
 
 const DEFAULT_PRIMARY = "#AD9E70";
 
@@ -42,111 +43,165 @@ export default function SearchTicket({
     }
   };
 
+  const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && ticketNumber && username && !loading) {
+      handleSearch();
+    }
+  };
+
   return (
-    <div
-      className="max-w-md mx-auto rounded-2xl shadow p-6 space-y-5"
-      style={{
-        backgroundColor: `${accent}26`, // ~15% opacity
-        border: `1px solid ${accent}`,
-      }}
-    >
-      <h2
-        className="text-xl font-semibold text-center"
-        style={{ color: accent }}
-      >
-        Transaction Inquiry
+    /* SECTION WRAPPER */
+    <section className="w-full max-w-360 mx-auto px-4 md:px-6 mb-32">
+      {/* SECTION HEADING */}
+      <h2 className="mb-6 text-[35px] font-semibold tracking-tight text-[#BDBDBD] uppercase">
+        TRANSACTION INQUIRY
       </h2>
 
-      {/* Ticket ID */}
-      <input
-        className="w-full rounded-lg px-4 py-3 text-sm bg-black/60 text-white placeholder:text-white/40 focus:outline-none"
-        style={{ border: `1px solid ${accent}` }}
-        placeholder="e.g. 3012-3LIT"
-        value={ticketNumber}
-        onChange={(e) => setTicketNumber(e.target.value)}
-      />
-
-      {/* Username */}
-      <input
-        className="w-full rounded-lg px-4 py-3 text-sm bg-black/60 text-white placeholder:text-white/40 focus:outline-none"
-        style={{ border: `1px solid ${accent}` }}
-        placeholder="e.g. Elitedesk123"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-
-      {/* Search Button */}
-      <button
-        onClick={handleSearch}
-        disabled={loading}
-        className="w-full py-3 rounded-lg font-bold text-black transition disabled:opacity-50"
-        style={{ backgroundColor: accent }}
+      <div
+        className="
+          w-full
+          rounded-3xl
+          min-h-97
+          flex flex-col justify-center
+          px-6 py-10
+          md:px-20 md:py-10
+          gap-6
+        "
+        style={{
+          backgroundColor: `${accent}1A`,
+        }}
       >
-        {loading ? "Searching..." : "🔍 Inquire"}
-      </button>
+        {/* INPUT GRID - Gap 24px per Auto Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Ticket ID */}
+          <div className="space-y-3">
+            <label className="text-[18px] font-semibold text-white">
+              Ticket ID
+            </label>
+            <input
+              className="
+                w-full
+                h-16
+                rounded-lg
+                px-6
+                text-[16px]
+                bg-[#0C0A06]
+                text-white
+                placeholder:text-white/40
+                focus:outline-none
+              "
+              placeholder="e.g. 3012 -3LIT"
+              value={ticketNumber}
+              onChange={(e) => setTicketNumber(e.target.value)}
+              onKeyDown={handleEnterKey}
+            />
+          </div>
 
-      {/* Note */}
-      <p className="text-xs text-white/60">
-        You can check the status of your transaction by entering your Ticket ID
-        and username.
-      </p>
-
-      {/* ERROR */}
-      {error && <p className="text-sm text-red-400 text-center">{error}</p>}
-
-      {/* RESULT */}
-      {result && (
-        <div
-          className="rounded-lg p-4 text-sm space-y-2 text-white/80"
-          style={{ border: `1px solid ${accent}` }}
-        >
-          <p>
-            <strong>Ticket:</strong> {result.ticket.ticket_number}
-          </p>
-          <p>
-            <strong>Status:</strong> {result.ticket.status}
-          </p>
-          <p>
-            <strong>Subject:</strong> {result.ticket.subject_id?.title}
-          </p>
-          <p>
-            <strong>Sub Subject:</strong> {result.ticket.sub_subject_id?.title}
-          </p>
-          <p>
-            <strong>Created:</strong>{" "}
-            {new Date(result.ticket.createdAt).toLocaleString()}
-          </p>
-
-          {/* History */}
-          {result.history.map((history: any, idx: number) => (
-            <div
-              key={idx}
-              className="rounded-md p-3 text-xs space-y-1"
-              style={{ border: `1px solid ${accent}` }}
-            >
-              <p>
-                <strong>Action By:</strong>{" "}
-                {history.admin_id
-                  ? `Admin (${history.admin_id.email})`
-                  : "User"}
-              </p>
-              <p>
-                <strong>Action:</strong> {history.action}
-              </p>
-              {history.comments && (
-                <p>
-                  <strong>Comments:</strong> {history.comments}
-                </p>
-              )}
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(history.createdAt).toLocaleString()}
-              </p>
-            </div>
-          ))}
+          {/* Username */}
+          <div className="space-y-3">
+            <label className="text-[18px] font-semibold text-white">
+              Username
+            </label>
+            <input
+              className="
+                w-full
+                h-16
+                rounded-lg
+                px-6
+                text-[16px]
+                bg-[#0C0A06]
+                text-white
+                placeholder:text-white/40
+                focus:outline-none
+              "
+              placeholder="e.g. Elitedesk123"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyDown={handleEnterKey}
+            />
+          </div>
         </div>
-      )}
-    </div>
+
+        <button
+          onClick={handleSearch}
+          disabled={loading}
+          className="
+            w-full
+            h-16.5
+            rounded-lg
+            font-semibold
+            text-[18px]
+            text-black
+            transition
+            disabled:opacity-50
+            flex items-center justify-center gap-2
+          "
+          style={{
+            backgroundColor: accent,
+            fontFamily: "Montserrat, sans-serif",
+          }}
+        >
+          <IconSearch size={20} stroke={2.5} />
+          {loading ? "Searching..." : "Inquire"}
+        </button>
+
+        {/* NOTE */}
+        <p className="text-[14px] text-white/80">
+          <span className="opacity-60">Note:</span> You can check the status of
+          your transaction by entering your Ticket ID and username.
+        </p>
+
+        {/* ERROR */}
+        {error && <p className="text-sm text-red-400">{error}</p>}
+
+        {/* RESULT (Functionality preserved) */}
+        {result && (
+          <div className="rounded-xl p-4 space-y-3 text-sm text-white/80">
+            <p>
+              <strong>Ticket:</strong> {result.ticket.ticket_number}
+            </p>
+            <p>
+              <strong>Status:</strong> {result.ticket.status}
+            </p>
+            <p>
+              <strong>Subject:</strong> {result.ticket.subject_id?.title}
+            </p>
+            <p>
+              <strong>Sub Subject:</strong>{" "}
+              {result.ticket.sub_subject_id?.title}
+            </p>
+            <p>
+              <strong>Created:</strong>{" "}
+              {new Date(result.ticket.createdAt).toLocaleString()}
+            </p>
+            {result.history.map((history: any) => {
+              return (
+                <div className="border text-xs space-y-1 ">
+                  <p>
+                    <strong>Action By:</strong>{" "}
+                    {history.admin_id
+                      ? `Admin (${history.admin_id.email})`
+                      : "User"}
+                  </p>
+                  <p>
+                    <strong>Action:</strong> {history.action}
+                  </p>
+                  {history.comments && (
+                    <p>
+                      <strong>Comments:</strong> {history.comments}
+                    </p>
+                  )}
+                  <p>
+                    <strong>Date:</strong>{" "}
+                    {new Date(history.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 

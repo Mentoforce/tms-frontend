@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import { IconProps } from "@tabler/icons-react";
 
 export interface OrganisationContextType {
   organisation: OrganisationConfig | null;
@@ -19,9 +20,10 @@ export interface FeatureConfig {
   id: string;
   title: string;
   subtitle: string;
-  icon: string;
+  icon: React.FC<IconProps>;
   action: {
     type: FeatureActionType;
     target: string; // modal key OR route
   };
+  primarycolor:string;
 }

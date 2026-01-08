@@ -69,17 +69,26 @@ export default function Home() {
       />
 
       {/* Feature Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-        {FEATURES.map((feature) => (
-          <FeatureCard
-            key={feature.id}
-            icon={feature.icon}
-            title={feature.title}
-            subtitle={feature.subtitle}
-            onClick={() => handleFeatureAction(feature, openModal, router)}
-          />
-        ))}
-      </div>
+      <section className="w-full max-w-360 mx-auto px-4 md:px-6 mb-32">
+        <h2 className="mb-6 text-[35px] font-semibold tracking-tight text-[#BDBDBD] uppercase">
+          QUICK SUPPORT
+        </h2>
+
+        {/* FEATURE CARDS GRID*/}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-6 ">
+          {FEATURES.map((feature) => (
+            <FeatureCard
+              key={feature.id}
+              icon={feature.icon}
+              title={feature.title}
+              subtitle={feature.subtitle}
+              onClick={() => handleFeatureAction(feature, openModal, router)}
+              primarycolor={feature.primarycolor}
+            />
+          ))}
+        </div>
+      </section>
+
       <SearchTicket />
     </>
   );

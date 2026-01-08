@@ -68,12 +68,6 @@ export default function Home() {
         onClose={() => closeModal("UPLOAD_FILE")}
       />
 
-      {/* Header
-      <div className="p-6">
-        <h1 className="text-2xl font-semibold">How can we help you?</h1>
-        <p className="text-gray-600 mt-1">Choose one of the options below</p>
-      </div> */}
-
       {/* Feature Cards */}
       <section className="w-full max-w-360 mx-auto px-4 md:px-6 mb-32">
         <h2 className="mb-6 text-[35px] font-semibold tracking-tight text-[#BDBDBD] uppercase">

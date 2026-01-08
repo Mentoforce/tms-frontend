@@ -54,4 +54,14 @@ export const FEATURES: FeatureConfig[] = [
     },
     primarycolor: "#AD9E70"
   },
+  {
+    id: "send-whatsapp",
+    title: "Send Whatsapp",
+    subtitle: "Send whatsapp to us",
+    icon: "🔍",
+    action: {
+      type: "redirect",
+      target: "https://wa.me/919899598446",
+    },
+  },
 ];

@@ -19,7 +19,7 @@ export const FEATURES: FeatureConfig[] = [
       type: "modal",
       target: "RAISE_TICKET",
     },
-    primarycolor: "#AD9E70"
+    // primarycolor: "#AD9E70",
   },
   {
     id: "request-callback",
@@ -30,7 +30,7 @@ export const FEATURES: FeatureConfig[] = [
       type: "modal",
       target: "REQUEST_CALLBACK",
     },
-    primarycolor: "#AD9E70"
+    // primarycolor: "#AD9E70",
   },
   {
     id: "bonus-claim",
@@ -41,7 +41,7 @@ export const FEATURES: FeatureConfig[] = [
       type: "modal",
       target: "BONUS_CLAIM",
     },
-    primarycolor: "#AD9E70"
+    // primarycolor: "#AD9E70",
   },
   {
     id: "upload-file",
@@ -52,16 +52,17 @@ export const FEATURES: FeatureConfig[] = [
       type: "modal",
       target: "UPLOAD_FILE",
     },
-    primarycolor: "#AD9E70"
+    // primarycolor: "#AD9E70",
   },
   {
     id: "send-whatsapp",
     title: "Send Whatsapp",
     subtitle: "Send whatsapp to us",
-    icon: "🔍",
+    icon: IconBrandWhatsapp,
     action: {
       type: "redirect",
       target: "https://wa.me/919899598446",
     },
+    // primarycolor: "#AD9E70",
   },
 ];

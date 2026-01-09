@@ -74,7 +74,7 @@ export default function FeatureCard({
         className="
     text-[14px]
     text-[#BDBDBD]
-    max-w-[200px]
+    px-2
     text-center
     mx-auto
     leading-relaxed

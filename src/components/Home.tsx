@@ -54,6 +54,7 @@ export default function Home() {
       <RaiseTicketModal
         open={openModals.RAISE_TICKET}
         onClose={() => closeModal("RAISE_TICKET")}
+        primarycolor={primaryColor}
       />
       <RequestCallbackModal
         open={openModals.REQUEST_CALLBACK}
@@ -83,13 +84,13 @@ export default function Home() {
               title={feature.title}
               subtitle={feature.subtitle}
               onClick={() => handleFeatureAction(feature, openModal, router)}
-              primarycolor={feature.primarycolor}
+              primarycolor={primaryColor}
             />
           ))}
         </div>
       </section>
 
-      <SearchTicket />
+      <SearchTicket primarycolor={primaryColor} />
     </>
   );
 }

@@ -1,21 +1,21 @@
 import { OrganisationConfig } from "../types/context-types";
 
-export const ORGANISATIONS: Record<string, any> = {
-  MTF: {
-    code: "MTF",
-    name: "Mentoforce Technologies",
-    logoUrl: "/logos/mentoforce.png",
-    primaryColor: "#000000",
-    supportEmail: "support@mentoforce.com",
-  },
-  ACME: {
-    code: "ACME",
-    name: "Acme Corp",
-    logoUrl: "/logos/acme.png",
-    primaryColor: "#2563eb",
-    supportEmail: "help@acme.com",
-  },
-};
+// export const ORGANISATIONS: Record<string, any> = {
+//   MTF: {
+//     code: "MTF",
+//     name: "Mentoforce Technologies",
+//     logoUrl: "/logos/mentoforce.png",
+//     primaryColor: "#000000",
+//     supportEmail: "support@mentoforce.com",
+//   },
+//   ACME: {
+//     code: "ACME",
+//     name: "Acme Corp",
+//     logoUrl: "/logos/acme.png",
+//     primaryColor: "#2563eb",
+//     supportEmail: "help@acme.com",
+//   },
+// };
 
 export interface TicketDraft {
   username: string;
@@ -29,4 +29,3 @@ export interface TicketDraft {
   }[];
   returnChannel: "whatsapp" | "telegram" | "telephone" | "email" | null;
 }
-

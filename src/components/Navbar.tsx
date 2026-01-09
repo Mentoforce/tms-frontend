@@ -13,7 +13,7 @@ export default function Navbar({ config }: NavbarProps) {
   const { logoUrl, lineColor } = config;
 
   return (
-    <header className="w-full flex flex-col bg-[#0C0A06]">
+    <header className="w-full flex flex-col sticky top-0 bg-[#0C0A06] mb-10 z-50">
       <div
         className="
           flex items-center justify-center
@@ -24,10 +24,8 @@ export default function Navbar({ config }: NavbarProps) {
       >
         <img
           src={logoUrl}
-          alt="ELIT Logo"
-          width={173}
-          height={60}
-          className="max-w-35 sm:max-w-40 lg:max-w-43.25 h-auto object-contain"
+          alt="Company Logo"
+          className="max-h-20 sm:max-h-15 lg:max-h-18 w-auto object-contain"
         />
       </div>
 

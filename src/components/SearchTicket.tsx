@@ -74,8 +74,8 @@ export default function SearchTicket({
         {/* INPUT GRID - Gap 24px per Auto Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Ticket ID */}
-          <div className="space-y-3">
-            <label className="text-[18px] font-semibold text-white">
+          <div className="space-y-13">
+            <label className="text-lg font-semibold text-white">
               Ticket ID
             </label>
             <input
@@ -88,9 +88,9 @@ export default function SearchTicket({
                 bg-[#0C0A06]
                 text-white
                 placeholder:text-white/40
-                focus:outline-none
+                focus:outline-none mt-3
               "
-              placeholder="e.g. 3012 -3LIT"
+              placeholder="e.g. 3012-3LIT"
               value={ticketNumber}
               onChange={(e) => setTicketNumber(e.target.value)}
               onKeyDown={handleEnterKey}
@@ -98,10 +98,8 @@ export default function SearchTicket({
           </div>
 
           {/* Username */}
-          <div className="space-y-3">
-            <label className="text-[18px] font-semibold text-white">
-              Username
-            </label>
+          <div className="space-y-13">
+            <label className="text-lg font-semibold text-white">Username</label>
             <input
               className="
                 w-full
@@ -112,7 +110,7 @@ export default function SearchTicket({
                 bg-[#0C0A06]
                 text-white
                 placeholder:text-white/40
-                focus:outline-none
+                focus:outline-none mt-3
               "
               placeholder="e.g. Elitedesk123"
               value={username}

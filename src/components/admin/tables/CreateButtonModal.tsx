@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { Component, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import api from "@/lib/axios";
 import {
@@ -11,6 +11,8 @@ import {
   IconPhoneCall,
   IconTicket,
   IconUpload,
+  IconUser,
+  IconWorldWww,
 } from "@tabler/icons-react";
 
 const ICON_MAP: any = [
@@ -21,6 +23,8 @@ const ICON_MAP: any = [
   { name: "IconMail", component: IconMail },
   { name: "IconUpload", component: IconUpload },
   { name: "IconGift", component: IconGift },
+  { name: "IconWorldWww", component: IconWorldWww },
+  { name: "IconUser", Component: IconUser },
 ];
 
 export default function CreateButtonModal({
@@ -65,7 +69,7 @@ export default function CreateButtonModal({
     try {
       const payload = {
         ...form,
-        bonus_type_id: form._id || undefined,
+        button_id: form._id || undefined,
       };
 
       const res = await api.post("/create-button", payload);

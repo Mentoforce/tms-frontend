@@ -6,6 +6,8 @@ import {
   IconMail,
   IconUpload,
   IconGift,
+  IconWorldWww,
+  IconUser,
 } from "@tabler/icons-react";
 
 const ICON_MAP: any = {
@@ -16,6 +18,8 @@ const ICON_MAP: any = {
   IconMail,
   IconUpload,
   IconGift,
+  IconWorldWww,
+  IconUser,
 };
 export default function FeatureCard({
   icon,

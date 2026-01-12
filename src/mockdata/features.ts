@@ -19,7 +19,6 @@ export const FEATURES: FeatureConfig[] = [
       type: "modal",
       target: "RAISE_TICKET",
     },
-    // primarycolor: "#AD9E70",
   },
   {
     id: "request-callback",
@@ -30,7 +29,46 @@ export const FEATURES: FeatureConfig[] = [
       type: "modal",
       target: "REQUEST_CALLBACK",
     },
-    // primarycolor: "#AD9E70",
+  },
+    {
+    id: "send-whatsapp",
+    title: "Whatsapp",
+    subtitle: "Send whatsapp to us",
+    icon: IconBrandWhatsapp,
+    action: {
+      type: "redirect",
+      target: "https://wa.me/919899598446",
+    },
+  },
+    {
+    id: "send-telegram",
+    title: "Telegram",
+    subtitle: "Member Support Line",
+    icon: IconBrandTelegram,
+    action: {
+      type: "redirect",
+      target: "https://t.me/your_telegram_username",
+    },
+  },
+  {
+    id: "send-expressmail",
+    title: "Express Mail",
+    subtitle: "Fast Communication via Email",
+    icon: IconMail,
+    action: {
+      type: "redirect",
+      target: "mailto:support@yourdomain.com",
+    },
+  },
+    {
+    id: "upload-file",
+    title: "Upload File",
+    subtitle: "Upload a file to your current request",
+    icon: IconUpload,
+    action: {
+      type: "modal",
+      target: "UPLOAD_FILE",
+    },
   },
   {
     id: "bonus-claim",
@@ -41,28 +79,7 @@ export const FEATURES: FeatureConfig[] = [
       type: "modal",
       target: "BONUS_CLAIM",
     },
-    // primarycolor: "#AD9E70",
   },
-  {
-    id: "upload-file",
-    title: "Upload File",
-    subtitle: "Upload a file to your current request",
-    icon: IconUpload,
-    action: {
-      type: "modal",
-      target: "UPLOAD_FILE",
-    },
-    // primarycolor: "#AD9E70",
-  },
-  {
-    id: "send-whatsapp",
-    title: "Send Whatsapp",
-    subtitle: "Send whatsapp to us",
-    icon: IconBrandWhatsapp,
-    action: {
-      type: "redirect",
-      target: "https://wa.me/919899598446",
-    },
-    // primarycolor: "#AD9E70",
-  },
+
+
 ];

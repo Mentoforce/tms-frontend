@@ -25,5 +25,4 @@ export interface FeatureConfig {
     type: FeatureActionType;
     target: string; // modal key OR route
   };
-  // primarycolor:string;
 }

@@ -13,6 +13,7 @@ import RequestCallbackModal from "./CallbackRequestModal";
 import SearchTicket from "./SearchTicket";
 import BonusClaimModal from "./BonusClaimModal";
 import UploadFileModal from "./UploadFileModal";
+import Footer from "./Footer";
 
 /**
  * Dummy data for now
@@ -64,6 +65,7 @@ export default function Home() {
       <BonusClaimModal
         open={openModals.BONUS_CLAIM}
         onClose={() => closeModal("BONUS_CLAIM")}
+        primarycolor={primaryColor}
       />
       <UploadFileModal
         open={openModals.UPLOAD_FILE}
@@ -93,6 +95,7 @@ export default function Home() {
       </section>
 
       <SearchTicket primarycolor={primaryColor} />
+      <Footer primarycolor={primaryColor} />
     </>
   );
 }

@@ -68,6 +68,7 @@ export default function Home() {
       <RequestCallbackModal
         open={openModals.REQUEST_CALLBACK}
         onClose={() => closeModal("REQUEST_CALLBACK")}
+        primarycolor={primaryColor}
       />
       <BonusClaimModal
         open={openModals.BONUS_CLAIM}
@@ -76,6 +77,7 @@ export default function Home() {
       <UploadFileModal
         open={openModals.UPLOAD_FILE}
         onClose={() => closeModal("UPLOAD_FILE")}
+        primarycolor={primaryColor}
       />
 
       {/* Feature Cards */}

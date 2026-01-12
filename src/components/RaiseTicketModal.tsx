@@ -93,9 +93,7 @@ export default function RaiseTicketModal({
         {/* TICKET ID */}
         <div
           className="flex items-center justify-center gap-3 rounded-lg px-4 py-3"
-          style={{
-            backgroundColor: "rgba(173, 158, 112, 0.2)", // primary @ 20%
-          }}
+          style={{ backgroundColor: `${primarycolor}33` }}
         >
           <span className="font-mono font-bold text-white text-base">
             {ticket}

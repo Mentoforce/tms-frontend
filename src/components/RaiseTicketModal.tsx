@@ -15,7 +15,7 @@ type Subject = {
 };
 
 const TOTAL_STEPS = 6;
-const DEFAULT_PRIMARY = "#AD9E70";
+const DEFAULT_PRIMARY = "#DFD1A1";
 
 export default function RaiseTicketModal({
   open,

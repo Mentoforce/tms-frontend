@@ -27,12 +27,14 @@ export default function FeatureCard({
   subtitle,
   onClick,
   primarycolor,
+  quick_access,
 }: {
   icon: string;
   title: string;
   subtitle: string;
   onClick: () => void;
   primarycolor: string;
+  quick_access: boolean;
 }) {
   const Icon = ICON_MAP[icon] || IconTicket;
   return (
@@ -45,12 +47,35 @@ export default function FeatureCard({
       }}
     >
       {/* ICON */}
-      <div className="text-[#BDBDBD]">
-        <Icon size={58} stroke={0.8} />
+      <div className="relative flex items-center justify-center w-[58px] h-[58px]">
+        {quick_access && (
+          <div
+            className="absolute rounded-full"
+            style={{
+              width: "45px",
+              height: "45px",
+              backgroundColor: primarycolor,
+              opacity: 0.15,
+              top: "20px",
+              left: "23px",
+            }}
+          />
+        )}
+
+        {/* Icon sits relative and z-10 to stay above the circle */}
+        <div className="relative z-10 text-[#BDBDBD]">
+          <Icon size={68} stroke={0.8} />
+        </div>
       </div>
 
       {/* TITLE */}
-      <h3 className="text-[18px] mt-3 font-semibold text-[#FFFFFF]">{title}</h3>
+      <h3
+        className={`${
+          quick_access ? "text-[24px]" : "text-[18px]"
+        } mt-3 font-semibold text-[#FFFFFF]`}
+      >
+        {title}
+      </h3>
 
       {/* SUBTITLE */}
       <p className="text-[14px] text-[#BDBDBD] px-2 text-center mx-auto leading-relaxed">

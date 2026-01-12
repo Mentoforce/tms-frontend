@@ -11,6 +11,7 @@ import RequestCallbackModal from "./CallbackRequestModal";
 import SearchTicket from "./SearchTicket";
 import BonusClaimModal from "./BonusClaimModal";
 import UploadFileModal from "./UploadFileModal";
+import Footer from "./Footer";
 import api from "@/lib/axios";
 
 export default function Home() {
@@ -60,6 +61,7 @@ export default function Home() {
       <BonusClaimModal
         open={openModals.BONUS_CLAIM}
         onClose={() => closeModal("BONUS_CLAIM")}
+        primarycolor={primaryColor}
       />
       <UploadFileModal
         open={openModals.UPLOAD_FILE}
@@ -74,7 +76,7 @@ export default function Home() {
         </h2>
 
         {/* FEATURE CARDS GRID*/}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-6 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 w-full gap-6 mb-32 auto-rows-[280px]">
           {features.map(
             (feature: any) =>
               feature.quick_access && (
@@ -87,10 +89,12 @@ export default function Home() {
                     handleFeatureAction(feature, openModal, router)
                   }
                   primarycolor={primaryColor}
+                  quick_access={feature.quick_access}
                 />
               )
           )}
         </div>
+
         <h2 className="mb-6 text-[35px] font-semibold tracking-tight text-[#BDBDBD] uppercase">
           QUICK SUPPORT
         </h2>
@@ -109,6 +113,7 @@ export default function Home() {
                     handleFeatureAction(feature, openModal, router)
                   }
                   primarycolor={primaryColor}
+                  quick_access={feature.quick_access}
                 />
               )
           )}
@@ -116,6 +121,7 @@ export default function Home() {
       </section>
 
       <SearchTicket primarycolor={primaryColor} />
+      <Footer primarycolor={primaryColor} />
     </>
   );
 }

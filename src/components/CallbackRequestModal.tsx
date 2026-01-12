@@ -267,7 +267,7 @@ export default function RequestCallbackModal({
                       setDraft({ ...draft, issue: e.target.value })
                     }
                     placeholder="Briefly describe your problem (or record a voice message)..."
-                    className="w-full min-h-[140px] rounded-lg px-4 py-3 text-sm bg-transparent text-white placeholder:text-white/40 resize-none focus:outline-none mb-1 "
+                    className="w-full min-h-35 rounded-lg px-4 py-3 text-sm bg-transparent text-white placeholder:text-white/40 resize-none focus:outline-none mb-1 "
                     style={{ border: "1px solid rgba(255,255,255,0.3)" }}
                   />
                   {/* OR */}
@@ -449,7 +449,7 @@ function SuccessScreen({
         onClick={onClose}
         className="w-full py-3 rounded-lg text-sm font-medium transition text-center
              border border-white/60 text-white/60 bg-transparent
-             hover:bg-[var(--accent)] hover:text-black hover:font-bold hover:border-[var(--accent)]"
+             hover:bg-(--accent) hover:text-black hover:font-bold hover:border-(--accent)"
       >
         Close
       </button>

@@ -6,20 +6,13 @@ import FeatureCard from "@/components/FeatureCard";
 import RaiseTicketModal from "@/components/RaiseTicketModal";
 import { handleFeatureAction } from "@/lib/featureHandler";
 import Navbar from "./Navbar";
-// import QuickAccess from "./QuickAccess";
 import { useOrganisation } from "@/context/OrganisationProvider";
-import { FEATURES } from "@/mockdata/features";
 import RequestCallbackModal from "./CallbackRequestModal";
 import SearchTicket from "./SearchTicket";
 import BonusClaimModal from "./BonusClaimModal";
 import UploadFileModal from "./UploadFileModal";
 import Footer from "./Footer";
 import api from "@/lib/axios";
-
-/**
- * Dummy data for now
- * Later → fetch from backend
- */
 
 export default function Home() {
   const router = useRouter();
@@ -59,7 +52,6 @@ export default function Home() {
           lineColor: primaryColor,
         }}
       />
-      {/* <QuickAccess /> */}
 
       <RaiseTicketModal
         open={openModals.RAISE_TICKET}
@@ -85,21 +77,48 @@ export default function Home() {
       {/* Feature Cards */}
       <section className="w-full max-w-360 mx-auto px-4 md:px-6 mb-32">
         <h2 className="mb-6 text-[35px] font-semibold tracking-tight text-[#BDBDBD] uppercase">
+          QUICK ACCESS
+        </h2>
+
+        {/* FEATURE CARDS GRID*/}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-6 ">
+          {features.map(
+            (feature: any) =>
+              feature.quick_access && (
+                <FeatureCard
+                  key={feature._id}
+                  icon={feature.icon}
+                  title={feature.title}
+                  subtitle={feature.subtitle}
+                  onClick={() =>
+                    handleFeatureAction(feature, openModal, router)
+                  }
+                  primarycolor={primaryColor}
+                />
+              )
+          )}
+        </div>
+        <h2 className="mb-6 text-[35px] font-semibold tracking-tight text-[#BDBDBD] uppercase">
           QUICK SUPPORT
         </h2>
 
         {/* FEATURE CARDS GRID*/}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-6 ">
-          {features.map((feature: any) => (
-            <FeatureCard
-              key={feature.id}
-              icon={feature.icon}
-              title={feature.title}
-              subtitle={feature.subtitle}
-              onClick={() => handleFeatureAction(feature, openModal, router)}
-              primarycolor={primaryColor}
-            />
-          ))}
+          {features.map(
+            (feature: any) =>
+              !feature.quick_access && (
+                <FeatureCard
+                  key={feature._id}
+                  icon={feature.icon}
+                  title={feature.title}
+                  subtitle={feature.subtitle}
+                  onClick={() =>
+                    handleFeatureAction(feature, openModal, router)
+                  }
+                  primarycolor={primaryColor}
+                />
+              )
+          )}
         </div>
       </section>
 

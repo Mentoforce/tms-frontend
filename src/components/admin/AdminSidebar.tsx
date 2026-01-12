@@ -8,7 +8,8 @@ const items = [
   { href: "/admin/tickets", label: "Tickets" },
   { href: "/admin/callback", label: "Callback Requests" },
   { href: "/admin/bonus", label: "Bonus" },
-  { href: "/admin/organisations", label: "Organisations" },
+  { href: "/admin/bonus-config", label: "Bonus Config" },
+  { href: "/admin/subjects", label: "Subjects" },
 ];
 
 export default function AdminSidebar() {
@@ -24,9 +25,7 @@ export default function AdminSidebar() {
             key={item.href}
             href={item.href}
             className={`block px-3 py-2 rounded ${
-              pathname.startsWith(item.href)
-                ? "bg-slate-700"
-                : "hover:bg-slate-800"
+              pathname === item.href ? "bg-slate-700" : "hover:bg-slate-800"
             }`}
           >
             {item.label}

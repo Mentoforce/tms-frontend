@@ -241,7 +241,7 @@ export default function RequestCallbackModal({
                     onClick={() => setStep(1)}
                     disabled={!canMoveForward}
                     className="w-full py-3 rounded-lg text-sm font-bold text-black transition
-             disabled:opacity-40 disabled:cursor-not-allowed"
+             disabled:opacity-40 disabled:cursor-not-allowed mb-5"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
                     Move Forward →
@@ -353,7 +353,7 @@ export default function RequestCallbackModal({
                     onClick={submitCallbackRequest}
                     disabled={!canSubmit}
                     className="w-full py-3 rounded-lg text-md font-bold text-black transition
-             disabled:opacity-40 disabled:cursor-not-allowed"
+             disabled:opacity-40 disabled:cursor-not-allowed mb-5"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
                     Submit Request →

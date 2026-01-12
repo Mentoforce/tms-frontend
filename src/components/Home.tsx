@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import FeatureCard from "@/components/FeatureCard";
 import RaiseTicketModal from "@/components/RaiseTicketModal";
@@ -14,6 +14,7 @@ import SearchTicket from "./SearchTicket";
 import BonusClaimModal from "./BonusClaimModal";
 import UploadFileModal from "./UploadFileModal";
 import Footer from "./Footer";
+import api from "@/lib/axios";
 
 /**
  * Dummy data for now
@@ -24,17 +25,22 @@ export default function Home() {
   const router = useRouter();
   const { organisation } = useOrganisation();
   const { logo, primaryColor } = organisation!;
-
-  /**
-   * Central modal registry
-   * Easily extensible
-   */
+  const [features, setFeatures] = useState<any>([]);
   const [openModals, setOpenModals] = useState<Record<string, boolean>>({
     RAISE_TICKET: false,
     REQUEST_CALLBACK: false,
     BONUS_CLAIM: false,
     UPLOAD_FILE: false,
   });
+  const getFeatures = async () => {
+    const res = await api.get("/buttons");
+    setFeatures(res.data.data);
+  };
+
+  /**
+   * Central modal registry
+   * Easily extensible
+   */
 
   const openModal = (key: string) =>
     setOpenModals((prev) => ({ ...prev, [key]: true }));
@@ -42,6 +48,9 @@ export default function Home() {
   const closeModal = (key: string) =>
     setOpenModals((prev) => ({ ...prev, [key]: false }));
 
+  useEffect(() => {
+    getFeatures();
+  }, []);
   return (
     <>
       <Navbar
@@ -81,7 +90,7 @@ export default function Home() {
 
         {/* FEATURE CARDS GRID*/}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-6 ">
-          {FEATURES.map((feature) => (
+          {features.map((feature: any) => (
             <FeatureCard
               key={feature.id}
               icon={feature.icon}

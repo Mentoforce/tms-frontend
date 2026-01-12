@@ -292,7 +292,7 @@ export default function UploadFileModal({
                   <button
                     onClick={verifyTicket}
                     disabled={!isVerifyEnabled || loading}
-                    className="w-full py-3 rounded-lg text-sm font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full py-3 rounded-lg text-sm font-bold text-black mb-5 transition disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
                     {loading ? "Verifying..." : "Verify Ticket →"}
@@ -409,7 +409,7 @@ export default function UploadFileModal({
                   <button
                     onClick={uploadFiles}
                     disabled={loading || files.length === 0}
-                    className="w-full py-3 rounded-lg text-sm font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full py-3 rounded-lg text-sm font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
                     {loading ? "Uploading..." : "Upload Files →"}

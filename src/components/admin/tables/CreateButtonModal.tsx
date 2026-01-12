@@ -24,7 +24,7 @@ const ICON_MAP: any = [
   { name: "IconUpload", component: IconUpload },
   { name: "IconGift", component: IconGift },
   { name: "IconWorldWww", component: IconWorldWww },
-  { name: "IconUser", Component: IconUser },
+  { name: "IconUser", component: IconUser },
 ];
 
 export default function CreateButtonModal({

@@ -1,6 +1,6 @@
 "use client";
 
-const DEFAULT_PRIMARY = "#AD9E70";
+const DEFAULT_PRIMARY = "#DFD1A1";
 
 export default function Footer({ primarycolor }: { primarycolor?: string }) {
   const accent = primarycolor || DEFAULT_PRIMARY;

@@ -6,7 +6,7 @@ import { IconUser, IconPhone, IconCheck } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 
 const TOTAL_STEPS = 3;
-const DEFAULT_PRIMARY = "#AD9E70";
+const DEFAULT_PRIMARY = "#DFD1A1";
 
 export default function RequestCallbackModal({
   open,

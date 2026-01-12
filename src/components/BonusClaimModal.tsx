@@ -11,7 +11,7 @@ interface BonusConfig {
   is_active: boolean;
 }
 
-const DEFAULT_PRIMARY = "#AD9E70";
+const DEFAULT_PRIMARY = "#DFD1A1";
 
 export default function BonusClaimModal({
   open,

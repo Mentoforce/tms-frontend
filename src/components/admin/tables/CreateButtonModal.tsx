@@ -24,7 +24,7 @@ const ICON_MAP: any = [
   { name: "IconUpload", component: IconUpload },
   { name: "IconGift", component: IconGift },
   { name: "IconWorldWww", component: IconWorldWww },
-  { name: "IconUser", Component: IconUser },
+  { name: "IconUser", component: IconUser },
 ];
 
 export default function CreateButtonModal({
@@ -143,10 +143,8 @@ export default function CreateButtonModal({
                 className="select-clean mb-1 w-full rounded-lg px-4 py-4 pr-12 text-sm bg-transparent text-white focus:outline-none"
                 style={{ border: "1px solid rgba(255,255,255,0.4)" }}
               >
-                <option value="">Choose a main topic</option>
-                <option value="modal" disabled>
-                  Modal
-                </option>
+                <option value="">Choose one </option>
+                <option value="modal">Modal</option>
                 <option value="redirect">Redirect</option>
               </select>
             </div>

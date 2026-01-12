@@ -11,6 +11,7 @@ const items = [
   { href: "/admin/bonus-config", label: "Bonus Config" },
   { href: "/admin/subjects", label: "Subjects" },
   { href: "/admin/button", label: "Buttons" },
+  { href: "/admin/organisation", label: "Organisation" },
 ];
 
 export default function AdminSidebar() {

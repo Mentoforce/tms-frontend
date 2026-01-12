@@ -29,11 +29,6 @@ export default function Home() {
     setFeatures(res.data.data);
   };
 
-  /**
-   * Central modal registry
-   * Easily extensible
-   */
-
   const openModal = (key: string) =>
     setOpenModals((prev) => ({ ...prev, [key]: true }));
 
@@ -86,7 +81,7 @@ export default function Home() {
                 <FeatureCard
                   key={feature._id}
                   icon={feature.icon}
-                  title={feature.title}
+                  title={feature.title.toUpperCase()}
                   subtitle={feature.subtitle}
                   onClick={() =>
                     handleFeatureAction(feature, openModal, router)

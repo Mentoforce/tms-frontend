@@ -28,9 +28,37 @@ export default function ButtonTable({ config }: { config: ButtonConfig[] }) {
 
   if (!config || config.length === 0) {
     return (
-      <div className="rounded-xl border border-white/10 p-8 text-center text-gray-400">
-        No Buttons found
-      </div>
+      <>
+        <button
+          onClick={() => {
+            setEditingConfig(null);
+            setOpenModal(true);
+          }}
+          className="btn cursor-pointer mb-10 w-full"
+        >
+          + Create Button
+        </button>
+        {openModal && (
+          <CreateButtonModal
+            initialData={editingConfig}
+            onClose={() => {
+              setOpenModal(false);
+              setEditingConfig(null);
+            }}
+            onSaved={(saved) => {
+              setConfigData((prev) => {
+                const exists = prev.find((c) => c._id === saved._id);
+                return exists
+                  ? prev.map((c) => (c._id === saved._id ? saved : c))
+                  : [saved, ...prev];
+              });
+            }}
+          />
+        )}
+        <div className="rounded-xl border border-white/10 p-8 text-center text-gray-400">
+          No Buttons found
+        </div>
+      </>
     );
   }
 

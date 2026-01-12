@@ -1,30 +1,15 @@
-// components/FeatureCard.tsx
-// export default function FeatureCard({
-//   icon,
-//   title,
-//   subtitle,
-//   onClick,
-//   primarycolor,
-// }: {
-//   icon: string;
-//   title: string;
-//   subtitle: string;
-//   onClick: () => void;
-//   primarycolor: string;
-// }) {
-//   return (
-//     <button
-//       onClick={onClick}
-//       className="bg-black cursor-pointer rounded-lg shadow p-6 text-left hover:shadow-md transition w-full"
-//     >
-//       <div className="text-3xl mb-3">{icon}</div>
-//       <h3 className="font-semibold text-lg">{title}</h3>
-//       <p className="text-sm text-gray-600">{subtitle}</p>
-//     </button>
-//   );
-// }
+import {
+  IconBrandWhatsapp,
+  IconPhoneCall,
+  IconProps,
+  IconTicket,
+} from "@tabler/icons-react";
 
-import { IconProps } from "@tabler/icons-react";
+const ICON_MAP: any = {
+  IconTicket,
+  IconPhoneCall,
+  IconBrandWhatsapp,
+};
 export default function FeatureCard({
   icon,
   title,
@@ -32,13 +17,13 @@ export default function FeatureCard({
   onClick,
   primarycolor,
 }: {
-  icon: React.FC<IconProps>;
+  icon: string;
   title: string;
   subtitle: string;
   onClick: () => void;
   primarycolor: string;
 }) {
-  const Icon = icon;
+  const Icon = ICON_MAP[icon] || IconTicket;
   return (
     <button
       onClick={onClick}
@@ -70,16 +55,7 @@ export default function FeatureCard({
       <h3 className="text-[18px] mt-3 font-semibold text-[#FFFFFF]">{title}</h3>
 
       {/* SUBTITLE */}
-      <p
-        className="
-    text-[14px]
-    text-[#BDBDBD]
-    px-2
-    text-center
-    mx-auto
-    leading-relaxed
-  "
-      >
+      <p className="text-[14px] text-[#BDBDBD] px-2 text-center mx-auto leading-relaxed">
         {subtitle}
       </p>
     </button>

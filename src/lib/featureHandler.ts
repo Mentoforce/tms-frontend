@@ -1,4 +1,3 @@
-// lib/featureActionHandler.ts
 import { FeatureConfig } from "@/types/context-types";
 
 export function handleFeatureAction(

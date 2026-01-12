@@ -5,23 +5,23 @@ import { useState } from "react";
 import Td from "./util/Td";
 import Th from "./util/Th";
 import api from "@/lib/axios";
-import CreateBonusConfigModal from "./CreateBonusConfigModal";
 import ActivePill from "@/components/ActivePill";
+import CreateButtonModal from "./CreateButtonModal";
 
-type BonusConfig = {
+type ButtonConfig = {
   _id: string;
   title: string;
-  explanation: string;
-  start_date: Date;
-  end_date: Date;
+  subtitle: string;
+  icon: string;
+  action: {
+    type: string;
+    target: string;
+  };
   is_active: boolean;
+  quick_access: boolean;
 };
 
-export default function BonusConfigTable({
-  config,
-}: {
-  config: BonusConfig[];
-}) {
+export default function ButtonTable({ config }: { config: ButtonConfig[] }) {
   const [openModal, setOpenModal] = useState(false);
   const [editingConfig, setEditingConfig] = useState<any>(null);
   const [configData, setConfigData] = useState(config || []);
@@ -29,15 +29,15 @@ export default function BonusConfigTable({
   if (!config || config.length === 0) {
     return (
       <div className="rounded-xl border border-white/10 p-8 text-center text-gray-400">
-        No Bonus Config found
+        No Buttons found
       </div>
     );
   }
 
-  const updateActiveStatus = async (config: BonusConfig) => {
-    await api.post("/subjects/add-bonus-config", {
+  const updateActiveStatus = async (config: ButtonConfig) => {
+    await api.post("/create-button", {
       is_active: !config.is_active,
-      bonus_type_id: config._id,
+      button_id: config._id,
     });
     setConfigData((prev) =>
       prev.map((c) =>
@@ -46,9 +46,9 @@ export default function BonusConfigTable({
     );
   };
 
-  const deleteConfig = async (id: string) => {
-    await api.post("/subjects/delete-bonus-config", {
-      bonus_type_id: id,
+  const deletButton = async (id: string) => {
+    await api.post("/delete-button", {
+      button_id: id,
     });
   };
   return (
@@ -60,11 +60,11 @@ export default function BonusConfigTable({
         }}
         className="btn cursor-pointer mb-10 w-full"
       >
-        + Create Bonus Config
+        + Create Button
       </button>
       <div className="rounded-xl border border-white/10 overflow-hidden">
         {openModal && (
-          <CreateBonusConfigModal
+          <CreateButtonModal
             initialData={editingConfig}
             onClose={() => {
               setOpenModal(false);
@@ -84,10 +84,10 @@ export default function BonusConfigTable({
         <table className="w-full text-sm">
           <thead className="bg-white/5">
             <tr>
-              <Th>BONUS TYPE</Th>
-              <Th>EXPLANATION</Th>
+              <Th>BUTTON</Th>
+              <Th>ACTION</Th>
+              <Th>PART</Th>
               <Th>STATUS</Th>
-              <Th>VALIDITY</Th>
               <Th>UPDATE</Th>
             </tr>
           </thead>
@@ -98,8 +98,17 @@ export default function BonusConfigTable({
                 key={b._id}
                 className="border-t border-white/5 hover:bg-white/5 transition"
               >
-                <Td className="text-gray-400">{b.title}</Td>
-                <Td className="text-gray-400">{b.explanation}</Td>
+                <Td className="text-gray-400">
+                  <div className="text-white text-md">{b.title}</div>
+                  <div className="text-xs"> {b.subtitle}</div>
+                </Td>
+                <Td className="text-gray-400">
+                  <div className="text-white text-md">{b.action.type}</div>
+                  <div className="text-xs"> {b.action.target}</div>
+                </Td>
+                <Td className="text-gray-400">
+                  {b.quick_access ? "Quick Access" : "Quick Support"}
+                </Td>
 
                 <Td>
                   <button
@@ -110,10 +119,6 @@ export default function BonusConfigTable({
                   >
                     <ActivePill status={b.is_active} />
                   </button>
-                </Td>
-
-                <Td className="text-gray-400">
-                  {new Date(b.start_date).toLocaleDateString()}
                 </Td>
 
                 <Td>
@@ -129,7 +134,7 @@ export default function BonusConfigTable({
                     </button>
                     <button
                       onClick={() => {
-                        deleteConfig(b._id);
+                        deletButton(b._id);
                         setConfigData(
                           configData.filter((config) => config._id !== b._id)
                         );

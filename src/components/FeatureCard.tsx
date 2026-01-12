@@ -1,14 +1,21 @@
 import {
-  IconBrandWhatsapp,
-  IconPhoneCall,
-  IconProps,
   IconTicket,
+  IconPhoneCall,
+  IconBrandWhatsapp,
+  IconBrandTelegram,
+  IconMail,
+  IconUpload,
+  IconGift,
 } from "@tabler/icons-react";
 
 const ICON_MAP: any = {
   IconTicket,
   IconPhoneCall,
   IconBrandWhatsapp,
+  IconBrandTelegram,
+  IconMail,
+  IconUpload,
+  IconGift,
 };
 export default function FeatureCard({
   icon,
@@ -27,20 +34,7 @@ export default function FeatureCard({
   return (
     <button
       onClick={onClick}
-      className="
-        w-full
-        h-70
-        rounded-2xl
-        flex
-        flex-col
-        items-center
-        justify-center
-        text-center
-        gap-3
-        transition
-        hover:scale-[1.02]
-        active:scale-[0.99]
-      "
+      className="w-full h-70 rounded-2xl flex flex-col items-center justify-center text-center gap-3 transition hover:scale-[1.02] active:scale-[0.99]"
       style={{
         backgroundColor: `${primarycolor}1A`,
         boxShadow: "0 10px 40px rgba(0,0,0,0.6)",

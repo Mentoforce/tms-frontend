@@ -12,6 +12,7 @@ const items = [
   { href: "/admin/subjects", label: "Subjects" },
   { href: "/admin/button", label: "Buttons" },
   { href: "/admin/organisation", label: "Organisation" },
+  { href: "/admin/footer-content", label: "Footer Content" },
 ];
 
 export default function AdminSidebar() {

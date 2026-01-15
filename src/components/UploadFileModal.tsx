@@ -33,6 +33,9 @@ export default function UploadFileModal({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  const usernameRegex = /^[a-zA-Z0-9]{4,}$/;
+  const isUsernameValid = usernameRegex.test(username);
+
   if (!open) return null;
 
   /* ================= CLOSE HANDLER ================= */
@@ -51,7 +54,8 @@ export default function UploadFileModal({
 
   /* ================= HELPERS ================= */
 
-  const isVerifyEnabled = ticketNumber !== "" && username !== "";
+  const isVerifyEnabled =
+    ticketNumber !== "" && username !== "" && isUsernameValid;
 
   const addFiles = (incoming: File[]) => {
     setError(null);
@@ -155,8 +159,6 @@ export default function UploadFileModal({
     }
   };
 
-  /* ================= UI ================= */
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4"
@@ -174,7 +176,7 @@ export default function UploadFileModal({
             </h2>
             <button
               onClick={handleClose}
-              className="text-white/80 hover:text-white text-2xl"
+              className="text-white/80 hover:text-white text-2xl cursor-pointer"
             >
               ✕
             </button>
@@ -238,7 +240,7 @@ export default function UploadFileModal({
 
               <button
                 onClick={handleClose}
-                className="w-full py-3 rounded-lg text-sm font-bold text-black"
+                className="w-full py-3 rounded-lg text-sm font-bold text-black cursor-pointer"
                 style={{ backgroundColor: "var(--accent)" }}
               >
                 Close
@@ -275,15 +277,27 @@ export default function UploadFileModal({
                     </label>
                     <input
                       className="w-full mb-1 rounded-lg px-4 py-3 text-sm bg-transparent text-white focus:outline-none"
-                      style={{ border: "1px solid rgba(255,255,255,0.35)" }}
                       placeholder="Enter your username"
                       value={username}
                       onChange={(e) => {
                         setUsername(e.target.value);
                         setError(null);
                       }}
+                      style={{
+                        border: `1px solid ${
+                          username && !isUsernameValid
+                            ? "red"
+                            : "rgba(255,255,255,0.4)"
+                        }`,
+                      }}
                     />
                   </div>
+                  {username && !isUsernameValid && (
+                    <p className="text-xs text-red-400 mt-1">
+                      Username must be at least 4 characters and contain no
+                      special symbols
+                    </p>
+                  )}
 
                   {error && (
                     <p className="text-xs text-red-400 mt-1">{error}</p>
@@ -292,7 +306,7 @@ export default function UploadFileModal({
                   <button
                     onClick={verifyTicket}
                     disabled={!isVerifyEnabled || loading}
-                    className="w-full py-3 rounded-lg text-sm font-bold text-black mb-5 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold text-black mb-5 transition disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
                     {loading ? "Verifying..." : "Verify Ticket →"}
@@ -395,7 +409,7 @@ export default function UploadFileModal({
                             onClick={() =>
                               setFiles(files.filter((_, idx) => idx !== i))
                             }
-                            className="text-red-400 text-xs hover:text-red-300"
+                            className="text-red-400 text-xs hover:text-red-300 cursor-pointer"
                           >
                             Remove
                           </button>
@@ -411,7 +425,7 @@ export default function UploadFileModal({
                   <button
                     onClick={uploadFiles}
                     disabled={loading || files.length === 0}
-                    className="w-full py-3 rounded-lg text-sm font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
+                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
                     {loading ? "Uploading..." : "Upload Files →"}

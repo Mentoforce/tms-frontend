@@ -30,6 +30,9 @@ export default function BonusClaimModal({
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const usernameRegex = /^[a-zA-Z0-9]{4,}$/;
+  const isUsernameValid = usernameRegex.test(username);
+
   useEffect(() => {
     fetchBonusConfigs();
   }, []);
@@ -179,15 +182,29 @@ export default function BonusClaimModal({
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
                   className="w-full mb-1 rounded-lg px-4 py-4 text-sm bg-transparent text-white placeholder:text-white/40 focus:outline-none placeholder:text-base"
-                  style={{ border: "1px solid rgba(255,255,255,0.4)" }}
+                  style={{
+                    border: `1px solid ${
+                      username && !isUsernameValid
+                        ? "red"
+                        : "rgba(255,255,255,0.4)"
+                    }`,
+                  }}
                 />
+                {username && !isUsernameValid && (
+                  <p className="text-xs text-red-400 mt-1">
+                    Username must be at least 4 characters and contain no
+                    special symbols
+                  </p>
+                )}
               </div>
 
               {/* SUBMIT */}
               <button
                 onClick={handleSubmit}
-                disabled={!username || !selectedBonus || loading}
-                className="w-full mt-4 py-3 rounded-lg text-base font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed"
+                disabled={
+                  !username || !isUsernameValid || !selectedBonus || loading
+                }
+                className="cursor-pointer w-full mt-4 py-3 rounded-lg text-base font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{ backgroundColor: "var(--accent)" }}
               >
                 {loading ? "Submitting..." : "Submit →"}

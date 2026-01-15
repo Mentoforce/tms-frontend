@@ -86,13 +86,12 @@ export default function CallbackViewModal({
               {callback.issue || "—"}
             </pre>
           </div>
-          {callback.audio_url && (
+          {callback.audio && (
             <div>
+              <label>Audio</label>
               <p className="text-gray-400 mb-1">Audio</p>
               <pre className="text-gray-200 bg-white/5 p-3 rounded-lg">
-                <audio>
-                  <source src={callback.audio_url} type="audio/mpeg" />
-                </audio>
+                <audio controls src={callback.audio} className="w-full" />
                 {/* <a href={ticketData.ticket.audio_url} target="_blank">
                   AUDIO
                 </a> */}
@@ -101,6 +100,7 @@ export default function CallbackViewModal({
           )}
         </div>
         <div className=" flex flex-col gap-4 p-5">
+          <label>Status Update</label>
           <select
             value={callbackStatus}
             onChange={(e) => setCallbackStatus(e.target.value)}

@@ -95,7 +95,7 @@ export default function SearchTicket({
             <button
               onClick={handleSearch}
               disabled={loading}
-              className="w-full h-16.5 rounded-lg font-semibold text-[18px] text-black flex items-center justify-center gap-2"
+              className="cursor-pointer w-full h-16.5 rounded-lg font-semibold text-[18px] text-black flex items-center justify-center gap-2"
               style={{ backgroundColor: accent }}
             >
               <IconSearch size={20} stroke={2.5} />
@@ -170,7 +170,7 @@ export default function SearchTicket({
                         {/* Vertical Line Segment - Colored by CURRENT status to match icon */}
                         {!isLast && (
                           <div
-                            className="absolute left-4 top-8 w-[2px] h-full"
+                            className="absolute left-4 top-8 w-0.5 h-full"
                             style={{
                               backgroundColor: color,
                             }}

@@ -37,6 +37,7 @@ body {
 .btn-danger {
   @apply bg-red-600 text-white px-4 py-2 rounded;
 }
+
 /* Hide default select arrow */
 .select-clean {
   appearance: none;
@@ -46,10 +47,10 @@ body {
 
 /* Dropdown options – default state */
 .select-clean option {
-  background-color: #000000;      /* black dropdown */
-  color: var(--accent);           /* primary color text */
-  padding: 14px 16px;             /* increased spacing */
-  line-height: 1.6;               /* more breathing room */
+  background-color: #000000; /* black dropdown */
+  color: var(--accent); /* primary color text */
+  padding: 14px 16px; /* increased spacing */
+  line-height: 1.6; /* more breathing room */
 }
 
 /* Hover state – NO BLUE, text turns white */
@@ -69,4 +70,3 @@ body {
   background-color: #111111;
   color: #ffffff;
 }
-

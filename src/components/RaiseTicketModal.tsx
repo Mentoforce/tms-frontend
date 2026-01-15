@@ -39,7 +39,6 @@ export default function RaiseTicketModal({
     subject_id: "",
     sub_subject_id: "",
     description: "",
-    information: "",
     audio: null as Blob | null,
     files: [] as { file: File; name: string }[],
     return_channel: "email",
@@ -116,7 +115,7 @@ export default function RaiseTicketModal({
         {/* CTA BUTTON */}
         <button
           onClick={handleClose}
-          className="w-full py-3 rounded-lg text-sm font-bold text-black transition hover:opacity-90"
+          className="w-full py-3 rounded-lg text-sm font-bold text-black transition hover:opacity-90 cursor-pointer"
           style={{ backgroundColor: "var(--accent)" }}
         >
           Go to the Website →
@@ -242,7 +241,11 @@ export default function RaiseTicketModal({
     recordedDuration > 0 ? (playProgress / recordedDuration) * 100 : 0;
 
   /* ---------- CONTINUE ---------- */
-  const isTextValid = draft.description.trim().length >= 20;
+  const isTextValid =
+    draft.description.trim().length -
+      subSubjects.find((s) => s._id === draft.sub_subject_id)?.predefined_text
+        ?.length >=
+    20;
   const isAudioValid = !!draft.audio;
   const canContinue = isTextValid || isAudioValid;
 
@@ -269,13 +272,15 @@ export default function RaiseTicketModal({
   if (!open) return null;
 
   /* ---------------- Validation ---------------- */
-  const canMoveForward =
-    draft.username.trim() !== "" &&
-    draft.subject_id !== "" &&
-    draft.sub_subject_id !== "";
 
   const usernameRegex = /^[a-zA-Z0-9]{4,}$/;
   const isUsernameValid = usernameRegex.test(draft.username);
+
+  const canMoveForward =
+    draft.username.trim() !== "" &&
+    isUsernameValid &&
+    draft.subject_id !== "" &&
+    draft.sub_subject_id !== "";
 
   const handleClose = () => {
     setStep(0);
@@ -284,7 +289,6 @@ export default function RaiseTicketModal({
       subject_id: "",
       sub_subject_id: "",
       description: "",
-      information: "",
       audio: null,
       files: [],
       return_channel: "email",
@@ -311,7 +315,7 @@ export default function RaiseTicketModal({
             </h2>
             <button
               onClick={handleClose}
-              className="text-white hover:text-white/70 text-2xl pt-3"
+              className="text-white hover:text-white/70 text-2xl pt-3 cursor-pointer"
             >
               ✕
             </button>
@@ -480,7 +484,10 @@ export default function RaiseTicketModal({
 
                 {/* DESCRIPTION FROM BACKEND */}
                 <p className="text-sm leading-relaxed text-white/60">
-                  {draft.information ?? ""}
+                  {
+                    subSubjects.find((s) => s._id === draft.sub_subject_id)
+                      ?.information
+                  }
                 </p>
 
                 {/* CONTINUE BUTTON */}
@@ -535,10 +542,12 @@ export default function RaiseTicketModal({
                 {!isRecording && !draft.audio && (
                   <button
                     onClick={startRecording}
-                    className="w-full py-3 rounded-lg text-sm font-medium text-black"
-                    style={{ backgroundColor: "var(--accent)" }}
+                    className="w-full border py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
+                    style={{
+                      color: "var(--accent)",
+                    }}
                   >
-                    🎙 Start Recording
+                    Start Recording
                   </button>
                 )}
 
@@ -548,7 +557,7 @@ export default function RaiseTicketModal({
                     <div className="flex gap-3">
                       <button
                         onClick={stopRecording}
-                        className="flex-1 py-3 rounded-lg text-sm font-medium text-black"
+                        className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
                         style={{ backgroundColor: "var(--accent)" }}
                       >
                         ⏹ Stop Recording
@@ -556,7 +565,7 @@ export default function RaiseTicketModal({
 
                       <button
                         onClick={deleteRecording}
-                        className="flex-1 py-3 rounded-lg text-sm font-medium text-white bg-red-500"
+                        className="flex-1 py-3 rounded-lg text-sm font-medium text-white bg-red-500 cursor-pointer"
                       >
                         🗑 Delete
                       </button>
@@ -587,7 +596,7 @@ export default function RaiseTicketModal({
                     <div className="flex gap-3">
                       <button
                         onClick={togglePlayAudio}
-                        className="flex-1 py-3 rounded-lg text-sm font-medium text-black"
+                        className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
                         style={{ backgroundColor: "var(--accent)" }}
                       >
                         {isPlaying ? "⏸ Pause" : "▶ Play Recording"}
@@ -595,14 +604,14 @@ export default function RaiseTicketModal({
 
                       <button
                         onClick={deleteRecording}
-                        className="flex-1 py-3 rounded-lg text-sm font-medium"
+                        className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer"
                         style={{
                           border: "1px solid var(--accent)",
                           color: "var(--accent)",
                           background: "transparent",
                         }}
                       >
-                        🗑 Record Again
+                        Record Again
                       </button>
                     </div>
 
@@ -624,18 +633,17 @@ export default function RaiseTicketModal({
                     </div>
                   </>
                 )}
+                <p className="text-xs text-white/50 mb-6">
+                  Note: You can submit your request using text (at least 20
+                  characters) or audio (5–120 seconds).
+                </p>
 
                 {/* CONTINUE */}
                 <button
                   disabled={!canContinue}
                   onClick={() => setStep(3)}
-                  className="cursor-pointer w-full py-3 rounded-lg text-base font-bold transition"
-                  style={{
-                    backgroundColor: canContinue
-                      ? "var(--accent)"
-                      : "rgba(255,255,255,0.2)",
-                    color: canContinue ? "#000" : "#999",
-                  }}
+                  className="w-full py-3 rounded-lg text-base font-bold text-black cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed "
+                  style={{ backgroundColor: "var(--accent)" }}
                 >
                   Continue →
                 </button>
@@ -662,7 +670,6 @@ export default function RaiseTicketModal({
                     e.preventDefault();
 
                     if (draft.files.length >= 4) return;
-
                     const dropped = Array.from(e.dataTransfer.files);
                     const remaining = 4 - draft.files.length;
 
@@ -862,33 +869,33 @@ export default function RaiseTicketModal({
 
                 {/* SUMMARY */}
                 <div className="space-y-2 text-white/70">
-                  <div className="flex gap-3">
+                  <div className="grid grid-cols-2">
                     <span className="w-44 text-white/50">Username:</span>
                     <span className="text-white">{draft.username}</span>
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="grid grid-cols-2">
                     <span className="w-44 text-white/50">Subject:</span>
                     <span className="text-white">
                       {subjects.find((s) => s._id === draft.subject_id)?.title}
                     </span>
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="grid grid-cols-2">
                     <span className="w-44 text-white/50">Request Details:</span>
                     <span className="text-white whitespace-pre-line">
                       {draft.description || "-"}
                     </span>
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="grid grid-cols-2">
                     <span className="w-44 text-white/50">
                       Number of Attached Files:
                     </span>
                     <span className="text-white">{draft.files.length}</span>
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="grid grid-cols-2">
                     <span className="w-44 text-white/50">Return Channel:</span>
                     <span className="capitalize text-white">
                       {draft.return_channel}
@@ -915,198 +922,3 @@ export default function RaiseTicketModal({
     </div>
   );
 }
-
-// /* ---------------- Audio Recording ---------------- */
-//   const mediaRecorder = useRef<MediaRecorder | null>(null);
-//   const [isRecording, setIsRecording] = useState(false);
-//   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-//   const MAX_RECORDING_TIME = 120; // 2 minutes
-
-//   const recordingTimer = useRef<NodeJS.Timeout | null>(null);
-//   const recordingStart = useRef<number>(0);
-
-//   const audioRef = useRef<HTMLAudioElement | null>(null);
-//   const [playProgress, setPlayProgress] = useState(0);
-//   const [playDuration, setPlayDuration] = useState(0);
-
-//   const startRecording = async () => {
-//     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-//     const recorder = new MediaRecorder(stream);
-//     const chunks: BlobPart[] = [];
-
-//     recorder.ondataavailable = (e) => chunks.push(e.data);
-
-//     recorder.onstop = () => {
-//       const audioBlob = new Blob(chunks, { type: "audio/webm" });
-
-//       setDraft((d) => ({ ...d, audio: audioBlob }));
-//       setAudioUrl(URL.createObjectURL(audioBlob));
-//       setIsRecording(false);
-
-//       stream.getTracks().forEach((t) => t.stop());
-//       if (recordingTimer.current) clearTimeout(recordingTimer.current);
-//     };
-
-//     recorder.start();
-//     mediaRecorder.current = recorder;
-//     setIsRecording(true);
-
-//     recordingStart.current = Date.now();
-//     recordingTimer.current = setTimeout(() => {
-//       recorder.stop();
-//     }, MAX_RECORDING_TIME * 1000);
-//   };
-
-//   const stopRecording = () => {
-//     mediaRecorder.current?.stop();
-//     if (recordingTimer.current) clearTimeout(recordingTimer.current);
-//   };
-
-//   const deleteRecording = () => {
-//     setDraft((d) => ({ ...d, audio: null }));
-//     setAudioUrl(null);
-//   };
-
-//   const isTextValid = draft.description.trim().length >= 20;
-//   const isAudioValid = !!draft.audio;
-
-//   const canContinue = isTextValid || isAudioValid;
-
-//   const playAudio = () => {
-//     if (!audioUrl) return;
-
-//     const audio = new Audio(audioUrl);
-//     audioRef.current = audio;
-
-//     audio.onloadedmetadata = () => {
-//       setPlayDuration(audio.duration);
-//     };
-
-//     audio.ontimeupdate = () => {
-//       setPlayProgress(audio.currentTime);
-//     };
-
-//     audio.onended = () => {
-//       setPlayProgress(0);
-//     };
-
-//     audio.play();
-//   };
-
-//   const [recordProgress, setRecordProgress] = useState(0);
-
-//   useEffect(() => {
-//     if (!isRecording) return;
-
-//     const interval = setInterval(() => {
-//       const elapsed = (Date.now() - recordingStart.current) / 1000;
-//       setRecordProgress(Math.min((elapsed / MAX_RECORDING_TIME) * 100, 100));
-//     }, 200);
-
-//     return () => clearInterval(interval);
-//   }, [isRecording]);
-
-//---------------------------------------------------------------------
-{
-  /* RECORD STATES*/
-}
-// {!isRecording && !draft.audio && (
-//   <button
-//     onClick={startRecording}
-//     className="w-full py-3 rounded-lg text-sm font-medium text-black"
-//     style={{ backgroundColor: "var(--accent)" }}
-//   >
-//     🎙 Start Recording
-//   </button>
-// )}
-
-// {isRecording && (
-//   <>
-//     <div className="flex gap-3">
-//       <button
-//         onClick={stopRecording}
-//         className="flex-1 py-3 rounded-lg text-sm font-medium text-black"
-//         style={{ backgroundColor: "var(--accent)" }}
-//       >
-//         ⏹ Stop Recording
-//       </button>
-
-//       <button
-//         onClick={deleteRecording}
-//         className="flex-1 py-3 rounded-lg text-sm font-medium text-white bg-red-500"
-//       >
-//         🗑 Delete Recording
-//       </button>
-//     </div>
-
-//     {/* RECORDING TIMER BAR */}
-//     <div className="h-1 bg-white/20 rounded overflow-hidden">
-//       <div
-//         className="h-full"
-//         style={{
-//           width: `${Math.min(
-//             ((Date.now() - recordingStart.current) /
-//               1000 /
-//               MAX_RECORDING_TIME) *
-//               100,
-//             100
-//           )}%`,
-//           backgroundColor: "var(--accent)",
-//         }}
-//       />
-//     </div>
-//   </>
-// )}
-
-// {draft.audio && audioUrl && (
-//   <>
-//     <div className="flex gap-3">
-//       <button
-//         onClick={playAudio}
-//         className="flex-1 py-3 rounded-lg text-sm font-medium text-black"
-//         style={{ backgroundColor: "var(--accent)" }}
-//       >
-//         ▶ Play Recording
-//       </button>
-
-//       <button
-//         onClick={deleteRecording}
-//         className="flex-1 py-3 rounded-lg text-sm font-medium"
-//         style={{
-//           border: "1px solid var(--accent)",
-//           color: "var(--accent)",
-//           background: "transparent",
-//         }}
-//       >
-//         🗑 Record Again
-//       </button>
-//     </div>
-
-//     {/* PLAYBACK PROGRESS */}
-//     <div className="h-1 bg-white/20 rounded overflow-hidden">
-//       <div
-//         className="h-full"
-//         style={{
-//           width: `${(playProgress / playDuration) * 100 || 0}%`,
-//           backgroundColor: "var(--accent)",
-//         }}
-//       />
-//     </div>
-//   </>
-// )}
-
-// {/* CONTINUE */}
-// <button
-//   disabled={!canContinue}
-//   onClick={() => setStep(3)}
-//   className="w-full py-3 rounded-lg text-base font-bold transition"
-//   style={{
-//     backgroundColor: canContinue
-//       ? "var(--accent)"
-//       : "rgba(255,255,255,0.2)",
-//     color: canContinue ? "#000" : "#999",
-//     cursor: canContinue ? "pointer" : "not-allowed",
-//   }}
-// >
-//   Continue →
-// </button>

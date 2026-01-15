@@ -33,7 +33,9 @@ export default function RequestCallbackModal({
   });
 
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
-  const mediaRecorder = useRef<MediaRecorder | null>(null);
+
+  const usernameRegex = /^[a-zA-Z0-9]{4,}$/;
+  const isUsernameValid = usernameRegex.test(draft.username);
 
   const handleClose = () => {
     setStep(0);
@@ -63,24 +65,121 @@ export default function RequestCallbackModal({
     setSuccessModal(true);
   };
 
-  /* ---------------- Audio ---------------- */
+  /* ---------------- Audio Recording ---------------- */
+  const mediaRecorder = useRef<MediaRecorder | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const recordingInterval = useRef<NodeJS.Timeout | null>(null);
+
+  const MAX_RECORDING_TIME = 120; // 2 minutes
+
+  const [isRecording, setIsRecording] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+
+  const [recordingElapsed, setRecordingElapsed] = useState(0); // seconds
+  const [recordedDuration, setRecordedDuration] = useState(0); // final duration
+
+  const [playProgress, setPlayProgress] = useState(0);
+
+  // time formatter
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
+
+  /* ---------- START RECORDING ---------- */
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
     const chunks: BlobPart[] = [];
 
     recorder.ondataavailable = (e) => chunks.push(e.data);
-    recorder.onstop = () =>
-      setDraft((d) => ({
-        ...d,
-        audio: new Blob(chunks, { type: "audio/webm" }),
-      }));
+
+    recorder.onstop = () => {
+      const audioBlob = new Blob(chunks, { type: "audio/webm" });
+
+      setDraft((d) => ({ ...d, audio: audioBlob }));
+      setAudioUrl(URL.createObjectURL(audioBlob));
+      setRecordedDuration(recordingElapsed);
+
+      setIsRecording(false);
+      setRecordingElapsed(0);
+
+      stream.getTracks().forEach((t) => t.stop());
+      if (recordingInterval.current) clearInterval(recordingInterval.current);
+    };
 
     recorder.start();
     mediaRecorder.current = recorder;
+
+    setIsRecording(true);
+    setRecordingElapsed(0);
+
+    recordingInterval.current = setInterval(() => {
+      setRecordingElapsed((prev) => {
+        if (prev + 1 >= MAX_RECORDING_TIME) {
+          recorder.stop();
+          return MAX_RECORDING_TIME;
+        }
+        return prev + 1;
+      });
+    }, 1000);
   };
 
-  const stopRecording = () => mediaRecorder.current?.stop();
+  /* ---------- STOP RECORDING ---------- */
+  const stopRecording = () => {
+    mediaRecorder.current?.stop();
+    if (recordingInterval.current) clearInterval(recordingInterval.current);
+  };
+
+  /* ---------- DELETE RECORDING ---------- */
+  const deleteRecording = () => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+
+    setDraft((d) => ({ ...d, audio: null }));
+    setAudioUrl(null);
+    setRecordedDuration(0);
+    setPlayProgress(0);
+    setIsPlaying(false);
+  };
+
+  /* ---------- PLAY / PAUSE AUDIO ---------- */
+  const togglePlayAudio = () => {
+    if (!audioUrl) return;
+
+    if (!audioRef.current) {
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+
+      audio.ontimeupdate = () => {
+        setPlayProgress(audio.currentTime);
+      };
+
+      audio.onended = () => {
+        setIsPlaying(false);
+        setPlayProgress(0);
+      };
+    }
+
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      audio.play();
+      setIsPlaying(true);
+    }
+  };
+
+  /* ---------- PROGRESS ---------- */
+  const recordingPercent = (recordingElapsed / MAX_RECORDING_TIME) * 100;
+  const playPercent =
+    recordedDuration > 0 ? (playProgress / recordedDuration) * 100 : 0;
 
   /* ---------------- Time Slots ---------------- */
   useEffect(() => {
@@ -110,8 +209,12 @@ export default function RequestCallbackModal({
 
   /*---------------------username and phone <check-------------------*/
   const canMoveForward = isMember
-    ? draft.username.trim().length > 0
+    ? draft.username.trim().length > 0 && isUsernameValid
     : draft.phone.trim().length > 0;
+
+  const isTextValid = draft.issue.trim().length >= 20;
+  const isAudioValid = !!draft.audio;
+  const canContinue = isTextValid || isAudioValid;
 
   const canSubmit = Boolean(draft.preferred_time);
 
@@ -132,7 +235,7 @@ export default function RequestCallbackModal({
             </h2>
             <button
               onClick={handleClose}
-              className="text-white hover:text-white/70 text-xl sm:text-2xl pt-3"
+              className="text-white hover:text-white/70 text-xl sm:text-2xl pt-3 cursor-pointer"
             >
               ✕
             </button>
@@ -173,7 +276,7 @@ export default function RequestCallbackModal({
                       <button
                         type="button"
                         onClick={() => setIsMember(false)}
-                        className="py-3 rounded-lg text-sm font-medium transition"
+                        className="py-3 rounded-lg text-sm font-medium transition cursor-pointer"
                         style={{
                           backgroundColor: !isMember
                             ? "var(--accent)"
@@ -189,7 +292,7 @@ export default function RequestCallbackModal({
                       <button
                         type="button"
                         onClick={() => setIsMember(true)}
-                        className="py-3 rounded-lg text-sm font-medium transition"
+                        className="py-3 rounded-lg text-sm font-medium transition cursor-pointer"
                         style={{
                           backgroundColor: isMember
                             ? "var(--accent)"
@@ -234,14 +337,19 @@ export default function RequestCallbackModal({
                         className="flex-1 bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none"
                       />
                     </div>
+                    {draft.username && !isUsernameValid && (
+                      <p className="text-xs text-red-400 mt-1">
+                        Username must be at least 4 characters and contain no
+                        special symbols
+                      </p>
+                    )}
                   </div>
 
                   {/* Forward */}
                   <button
                     onClick={() => setStep(1)}
                     disabled={!canMoveForward}
-                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold text-black transition
-             disabled:opacity-40 disabled:cursor-not-allowed mb-5"
+                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
                     Move Forward →
@@ -279,28 +387,113 @@ export default function RequestCallbackModal({
                   </p>
 
                   {/* Record button */}
-                  <button
-                    onClick={startRecording}
-                    className="w-full py-3 rounded-lg text-sm font-medium mb-3"
-                    style={{
-                      border: "1px solid var(--accent)",
-                      color: "var(--accent)",
-                      backgroundColor: "transparent",
-                    }}
-                  >
-                    Start Recording
-                  </button>
+                  {/* START RECORD */}
+                  {!isRecording && !draft.audio && (
+                    <button
+                      onClick={startRecording}
+                      className="w-full border py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
+                      style={{
+                        color: "var(--accent)",
+                      }}
+                    >
+                      Start Recording
+                    </button>
+                  )}
+
+                  {/* RECORDING */}
+                  {isRecording && (
+                    <>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={stopRecording}
+                          className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
+                          style={{ backgroundColor: "var(--accent)" }}
+                        >
+                          ⏹ Stop Recording
+                        </button>
+
+                        <button
+                          onClick={deleteRecording}
+                          className="flex-1 py-3 rounded-lg text-sm font-medium text-white bg-red-500 cursor-pointer"
+                        >
+                          🗑 Delete
+                        </button>
+                      </div>
+
+                      {/* RECORDING PROGRESS */}
+                      <div className="space-y-1">
+                        <div className="h-1 bg-white/30 rounded overflow-hidden">
+                          <div
+                            className="h-full transition-[width] duration-200"
+                            style={{
+                              width: `${recordingPercent}%`,
+                              backgroundColor: "var(--accent)",
+                            }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-xs text-white/60">
+                          <span>{formatTime(recordingElapsed)}</span>
+                          <span>{formatTime(MAX_RECORDING_TIME)}</span>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* PLAYBACK */}
+                  {draft.audio && audioUrl && (
+                    <>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={togglePlayAudio}
+                          className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
+                          style={{ backgroundColor: "var(--accent)" }}
+                        >
+                          {isPlaying ? "⏸ Pause" : "▶ Play Recording"}
+                        </button>
+
+                        <button
+                          onClick={deleteRecording}
+                          className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer"
+                          style={{
+                            border: "1px solid var(--accent)",
+                            color: "var(--accent)",
+                            background: "transparent",
+                          }}
+                        >
+                          Record Again
+                        </button>
+                      </div>
+
+                      {/* PLAYBACK PROGRESS */}
+                      <div className="space-y-1">
+                        <div className="h-1 bg-white/30 rounded overflow-hidden">
+                          <div
+                            className="h-full transition-[width] duration-200"
+                            style={{
+                              width: `${playPercent}%`,
+                              backgroundColor: "var(--accent)",
+                            }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-xs text-white/60">
+                          <span>00:00</span>
+                          <span>{formatTime(recordedDuration)}</span>
+                        </div>
+                      </div>
+                    </>
+                  )}
 
                   {/* Note */}
-                  <p className="text-xs text-center text-white/50 mb-6">
+                  <p className="text-xs text-white/50 mb-6">
                     Note: You can submit your request using text (at least 20
                     characters) or audio (5–120 seconds).
                   </p>
 
                   {/* Forward */}
                   <button
+                    disabled={!canContinue}
                     onClick={() => setStep(2)}
-                    className=" cursor-pointer w-full py-3 rounded-lg text-md font-bold text-black hover:opacity-90 mt-2 mb-6"
+                    className="cursor-pointer w-full py-3 rounded-lg text-md font-bold text-black hover:opacity-90 mt-2 mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
                     Move Forward →
@@ -330,7 +523,7 @@ export default function RequestCallbackModal({
                           onClick={() =>
                             setDraft({ ...draft, preferred_time: c })
                           }
-                          className="py-4 rounded-lg text-sm font-medium transition"
+                          className="cursor-pointer py-4 rounded-lg text-sm font-medium transition"
                           style={{
                             border: selected
                               ? "1px solid var(--accent)"
@@ -352,8 +545,7 @@ export default function RequestCallbackModal({
                   <button
                     onClick={submitCallbackRequest}
                     disabled={!canSubmit}
-                    className="w-full py-3 rounded-lg text-md font-bold text-black transition
-             disabled:opacity-40 disabled:cursor-not-allowed mb-5"
+                    className="cursor-pointer w-full py-3 rounded-lg text-md font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
                     Submit Request →
@@ -371,7 +563,6 @@ export default function RequestCallbackModal({
 /* ---------------- SUCCESS ---------------- */
 
 function SuccessScreen({
-  onClose,
   onPrimaryAction,
 }: {
   onClose: () => void;
@@ -438,247 +629,11 @@ function SuccessScreen({
       {/* Primary CTA */}
       <button
         onClick={onPrimaryAction}
-        className="w-full py-3 rounded-lg text-sm font-bold text-black text-center items-center hover:opacity-90"
+        className="w-full py-3 rounded-lg text-sm font-bold text-black text-center items-center hover:opacity-90 cursor-pointer"
         style={{ backgroundColor: "var(--accent)" }}
       >
-        Go to the Website
-      </button>
-
-      {/* Secondary CTA */}
-      <button
-        onClick={onClose}
-        className="w-full py-3 rounded-lg text-sm font-medium transition text-center
-             border border-white/60 text-white/60 bg-transparent
-             hover:bg-(--accent) hover:text-black hover:font-bold hover:border-(--accent)"
-      >
-        Close
+        Go to the Website →
       </button>
     </div>
   );
 }
-
-// "use client";
-
-// import { useEffect, useRef, useState } from "react";
-// import api from "@/lib/axios";
-
-// const TOTAL_STEPS = 3;
-
-// export default function RequestCallbackModal({
-//   open,
-//   onClose,
-//   primarycolor,
-// }: {
-//   open: boolean;
-//   onClose: () => void;
-//   primarycolor: string;
-// }) {
-//   const [step, setStep] = useState(0);
-//   const [successModal, setSuccessModal] = useState<boolean>(false);
-//   const [counter, setCounter] = useState(3);
-//   const [isMember, setIsMember] = useState<boolean>(true);
-//   const [draft, setDraft] = useState({
-//     username: "",
-//     phone: "",
-//     issue: "",
-//     audio: null as Blob | null,
-//     preferred_time: "",
-//   });
-//   const [timeSlots, setTimeSlots] = useState<string[]>([]);
-
-//   const submitCallbackRequest = async () => {
-//     const fd = new FormData();
-
-//     fd.append("username", draft.username);
-//     fd.append("phone", draft.phone);
-//     fd.append("issue", draft.issue);
-//     fd.append("preferred_time", draft.preferred_time);
-//     if (draft.audio) {
-//       fd.append("audio", draft.audio);
-//     }
-
-//     const res = await api.post("/tickets/create/request-callback", fd);
-//     setSuccessModal(true);
-//   };
-
-//   const mediaRecorder = useRef<MediaRecorder | null>(null);
-
-//   const startRecording = async () => {
-//     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-//     const recorder = new MediaRecorder(stream);
-//     const chunks: BlobPart[] = [];
-
-//     recorder.ondataavailable = (e) => chunks.push(e.data);
-//     recorder.onstop = () =>
-//       setDraft((d) => ({
-//         ...d,
-//         audio: new Blob(chunks, { type: "audio/webm" }),
-//       }));
-
-//     recorder.start();
-//     mediaRecorder.current = recorder;
-//   };
-
-//   const stopRecording = () => mediaRecorder.current?.stop();
-//   useEffect(() => {
-//     if (step === 1 && counter > 0) {
-//       let hr = new Date().getHours();
-//       let min = new Date().getMinutes();
-//       min = min + (10 - (min % 10));
-//       hr += 3;
-//       const arr: string[] = [];
-//       for (let i = 0; i < 8; i++) {
-//         if (min >= 60) {
-//           hr += 1;
-//           min = 0;
-//         }
-//         if (hr > 23) {
-//           hr = 0;
-//         }
-//         arr.push(
-//           `${hr.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}`
-//         );
-//         min += 10;
-//       }
-//       setTimeSlots(arr);
-//     }
-//   }, [step, counter]);
-
-//   if (!open) return null;
-
-//   return (
-//     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-//       <div className="bg-blue-950 w-full max-w-3xl rounded-lg shadow-lg p-6">
-//         {/* HEADER */}
-//         <div className="flex justify-between items-center mb-4">
-//           <h2 className="text-xl font-semibold">Request Callback</h2>
-//           <button onClick={onClose}>✕</button>
-//         </div>
-
-//         {/* SUCCESS */}
-//         {successModal ? (
-//           <SuccessScreen onClose={onClose} />
-//         ) : (
-//           <>
-//             {/* STEP CONTENT */}
-//             <div className="min-h-65">
-//               {/* STEP 0 – BASIC INFO */}
-//               {step === 0 && (
-//                 <>
-//                   <p>Are you an existing member?</p>
-//                   <label key="yes" className="flex gap-2 items-center">
-//                     <input
-//                       type="radio"
-//                       checked={isMember}
-//                       onChange={() => setIsMember(true)}
-//                     />
-//                     Yes
-//                   </label>
-//                   <label key="no" className="flex gap-2 items-center">
-//                     <input
-//                       type="radio"
-//                       checked={!isMember}
-//                       onChange={() => setIsMember(false)}
-//                     />
-//                     No
-//                   </label>
-//                   {isMember ? (
-//                     <input
-//                       className="input"
-//                       placeholder="Username"
-//                       value={draft.username}
-//                       onChange={(e) =>
-//                         setDraft({ ...draft, username: e.target.value })
-//                       }
-//                     />
-//                   ) : (
-//                     <input
-//                       className="input"
-//                       placeholder="Phone Number"
-//                       value={draft.phone}
-//                       onChange={(e) =>
-//                         setDraft({ ...draft, phone: e.target.value })
-//                       }
-//                     />
-//                   )}
-//                 </>
-//               )}
-
-//               {/* STEP 2 – DESCRIPTION + AUDIO */}
-//               {step === 1 && (
-//                 <>
-//                   <textarea
-//                     className="input h-32"
-//                     value={draft.issue}
-//                     onChange={(e) =>
-//                       setDraft({ ...draft, issue: e.target.value })
-//                     }
-//                   />
-//                   <div className="mt-3 space-x-2">
-//                     <button className="btn" onClick={startRecording}>
-//                       Record Audio
-//                     </button>
-//                     <button className="btn-danger" onClick={stopRecording}>
-//                       Stop
-//                     </button>
-//                   </div>
-//                 </>
-//               )}
-
-//               {step === 2 && (
-//                 <div className="space-y-2">
-//                   {timeSlots.map((c) => (
-//                     <label key={c} className="flex gap-2 items-center">
-//                       <input
-//                         type="radio"
-//                         checked={draft.preferred_time === c}
-//                         onChange={() =>
-//                           setDraft({ ...draft, preferred_time: c })
-//                         }
-//                       />
-//                       {c}
-//                     </label>
-//                   ))}
-//                 </div>
-//               )}
-//             </div>
-
-//             {/* FOOTER */}
-//             <div className="flex justify-between mt-6">
-//               <button
-//                 disabled={step === 0}
-//                 onClick={() => setStep(step - 1)}
-//                 className="btn-outline"
-//               >
-//                 Back
-//               </button>
-
-//               {step < TOTAL_STEPS - 1 ? (
-//                 <button className="btn" onClick={() => setStep(step + 1)}>
-//                   Next
-//                 </button>
-//               ) : (
-//                 <button className="btn" onClick={submitCallbackRequest}>
-//                   Submit
-//                 </button>
-//               )}
-//             </div>
-//           </>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
-// function SuccessScreen({ onClose }: { onClose: () => void }) {
-//   return (
-//     <div className="text-center space-y-4">
-//       <h3 className="text-lg font-semibold">Callback Requested </h3>
-//       <div className="flex justify-center gap-3">
-//         <button className="btn" onClick={onClose}>
-//           Close
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }

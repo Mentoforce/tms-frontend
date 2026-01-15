@@ -4,6 +4,7 @@ import api from "@/lib/axios";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Row } from "./util/Row";
+import FileCard from "../FileCard";
 
 export default function TicketViewModal({
   ticket,
@@ -71,7 +72,7 @@ export default function TicketViewModal({
     }
     getTicket();
   }, []);
-
+  console.log(ticketData.ticket);
   if (!ticket) return null;
 
   return (
@@ -88,7 +89,7 @@ export default function TicketViewModal({
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-4 text-sm max-h-110 overflow-y-auto">
+        <div className="p-6 space-y-4 text-sm max-h-100 overflow-y-auto">
           <Row label="User" value={ticket.username} />
           <Row label="Status" value={ticket.status} />
           <Row label="Channel" value={ticket.channel} />
@@ -105,31 +106,29 @@ export default function TicketViewModal({
             <div>
               <p className="text-gray-400 mb-1">Audio</p>
               <pre className="text-gray-200 bg-white/5 p-3 rounded-lg">
-                <audio>
-                  <source src={ticketData.ticket.audio_url} type="audio/mpeg" />
-                </audio>
+                <audio
+                  controls
+                  src={ticketData.ticket.audio_url}
+                  className="w-full"
+                />
                 {/* <a href={ticketData.ticket.audio_url} target="_blank">
                   AUDIO
                 </a> */}
               </pre>
             </div>
           )}
-          {ticketData.ticket?.files && (
+          {ticketData.ticket?.files?.length > 0 && (
             <div>
-              <p className="text-gray-400 mb-1">Files</p>
-              <pre className="text-gray-200 bg-white/5 p-3 rounded-lg">
-                {ticketData.ticket.files.map((file: any) => {
-                  return (
-                    <div key={file._id}>
-                      <a href={file.file_url} target="_blank">
-                        {file.file_name}
-                      </a>
-                    </div>
-                  );
-                })}
-              </pre>
+              <p className="text-gray-400 mb-3">Files</p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {ticketData.ticket.files.map((file: any) => (
+                  <FileCard key={file._id} file={file} />
+                ))}
+              </div>
             </div>
           )}
+
           {ticketData.history && (
             <div>
               <p className="text-gray-400 mb-1">Ticket History</p>
@@ -166,6 +165,7 @@ export default function TicketViewModal({
           )}
         </div>
         <div className=" flex flex-col gap-4 p-5">
+          <label>Status Update:</label>
           <select
             value={ticketStatus}
             onChange={(e) => setTicketStatus(e.target.value)}

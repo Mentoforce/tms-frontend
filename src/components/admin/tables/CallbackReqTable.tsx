@@ -17,7 +17,7 @@ type CallbackRequest = {
   createdAt: string;
   updatedAt: string;
   remarks?: string;
-  audio_url?: string;
+  audio?: string;
 };
 
 export default function CallbackRequestTable({
@@ -81,14 +81,9 @@ export default function CallbackRequestTable({
               </Td>
 
               <Td className="font-medium text-white">{c.preferred_time}</Td>
-              <Td>
-                {c.audio_url ? (
-                  <span className="px-1 py-1 rounded flex w-8 bg-purple-500/15 text-purple-400 text-xs justify-around">
-                    <span>
-                      <Volume1Icon size={14} />{" "}
-                    </span>
-                    1
-                  </span>
+              <Td className="text-center">
+                {c.audio ? (
+                  <audio controls src={c.audio} className="w-65 h-7" />
                 ) : (
                   "-"
                 )}

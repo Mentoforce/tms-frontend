@@ -70,10 +70,10 @@ export default function FooterTable({
         <table className="w-full text-sm">
           <thead className="bg-white/5">
             <tr>
-              <Th>Title</Th>
-              <Th>Status</Th>
-              <Th>Updated</Th>
-              <Th>Actions</Th>
+              <Th>TITLE</Th>
+              <Th>STATUS</Th>
+              <Th>UPDATED</Th>
+              <Th>ACTIONS</Th>
             </tr>
           </thead>
 

@@ -39,6 +39,7 @@ export default function RaiseTicketModal({
     subject_id: "",
     sub_subject_id: "",
     description: "",
+    information: "",
     audio: null as Blob | null,
     files: [] as { file: File; name: string }[],
     return_channel: "email",
@@ -283,6 +284,7 @@ export default function RaiseTicketModal({
       subject_id: "",
       sub_subject_id: "",
       description: "",
+      information: "",
       audio: null,
       files: [],
       return_channel: "email",
@@ -453,7 +455,7 @@ export default function RaiseTicketModal({
                 <button
                   disabled={!canMoveForward}
                   onClick={() => setStep(1)}
-                  className="w-full mt-4 py-3 rounded-lg text-base font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="w-full mt-4 py-3 rounded-lg text-base font-bold text-black cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed "
                   style={{ backgroundColor: "var(--accent)" }}
                 >
                   Move Forward →
@@ -478,14 +480,14 @@ export default function RaiseTicketModal({
 
                 {/* DESCRIPTION FROM BACKEND */}
                 <p className="text-sm leading-relaxed text-white/60">
-                  {draft.description}
+                  {draft.information ?? ""}
                 </p>
 
                 {/* CONTINUE BUTTON */}
                 <button
                   disabled={counter > 0}
                   onClick={() => setStep(2)}
-                  className="w-full py-3 rounded-lg text-base font-bold text-black flex items-center justify-center gap-2 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="cursor-pointer w-full py-3 rounded-lg text-base font-bold text-black flex items-center justify-center gap-2 transition disabled:opacity-40 disabled:cursor-not-allowed"
                   style={{
                     backgroundColor: "var(--accent)",
                   }}
@@ -627,7 +629,7 @@ export default function RaiseTicketModal({
                 <button
                   disabled={!canContinue}
                   onClick={() => setStep(3)}
-                  className="w-full py-3 rounded-lg text-base font-bold transition"
+                  className="cursor-pointer w-full py-3 rounded-lg text-base font-bold transition"
                   style={{
                     backgroundColor: canContinue
                       ? "var(--accent)"
@@ -757,7 +759,7 @@ export default function RaiseTicketModal({
                 {/* CONTINUE */}
                 <button
                   onClick={() => setStep(step + 1)}
-                  className="w-full mt-4 py-3 rounded-lg  text-base font-bold text-black"
+                  className="cursor-pointer w-full mt-4 py-3 rounded-lg  text-base font-bold text-black"
                   style={{ backgroundColor: "var(--accent)" }}
                 >
                   Continue →
@@ -834,7 +836,7 @@ export default function RaiseTicketModal({
                 <button
                   disabled={!draft.return_channel}
                   onClick={() => setStep(step + 1)}
-                  className="w-full mt-4 py-3 rounded-lg text-base font-bold transition"
+                  className="cursor-pointer w-full mt-4 py-3 rounded-lg text-base font-bold transition"
                   style={{
                     backgroundColor: draft.return_channel
                       ? "var(--accent)"
@@ -900,7 +902,7 @@ export default function RaiseTicketModal({
                 {/* SEND BUTTON — FINAL ACTION */}
                 <button
                   onClick={submitTicket}
-                  className="w-full mt-4 py-4 rounded-lg text-base font-bold text-black transition"
+                  className="cursor-pointer w-full mt-4 py-4 rounded-lg text-base font-bold text-black transition"
                   style={{ backgroundColor: "var(--accent)" }}
                 >
                   Send →

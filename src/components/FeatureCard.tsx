@@ -40,14 +40,14 @@ export default function FeatureCard({
   return (
     <button
       onClick={onClick}
-      className="w-full h-70 rounded-2xl flex flex-col items-center justify-center text-center gap-3 transition hover:scale-[1.02] active:scale-[0.99]"
+      className="cursor-pointer w-full h-70 rounded-2xl flex flex-col items-center justify-center text-center gap-3 transition hover:scale-[1.02] active:scale-[0.99]"
       style={{
         backgroundColor: `${primarycolor}1A`,
         boxShadow: "0 10px 40px rgba(0,0,0,0.6)",
       }}
     >
       {/* ICON */}
-      <div className="relative flex items-center justify-center w-[58px] h-[58px]">
+      <div className="relative flex items-center justify-center w-14.5 h-14.5">
         {quick_access && (
           <div
             className="absolute rounded-full"

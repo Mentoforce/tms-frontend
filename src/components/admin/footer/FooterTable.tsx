@@ -16,9 +16,24 @@ type FooterItem = {
   updatedAt?: string;
 };
 
-export default function FooterTable({ data }: { data: FooterItem[] }) {
-  const [items, setItems] = useState<FooterItem[]>(data);
+export default function FooterTable({
+  data,
+  onRefresh,
+}: {
+  data: FooterItem[];
+  onRefresh: () => void;
+}) {
   const [editing, setEditing] = useState<FooterItem | null>(null);
+  const toggleActive = async (f: FooterItem) => {
+    await api.post("/admin/footer", {
+      _id: f._id,
+      is_active: !f.is_active,
+    });
+    // setItems((prev) =>
+    //   prev.map((p) => (p._id == f._id ? { ...p, is_active: !p.is_active } : p))
+    // );
+    onRefresh();
+  };
 
   return (
     <>
@@ -41,12 +56,13 @@ export default function FooterTable({ data }: { data: FooterItem[] }) {
             initialData={editing}
             onClose={() => setEditing(null)}
             onSaved={(saved: FooterItem) => {
-              setItems((prev) => {
-                const exists = prev.find((i) => i._id === saved._id);
-                return exists
-                  ? prev.map((i) => (i._id === saved._id ? saved : i))
-                  : [saved, ...prev];
-              });
+              // setItems((prev) => {
+              //   const exists = prev.find((i) => i._id === saved._id);
+              //   return exists
+              //     ? prev.map((i) => (i._id === saved._id ? saved : i))
+              //     : [saved, ...prev];
+              // });
+              onRefresh();
             }}
           />
         )}
@@ -62,11 +78,18 @@ export default function FooterTable({ data }: { data: FooterItem[] }) {
           </thead>
 
           <tbody>
-            {items.map((f) => (
+            {data?.map((f) => (
               <tr key={f._id} className="border-t border-white/5">
                 <Td>{f.title}</Td>
                 <Td>
-                  <ActivePill status={f.is_active} />
+                  <button
+                    onClick={() => {
+                      toggleActive(f);
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <ActivePill status={f.is_active} />
+                  </button>
                 </Td>
                 <Td>
                   {f.updatedAt ? new Date(f.updatedAt).toLocaleString() : "-"}
@@ -74,16 +97,19 @@ export default function FooterTable({ data }: { data: FooterItem[] }) {
                 <Td>
                   <div className="flex gap-2">
                     <Pen
+                      size={14}
                       className="cursor-pointer"
                       onClick={() => setEditing(f)}
                     />
                     <Trash
-                      className="cursor-pointer"
+                      size={14}
+                      className="hover:text-red-400 cursor-pointer"
                       onClick={async () => {
                         await api.post("/admin/footer/delete", {
                           footer_id: f._id,
                         });
-                        setItems(items.filter((i) => i._id !== f._id));
+                        onRefresh();
+                        // setItems(items.filter((i) => i._id !== f._id));
                       }}
                     />
                   </div>

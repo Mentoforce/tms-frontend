@@ -7,17 +7,15 @@ import FooterTable from "@/components/admin/footer/FooterTable";
 export default function FooterContentPage() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const fetchFooter = async () => {
+    try {
+      const res = await api.get("/admin/footer");
+      setData(res.data.data);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchFooter = async () => {
-      try {
-        const res = await api.get("/admin/footer");
-        setData(res.data);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchFooter();
   }, []);
 
@@ -28,7 +26,7 @@ export default function FooterContentPage() {
   return (
     <div className="p-6">
       <h1 className="text-xl font-semibold mb-6">Footer Content</h1>
-      <FooterTable data={data} />
+      <FooterTable data={data} onRefresh={fetchFooter} />
     </div>
   );
 }

@@ -10,7 +10,7 @@ export default function Footer({ primarycolor }: { primarycolor?: string }) {
   const [footer, setFooter] = useState<any>(null);
 
   useEffect(() => {
-    api.get("/footer").then((res) => setFooter(res.data));
+    api.get("/footer").then((res) => setFooter(res.data.data));
   }, []);
 
   if (!footer) return null;

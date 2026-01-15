@@ -240,7 +240,7 @@ export default function RequestCallbackModal({
                   <button
                     onClick={() => setStep(1)}
                     disabled={!canMoveForward}
-                    className="w-full py-3 rounded-lg text-sm font-bold text-black transition
+                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold text-black transition
              disabled:opacity-40 disabled:cursor-not-allowed mb-5"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
@@ -300,7 +300,7 @@ export default function RequestCallbackModal({
                   {/* Forward */}
                   <button
                     onClick={() => setStep(2)}
-                    className="w-full py-3 rounded-lg text-md font-bold text-black hover:opacity-90 mt-2 mb-6"
+                    className=" cursor-pointer w-full py-3 rounded-lg text-md font-bold text-black hover:opacity-90 mt-2 mb-6"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
                     Move Forward →

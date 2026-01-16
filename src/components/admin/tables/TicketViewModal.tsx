@@ -98,22 +98,19 @@ export default function TicketViewModal({
 
           <div>
             <p className="text-gray-400 mb-1">Description</p>
-            <pre className="text-gray-200 bg-white/5 p-3 rounded-lg">
+            <pre className="text-gray-200 bg-white/5 p-3 rounded-lg whitespace-pre-wrap">
               {ticket.description || "—"}
             </pre>
           </div>
           {ticketData.ticket?.audio_url && (
             <div>
               <p className="text-gray-400 mb-1">Audio</p>
-              <pre className="text-gray-200 bg-white/5 p-3 rounded-lg">
+              <pre className="text-gray-200 bg-white/5 p-3 rounded-lg whitespace-pre-wrap">
                 <audio
                   controls
                   src={ticketData.ticket.audio_url}
                   className="w-full"
                 />
-                {/* <a href={ticketData.ticket.audio_url} target="_blank">
-                  AUDIO
-                </a> */}
               </pre>
             </div>
           )}
@@ -132,7 +129,7 @@ export default function TicketViewModal({
           {ticketData.history && (
             <div>
               <p className="text-gray-400 mb-1">Ticket History</p>
-              <pre className="text-gray-200 bg-white/5 p-3 rounded-lg">
+              <pre className="text-gray-200 bg-white/5 p-3 rounded-lg whitespace-pre-wrap">
                 {ticketData.history.map((history: any) => {
                   return (
                     <div

@@ -48,14 +48,14 @@ export default function OrganisationPage() {
   }, []);
 
   return (
-    <div className=" space-y-6">
+    <div className="max-w-full w-full space-y-6 overflow-x-hidden">
       <h1 className="text-xl font-semibold">Organisation Settings</h1>
 
       {org && (
         <>
           <div className="rounded-lg border border-white/10 p-4 space-y-6">
             <p className="text-sm text-gray-400">
-              Organisation:{" "}
+              Organisation:
               <span className="text-white font-medium">{org.name}</span>
             </p>
 
@@ -111,7 +111,7 @@ export default function OrganisationPage() {
                     }
                   }}
                   maxLength={7}
-                  className="input w-32 uppercase"
+                  className="input uppercase"
                   placeholder="#000000"
                 />
               </div>

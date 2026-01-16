@@ -82,7 +82,7 @@ export default function CallbackViewModal({
 
           <div>
             <p className="text-gray-400 mb-1">Description</p>
-            <pre className="text-gray-200 bg-white/5 p-3 rounded-lg">
+            <pre className="text-gray-200 bg-white/5 p-3 rounded-lg whitespace-pre-wrap">
               {callback.issue || "—"}
             </pre>
           </div>
@@ -90,7 +90,7 @@ export default function CallbackViewModal({
             <div>
               <label>Audio</label>
               <p className="text-gray-400 mb-1">Audio</p>
-              <pre className="text-gray-200 bg-white/5 p-3 rounded-lg">
+              <pre className="text-gray-200 bg-white/5 p-3 rounded-lg whitespace-pre-wrap">
                 <audio controls src={callback.audio} className="w-full" />
                 {/* <a href={ticketData.ticket.audio_url} target="_blank">
                   AUDIO

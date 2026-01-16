@@ -42,7 +42,7 @@ export default function SubSubjectRow({
           </span>
 
           {subSubject.predefined_text && (
-            <span className="text-xs px-2 py-0.5 rounded bg-blue-500/15 text-blue-400">
+            <span className="text-xs px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 hidden md:block">
               Template Available
             </span>
           )}

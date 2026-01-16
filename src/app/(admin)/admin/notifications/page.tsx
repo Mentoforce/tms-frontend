@@ -50,7 +50,7 @@ export default function NotificationsPage() {
   }, []);
 
   return (
-    <div className="p-6">
+    <div>
       <h1 className="text-xl font-semibold mb-6">Notifications</h1>
       <NotificationTable data={data} onRefresh={fetchNotifications} />
     </div>

@@ -19,18 +19,21 @@ export default function AdminLayout({
       .get("/me")
       .then(() => setLoading(false))
       .catch(() => router.replace("/admin/login"));
-  }, []);
+  }, [router]);
 
   if (loading) {
     return <div className="p-6">Checking admin access...</div>;
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-900">
+      {/* Sidebar (fixed on mobile, static on desktop) */}
       <AdminSidebar />
-      <div className="flex-1 flex flex-col">
+
+      {/* Main content */}
+      <div className="md:ml-64 flex flex-col min-h-screen">
         <AdminHeader />
-        <main className="p-6">{children}</main>
+        <main className="p-6 pt-20 md:pt-6">{children}</main>
       </div>
     </div>
   );

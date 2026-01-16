@@ -52,63 +52,65 @@ export default function NotificationTable({
           }}
         />
       )}
-      <table className="w-full text-sm">
-        <thead className="bg-white/5">
-          <tr>
-            <Th>TITLE</Th>
-            <Th>TYPE</Th>
-            <Th>VALIDITY</Th>
-            <Th>STATUS</Th>
-            <Th>ACTIONS</Th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {data?.map((d) => (
-            <tr key={d._id} className="border-t border-white/5 text-center">
-              <Td>
-                <div className="text-left">
-                  <p className="font-medium">{d.title}</p>
-                  <p className="text-xs text-gray-400">{d.message}</p>
-                </div>
-              </Td>
-              <Td>
-                <StatusPill status={d.type} />
-              </Td>
-              <Td>{formatValidity(d.start_date, d.end_date, d.createdAt)}</Td>
-              <Td>
-                <button
-                  onClick={() => {
-                    toggleActive(d);
-                  }}
-                  className="cursor-pointer"
-                >
-                  <ActivePill status={d.is_active} />
-                </button>
-              </Td>
-              <Td>
-                <div className="flex gap-2 justify-center">
-                  <Pen
-                    size={14}
-                    className="cursor-pointer"
-                    onClick={() => setEditing(d)}
-                  />
-                  <Trash
-                    size={14}
-                    className="cursor-pointer hover:text-red-500"
-                    onClick={async () => {
-                      await api.post("/notifications/delete", {
-                        notification_id: d._id,
-                      });
-                      onRefresh();
-                    }}
-                  />
-                </div>
-              </Td>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm overflow-x-auto">
+          <thead className="bg-white/5">
+            <tr>
+              <Th>TITLE</Th>
+              <Th>TYPE</Th>
+              <Th>VALIDITY</Th>
+              <Th>STATUS</Th>
+              <Th>ACTIONS</Th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {data?.map((d) => (
+              <tr key={d._id} className="border-t border-white/5 text-center">
+                <Td>
+                  <div className="text-left">
+                    <p className="font-medium">{d.title}</p>
+                    <p className="text-xs text-gray-400">{d.message}</p>
+                  </div>
+                </Td>
+                <Td>
+                  <StatusPill status={d.type} />
+                </Td>
+                <Td>{formatValidity(d.start_date, d.end_date, d.createdAt)}</Td>
+                <Td>
+                  <button
+                    onClick={() => {
+                      toggleActive(d);
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <ActivePill status={d.is_active} />
+                  </button>
+                </Td>
+                <Td>
+                  <div className="flex gap-2 justify-center">
+                    <Pen
+                      size={14}
+                      className="cursor-pointer"
+                      onClick={() => setEditing(d)}
+                    />
+                    <Trash
+                      size={14}
+                      className="cursor-pointer hover:text-red-500"
+                      onClick={async () => {
+                        await api.post("/notifications/delete", {
+                          notification_id: d._id,
+                        });
+                        onRefresh();
+                      }}
+                    />
+                  </div>
+                </Td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }

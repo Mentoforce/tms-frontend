@@ -49,65 +49,66 @@ export default function CallbackRequestTable({
           }}
         />
       )}
-
-      <table className="w-full text-sm">
-        <thead className="bg-white/5">
-          <tr>
-            <Th>USER</Th>
-            <Th>PHONE</Th>
-            <Th>REASON</Th>
-            <Th>PREFERRED TIME</Th>
-            <Th>AUDIO</Th>
-            <Th>SITUATION</Th>
-            <Th>HISTORY</Th>
-            <Th>VIEW</Th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {callback.map((c) => (
-            <tr
-              key={c._id}
-              className="border-t border-white/5 hover:bg-white/5 transition"
-            >
-              <Td className="font-medium text-white">{c.username || "-"}</Td>
-              <Td className="font-medium text-white">{c.phone || "-"}</Td>
-              <Td className="font-medium text-white">
-                {c.issue
-                  ? c.issue.length > 20
-                    ? c.issue?.slice(0, 20) + "..."
-                    : c.issue
-                  : "-"}
-              </Td>
-
-              <Td className="font-medium text-white">{c.preferred_time}</Td>
-              <Td className="text-center">
-                {c.audio ? (
-                  <audio controls src={c.audio} className="w-65 h-7" />
-                ) : (
-                  "-"
-                )}
-              </Td>
-              <Td>
-                <StatusPill status={c.status} />
-              </Td>
-
-              <Td className="text-gray-400">
-                {new Date(c.updatedAt).toLocaleDateString()}
-              </Td>
-
-              <Td>
-                <button
-                  onClick={() => setSelectedCallback(c)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  <Eye size={16} />
-                </button>
-              </Td>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm overflow-x-auto">
+          <thead className="bg-white/5">
+            <tr>
+              <Th>USER</Th>
+              <Th>PHONE</Th>
+              <Th>REASON</Th>
+              <Th>PREFERRED TIME</Th>
+              <Th>AUDIO</Th>
+              <Th>SITUATION</Th>
+              <Th>HISTORY</Th>
+              <Th>VIEW</Th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {callback.map((c) => (
+              <tr
+                key={c._id}
+                className="border-t border-white/5 hover:bg-white/5 transition"
+              >
+                <Td className="font-medium text-white">{c.username || "-"}</Td>
+                <Td className="font-medium text-white">{c.phone || "-"}</Td>
+                <Td className="font-medium text-white">
+                  {c.issue
+                    ? c.issue.length > 20
+                      ? c.issue?.slice(0, 20) + "..."
+                      : c.issue
+                    : "-"}
+                </Td>
+
+                <Td className="font-medium text-white">{c.preferred_time}</Td>
+                <Td className="text-center">
+                  {c.audio ? (
+                    <audio controls src={c.audio} className="w-65 h-7" />
+                  ) : (
+                    "-"
+                  )}
+                </Td>
+                <Td>
+                  <StatusPill status={c.status} />
+                </Td>
+
+                <Td className="text-gray-400">
+                  {new Date(c.updatedAt).toLocaleDateString()}
+                </Td>
+
+                <Td>
+                  <button
+                    onClick={() => setSelectedCallback(c)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <Eye size={16} />
+                  </button>
+                </Td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

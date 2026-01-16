@@ -29,7 +29,7 @@ export default function BonusConfigTable({
   if (!config || config.length === 0) {
     return (
       <div className="rounded-xl border border-white/10 p-8 text-center text-gray-400">
-        No Bonus Config found
+        No Bonus List found
       </div>
     );
   }
@@ -60,7 +60,7 @@ export default function BonusConfigTable({
         }}
         className="btn cursor-pointer mb-10 w-full"
       >
-        + Create Bonus Config
+        + Create Bonus List Itme
       </button>
       <div className="rounded-xl border border-white/10 overflow-hidden">
         {openModal && (
@@ -80,70 +80,79 @@ export default function BonusConfigTable({
             }}
           />
         )}
-
-        <table className="w-full text-sm">
-          <thead className="bg-white/5">
-            <tr>
-              <Th>BONUS TYPE</Th>
-              <Th>EXPLANATION</Th>
-              <Th>STATUS</Th>
-              <Th>VALIDITY</Th>
-              <Th>UPDATE</Th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {configData.map((b) => (
-              <tr
-                key={b._id}
-                className="border-t border-white/5 hover:bg-white/5 transition"
-              >
-                <Td className="text-gray-400">{b.title}</Td>
-                <Td className="text-gray-400">{b.explanation}</Td>
-
-                <Td>
-                  <button
-                    className="cursor-pointer"
-                    onClick={() => {
-                      updateActiveStatus(b);
-                    }}
-                  >
-                    <ActivePill status={b.is_active} />
-                  </button>
-                </Td>
-
-                <Td className="text-gray-400">
-                  {new Date(b.start_date).toLocaleDateString()}
-                </Td>
-
-                <Td>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setEditingConfig(b);
-                        setOpenModal(true);
-                      }}
-                      className="text-gray-400 hover:text-white cursor-pointer"
-                    >
-                      <Pen size={16} />
-                    </button>
-                    <button
-                      onClick={() => {
-                        deleteConfig(b._id);
-                        setConfigData(
-                          configData.filter((config) => config._id !== b._id)
-                        );
-                      }}
-                      className="text-gray-400 hover:text-white cursor-pointer"
-                    >
-                      <Trash size={16} />
-                    </button>
-                  </div>
-                </Td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm overflow-x-auto">
+            <thead className="bg-white/5">
+              <tr>
+                <Th>BONUS TYPE</Th>
+                <Th>EXPLANATION</Th>
+                <Th>STATUS</Th>
+                <Th>VALIDITY</Th>
+                <Th>UPDATE</Th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {configData.map((b) => (
+                <tr
+                  key={b._id}
+                  className="border-t border-white/5 hover:bg-white/5 transition"
+                >
+                  <Td className="text-gray-400">{b.title}</Td>
+                  <Td className="text-gray-400">
+                    {/* Mobile: truncated */}
+                    <span className="block lg:hidden">
+                      {b.explanation.slice(0, 30)}...
+                    </span>
+
+                    {/* Desktop: full text */}
+                    <span className="hidden lg:block">{b.explanation}</span>
+                  </Td>
+
+                  <Td>
+                    <button
+                      className="cursor-pointer"
+                      onClick={() => {
+                        updateActiveStatus(b);
+                      }}
+                    >
+                      <ActivePill status={b.is_active} />
+                    </button>
+                  </Td>
+
+                  <Td className="text-gray-400">
+                    {new Date(b.start_date).toLocaleDateString()}
+                  </Td>
+
+                  <Td>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setEditingConfig(b);
+                          setOpenModal(true);
+                        }}
+                        className="text-gray-400 hover:text-white cursor-pointer"
+                      >
+                        <Pen size={16} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          deleteConfig(b._id);
+                          setConfigData(
+                            configData.filter((config) => config._id !== b._id)
+                          );
+                        }}
+                        className="text-gray-400 hover:text-white cursor-pointer"
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
+                  </Td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );

@@ -50,82 +50,83 @@ export default function TicketTable({
           }}
         />
       )}
-
-      <table className="w-full text-sm">
-        <thead className="bg-white/5">
-          <tr>
-            <Th>REQUEST ID</Th>
-            <Th>USER</Th>
-            <Th>SUBJECT</Th>
-            <Th>SITUATION</Th>
-            <Th>CHANNEL</Th>
-            <Th>APPENDICES</Th>
-            <Th>HISTORY</Th>
-            <Th>VIEW</Th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {tickets.map((t) => (
-            <tr
-              key={t._id}
-              className="border-t border-white/5 hover:bg-white/5 transition"
-            >
-              <Td className="font-medium text-white">{t.ticket_number}</Td>
-
-              <Td className="flex items-center gap-2">
-                <span className="h-7 w-7 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">
-                  {t.username?.[0]?.toUpperCase()}
-                </span>
-                {t.username}
-              </Td>
-
-              <Td>
-                <p className="text-white">{t.subject_id?.title}</p>
-                <p className="text-xs text-gray-400">
-                  {t.sub_subject_id?.title}
-                </p>
-              </Td>
-
-              <Td>
-                <StatusPill status={t.status} />
-              </Td>
-
-              <Td className="text-gray-300">{t.return_channel}</Td>
-
-              <Td className="flex gap-2">
-                {t.files && t.files?.length > 0 && (
-                  <span className="px-1 py-1 rounded bg-blue-500/15 text-blue-400 text-xs">
-                    📎 {t.files.length}
-                  </span>
-                )}
-                {t.audio_url && (
-                  <span className="px-1 py-1 rounded flex w-8 bg-purple-500/15 text-purple-400 text-xs justify-around">
-                    <span>
-                      <Volume1Icon size={14} />{" "}
-                    </span>
-                    1
-                  </span>
-                )}
-                {(!t.files || t.files?.length == 0) && !t.audio_url && "-"}
-              </Td>
-
-              <Td className="text-gray-400">
-                {new Date(t.updatedAt).toLocaleDateString()}
-              </Td>
-
-              <Td>
-                <button
-                  onClick={() => setSelectedTicket(t)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  <Eye size={16} />
-                </button>
-              </Td>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm overflow-x-auto">
+          <thead className="bg-white/5">
+            <tr>
+              <Th>REQUEST ID</Th>
+              <Th>USER</Th>
+              <Th>SUBJECT</Th>
+              <Th>SITUATION</Th>
+              <Th>CHANNEL</Th>
+              <Th>APPENDICES</Th>
+              <Th>HISTORY</Th>
+              <Th>VIEW</Th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {tickets.map((t) => (
+              <tr
+                key={t._id}
+                className="border-t border-white/5 hover:bg-white/5 transition"
+              >
+                <Td className="font-medium text-white">{t.ticket_number}</Td>
+
+                <Td className="flex items-center gap-2">
+                  <span className="h-7 w-7 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">
+                    {t.username?.[0]?.toUpperCase()}
+                  </span>
+                  {t.username}
+                </Td>
+
+                <Td>
+                  <p className="text-white">{t.subject_id?.title}</p>
+                  <p className="text-xs text-gray-400">
+                    {t.sub_subject_id?.title}
+                  </p>
+                </Td>
+
+                <Td>
+                  <StatusPill status={t.status} />
+                </Td>
+
+                <Td className="text-gray-300">{t.return_channel}</Td>
+
+                <Td className="flex gap-2">
+                  {t.files && t.files?.length > 0 && (
+                    <span className="px-1 py-1 rounded bg-blue-500/15 text-blue-400 text-xs">
+                      📎 {t.files.length}
+                    </span>
+                  )}
+                  {t.audio_url && (
+                    <span className="px-1 py-1 rounded flex w-8 bg-purple-500/15 text-purple-400 text-xs justify-around">
+                      <span>
+                        <Volume1Icon size={14} />{" "}
+                      </span>
+                      1
+                    </span>
+                  )}
+                  {(!t.files || t.files?.length == 0) && !t.audio_url && "-"}
+                </Td>
+
+                <Td className="text-gray-400">
+                  {new Date(t.updatedAt).toLocaleDateString()}
+                </Td>
+
+                <Td>
+                  <button
+                    onClick={() => setSelectedTicket(t)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <Eye size={16} />
+                  </button>
+                </Td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

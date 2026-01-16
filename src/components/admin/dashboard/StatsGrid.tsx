@@ -9,7 +9,7 @@ export default function StatsGrid({ stats }: { stats: any }) {
 
     { title: "Total Callback Requests", value: stats.totalCallbackRequests },
     {
-      title: "Pending Callback Requests",
+      title: "Pending Callback Request",
       value: stats.pendingCallbackRequests,
     },
     {

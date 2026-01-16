@@ -12,7 +12,7 @@ export default function SubjectList({ subjects, stats, onRefresh }: any) {
         <SubjectModal onClose={() => setOpenModal(false)} onSaved={onRefresh} />
       )}
       {/* Header */}
-      <div className="flex justify-between">
+      <div className="flex justify-between flex-wrap gap-2">
         <div>
           <h1 className="text-xl font-semibold">Support Topic Management</h1>
           <p className="text-gray-400 text-sm">
@@ -28,7 +28,7 @@ export default function SubjectList({ subjects, stats, onRefresh }: any) {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <Stat label="Main Topics" value={stats.main} />
         <Stat label="Subtopics" value={stats.sub} />
         <Stat label="Active Topics" value={stats.active} />

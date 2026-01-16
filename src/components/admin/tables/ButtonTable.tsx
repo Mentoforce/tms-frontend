@@ -108,75 +108,76 @@ export default function ButtonTable({ config }: { config: ButtonConfig[] }) {
             }}
           />
         )}
-
-        <table className="w-full text-sm">
-          <thead className="bg-white/5">
-            <tr>
-              <Th>BUTTON</Th>
-              <Th>ACTION</Th>
-              <Th>PART</Th>
-              <Th>STATUS</Th>
-              <Th>UPDATE</Th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {configData.map((b) => (
-              <tr
-                key={b._id}
-                className="border-t border-white/5 hover:bg-white/5 transition"
-              >
-                <Td className="text-gray-400">
-                  <div className="text-white text-md">{b.title}</div>
-                  <div className="text-xs"> {b.subtitle}</div>
-                </Td>
-                <Td className="text-gray-400">
-                  <div className="text-white text-md">{b.action.type}</div>
-                  <div className="text-xs"> {b.action.target}</div>
-                </Td>
-                <Td className="text-gray-400">
-                  {b.quick_access ? "Quick Access" : "Quick Support"}
-                </Td>
-
-                <Td>
-                  <button
-                    className="cursor-pointer"
-                    onClick={() => {
-                      updateActiveStatus(b);
-                    }}
-                  >
-                    <ActivePill status={b.is_active} />
-                  </button>
-                </Td>
-
-                <Td>
-                  <div className="flex gap-2 justify-around">
-                    <button
-                      onClick={() => {
-                        setEditingConfig(b);
-                        setOpenModal(true);
-                      }}
-                      className="text-gray-400 hover:text-white cursor-pointer"
-                    >
-                      <Pen size={16} />
-                    </button>
-                    <button
-                      onClick={() => {
-                        deletButton(b._id);
-                        setConfigData(
-                          configData.filter((config) => config._id !== b._id)
-                        );
-                      }}
-                      className="text-gray-400 hover:text-white cursor-pointer"
-                    >
-                      <Trash size={16} />
-                    </button>
-                  </div>
-                </Td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm overflow-x-auto">
+            <thead className="bg-white/5">
+              <tr>
+                <Th>BUTTON</Th>
+                <Th>ACTION</Th>
+                <Th>PART</Th>
+                <Th>STATUS</Th>
+                <Th>UPDATE</Th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {configData.map((b) => (
+                <tr
+                  key={b._id}
+                  className="border-t border-white/5 hover:bg-white/5 transition"
+                >
+                  <Td className="text-gray-400">
+                    <div className="text-white text-md">{b.title}</div>
+                    <div className="text-xs hidden md:block"> {b.subtitle}</div>
+                  </Td>
+                  <Td className="text-gray-400">
+                    <div className="text-white text-md">{b.action.type}</div>
+                    <div className="text-xs"> {b.action.target}</div>
+                  </Td>
+                  <Td className="text-gray-400">
+                    {b.quick_access ? "Quick Access" : "Quick Support"}
+                  </Td>
+
+                  <Td>
+                    <button
+                      className="cursor-pointer"
+                      onClick={() => {
+                        updateActiveStatus(b);
+                      }}
+                    >
+                      <ActivePill status={b.is_active} />
+                    </button>
+                  </Td>
+
+                  <Td>
+                    <div className="flex gap-2 justify-around">
+                      <button
+                        onClick={() => {
+                          setEditingConfig(b);
+                          setOpenModal(true);
+                        }}
+                        className="text-gray-400 hover:text-white cursor-pointer"
+                      >
+                        <Pen size={16} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          deletButton(b._id);
+                          setConfigData(
+                            configData.filter((config) => config._id !== b._id)
+                          );
+                        }}
+                        className="text-gray-400 hover:text-white cursor-pointer"
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
+                  </Td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );

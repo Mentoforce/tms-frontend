@@ -25,7 +25,7 @@ export default function FooterContentPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-1">
       <h1 className="text-xl font-semibold mb-6">Footer Content</h1>
       <FooterTable data={data} onRefresh={fetchFooter} />
     </div>

@@ -25,7 +25,7 @@ export default function Navbar({ config }: NavbarProps) {
         <img
           src={logoUrl}
           alt="Company Logo"
-          className="max-h-20 sm:max-h-15 lg:max-h-18 w-auto object-contain"
+          className="max-h-10 sm:max-h-10 lg:max-h-18 w-auto object-contain"
         />
       </div>
 

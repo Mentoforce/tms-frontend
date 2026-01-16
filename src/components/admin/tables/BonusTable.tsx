@@ -48,52 +48,53 @@ export default function BonusTable({
           }}
         />
       )}
-
-      <table className="w-full text-sm">
-        <thead className="bg-white/5">
-          <tr>
-            <Th>USER</Th>
-            <Th>BONUS TYPE</Th>
-            <Th>SITUATION</Th>
-            <Th>HISTORY</Th>
-            <Th>VIEW</Th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {bonus.map((b) => (
-            <tr
-              key={b._id}
-              className="border-t border-white/5 hover:bg-white/5 transition text-center"
-            >
-              <Td className="flex items-center gap-2">
-                <span className="h-7 w-7 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">
-                  {b.username?.[0]?.toUpperCase()}
-                </span>
-                {b.username}
-              </Td>
-              <Td className="text-gray-400">{b.bonus_type_id.title}</Td>
-
-              <Td>
-                <StatusPill status={b.status} />
-              </Td>
-
-              <Td className="text-gray-400">
-                {new Date(b.updatedAt).toLocaleDateString()}
-              </Td>
-
-              <Td>
-                <button
-                  onClick={() => setSelectedBonus(b)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  <Eye size={16} />
-                </button>
-              </Td>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm overflow-x-auto">
+          <thead className="bg-white/5">
+            <tr>
+              <Th>USER</Th>
+              <Th>BONUS TYPE</Th>
+              <Th>SITUATION</Th>
+              <Th>HISTORY</Th>
+              <Th>VIEW</Th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {bonus.map((b) => (
+              <tr
+                key={b._id}
+                className="border-t border-white/5 hover:bg-white/5 transition text-center"
+              >
+                <Td className="flex items-center gap-2">
+                  <span className="h-7 w-7 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">
+                    {b.username?.[0]?.toUpperCase()}
+                  </span>
+                  {b.username}
+                </Td>
+                <Td className="text-gray-400">{b.bonus_type_id.title}</Td>
+
+                <Td>
+                  <StatusPill status={b.status} />
+                </Td>
+
+                <Td className="text-gray-400">
+                  {new Date(b.updatedAt).toLocaleDateString()}
+                </Td>
+
+                <Td>
+                  <button
+                    onClick={() => setSelectedBonus(b)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <Eye size={16} />
+                  </button>
+                </Td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -105,10 +106,6 @@ function StatusPill({ status }: { status: Bonus["status"] }) {
     resolved: "bg-green-500/15 text-green-400",
     rejected: "bg-red-500/15 text-red-400",
     review: "bg-yellow-500/15 text-yellow-400",
-    success: "bg-green-500/15 text-green-400",
-    info: "bg-blue-500/15 text-blue-400",
-    warning: "bg-yellow-500/15 text-yellow-400",
-    error: "bg-red-500/15 text-red-400",
   };
 
   return (

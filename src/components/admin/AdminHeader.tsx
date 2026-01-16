@@ -12,7 +12,7 @@ export default function AdminHeader() {
   };
 
   return (
-    <header className="h-14 bg-slate-900 shadow flex items-center justify-end px-6">
+    <header className="h-14 bg-slate-900 shadow md:flex items-center justify-end px-6 hidden">
       <button onClick={logout} className="btn-danger">
         Logout
       </button>

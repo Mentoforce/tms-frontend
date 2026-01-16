@@ -81,6 +81,7 @@ export default function BonusViewModal({
           <Row label="Latest Admin Remarks" value={bonus.remarks} />
         </div>
         <div className=" flex flex-col gap-4 p-5">
+          <label>Status Update</label>
           <select
             value={bonusStatus}
             onChange={(e) => setBonusStatus(e.target.value)}

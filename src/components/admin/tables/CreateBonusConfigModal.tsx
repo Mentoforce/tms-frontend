@@ -59,7 +59,7 @@ export default function CreateBonusConfigModal({
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold">
-            {form._id ? "Update Bonus Config" : "Create Bonus Config"}
+            {form._id ? "Update Bonus Config" : "Create Bonus List"}
           </h2>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
             <X />

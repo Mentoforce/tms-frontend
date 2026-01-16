@@ -45,12 +45,12 @@ export default function TicketPage() {
 
   return (
     <>
-      <div className="flex gap-4 m-2 my-10">
+      <div className="flex flex-wrap gap-4 m-2 my-10">
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by request ID, username, or description..."
-          className="w-full bg-transparent border border-black px-3"
+          className="w-full bg-transparent border border-black px-3 py-2"
         />
         <select
           value={status}

@@ -102,7 +102,7 @@ export default function RequestCallbackModal({
 
       setDraft((d) => ({ ...d, audio: audioBlob }));
       setAudioUrl(URL.createObjectURL(audioBlob));
-      setRecordedDuration(recordingElapsed);
+      // setRecordedDuration(recordingElapsed);
 
       setIsRecording(false);
       setRecordingElapsed(0);
@@ -136,14 +136,24 @@ export default function RequestCallbackModal({
 
   /* ---------- DELETE RECORDING ---------- */
   const deleteRecording = () => {
-    audioRef.current?.pause();
-    audioRef.current = null;
+    // Stop any playing audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = ""; // clear the source
+    }
 
+    // Revoke blob URL to free memory
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+    }
+
+    // Reset state
     setDraft((d) => ({ ...d, audio: null }));
     setAudioUrl(null);
     setRecordedDuration(0);
     setPlayProgress(0);
     setIsPlaying(false);
+    setIsRecording(false);
   };
 
   /* ---------- PLAY / PAUSE AUDIO ---------- */
@@ -153,6 +163,10 @@ export default function RequestCallbackModal({
     if (!audioRef.current) {
       const audio = new Audio(audioUrl);
       audioRef.current = audio;
+
+      audio.onloadedmetadata = () => {
+        setRecordedDuration(audio.duration);
+      };
 
       audio.ontimeupdate = () => {
         setPlayProgress(audio.currentTime);
@@ -207,7 +221,7 @@ export default function RequestCallbackModal({
 
   if (!open) return null;
 
-  /*---------------------username and phone <check-------------------*/
+  /*---------------------username and phone check-------------------*/
   const canMoveForward = isMember
     ? draft.username.trim().length > 0 && isUsernameValid
     : draft.phone.trim().length > 0;
@@ -476,7 +490,9 @@ export default function RequestCallbackModal({
                           />
                         </div>
                         <div className="flex justify-between text-xs text-white/60">
-                          <span>00:00</span>
+                          {/* <span>00:00</span> */}
+                          <span>{formatTime(playProgress)}</span>
+
                           <span>{formatTime(recordedDuration)}</span>
                         </div>
                       </div>

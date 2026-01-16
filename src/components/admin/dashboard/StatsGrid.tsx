@@ -5,11 +5,7 @@ export default function StatsGrid({ stats }: { stats: any }) {
     { title: "Total Tickets", value: stats.totalTickets },
     { title: "Pending Tickets", value: stats.pendingTickets },
     { title: "Solved Tickets", value: stats.solvedTickets },
-    { title: "New Tickets Today", value: stats.newTicketsToday },
-
-    { title: "Bonus Claims", value: stats.totalBonusClaims },
-    { title: "Pending Bonus", value: stats.pendingBonusClaims },
-    { title: "Resolved Bonus", value: stats.resolvedBonusClaims },
+    // { title: "New Tickets Today", value: stats.newTicketsToday },
 
     { title: "Total Callback Requests", value: stats.totalCallbackRequests },
     {
@@ -20,10 +16,10 @@ export default function StatsGrid({ stats }: { stats: any }) {
       title: "Solved Callback Requests",
       value: stats.completedCallbackRequests,
     },
-    {
-      title: "New Callback Requests Today",
-      value: stats.newCallbackRequestsToday,
-    },
+    // {
+    //   title: "New Callback Requests Today",
+    //   value: stats.newCallbackRequestsToday,
+    // },
 
     { title: "Total Bonus Claims", value: stats.totalBonusClaims },
     {
@@ -34,12 +30,12 @@ export default function StatsGrid({ stats }: { stats: any }) {
       title: "Solved Bonus Claims",
       value: stats.resolvedBonusClaims,
     },
-    {
-      title: "New Bonus Claims Today",
-      value: stats.bonusClaimsToday,
-    },
+    // {
+    //   title: "New Bonus Claims Today",
+    //   value: stats.bonusClaimsToday,
+    // },
 
-    { title: "Admins", value: stats.totalAdmins },
+    // { title: "Admins", value: stats.totalAdmins },
     { title: "Active Admins", value: stats.activeAdmins },
   ];
 

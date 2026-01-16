@@ -150,7 +150,7 @@ export default function ButtonTable({ config }: { config: ButtonConfig[] }) {
                 </Td>
 
                 <Td>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 justify-around">
                     <button
                       onClick={() => {
                         setEditingConfig(b);

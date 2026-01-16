@@ -47,7 +47,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { OrganisationProvider } from "@/context/OrganisationProvider";
 import { Montserrat } from "next/font/google";
-import NotificationContainer from "@/components/notifications/NotificationContainer";
 
 export const montserrat = Montserrat({
   subsets: ["latin"],
@@ -68,12 +67,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <OrganisationProvider>
-          {children}
-
-          {/* ✅ PUBLIC NOTIFICATIONS — GLOBAL */}
-          <NotificationContainer />
-        </OrganisationProvider>
+        <OrganisationProvider>{children}</OrganisationProvider>
       </body>
     </html>
   );

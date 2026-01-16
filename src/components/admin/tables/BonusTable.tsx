@@ -64,7 +64,7 @@ export default function BonusTable({
           {bonus.map((b) => (
             <tr
               key={b._id}
-              className="border-t border-white/5 hover:bg-white/5 transition"
+              className="border-t border-white/5 hover:bg-white/5 transition text-center"
             >
               <Td className="flex items-center gap-2">
                 <span className="h-7 w-7 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">
@@ -105,6 +105,10 @@ function StatusPill({ status }: { status: Bonus["status"] }) {
     resolved: "bg-green-500/15 text-green-400",
     rejected: "bg-red-500/15 text-red-400",
     review: "bg-yellow-500/15 text-yellow-400",
+    success: "bg-green-500/15 text-green-400",
+    info: "bg-blue-500/15 text-blue-400",
+    warning: "bg-yellow-500/15 text-yellow-400",
+    error: "bg-red-500/15 text-red-400",
   };
 
   return (

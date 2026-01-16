@@ -8,12 +8,12 @@ export function useNotifications() {
 
   useEffect(() => {
     api.get("/notifications").then((res) => {
-        console.log("PUBLIC NOTIFICATIONS 👉", res.data);
+      console.log("PUBLIC NOTIFICATIONS", res.data.data);
       const dismissed = JSON.parse(
         localStorage.getItem("dismissed_notifications") || "[]"
       );
 
-      const filtered = res.data.filter(
+      const filtered = res.data.data.filter(
         (n: NotificationItem) => !dismissed.includes(n._id)
       );
 
@@ -38,5 +38,12 @@ export function useNotifications() {
     setCurrent(remaining[0] || null);
   };
 
-  return { current, dismiss };
+  const close = () => {
+    if (!current) return;
+    const remaining = queue.slice(1);
+    setQueue(remaining);
+    setCurrent(remaining[0] || null);
+  };
+
+  return { current, dismiss, close };
 }

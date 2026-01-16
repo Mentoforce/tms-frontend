@@ -29,9 +29,6 @@ export default function FooterTable({
       _id: f._id,
       is_active: !f.is_active,
     });
-    // setItems((prev) =>
-    //   prev.map((p) => (p._id == f._id ? { ...p, is_active: !p.is_active } : p))
-    // );
     onRefresh();
   };
 
@@ -56,12 +53,6 @@ export default function FooterTable({
             initialData={editing}
             onClose={() => setEditing(null)}
             onSaved={(saved: FooterItem) => {
-              // setItems((prev) => {
-              //   const exists = prev.find((i) => i._id === saved._id);
-              //   return exists
-              //     ? prev.map((i) => (i._id === saved._id ? saved : i))
-              //     : [saved, ...prev];
-              // });
               onRefresh();
             }}
           />
@@ -79,7 +70,7 @@ export default function FooterTable({
 
           <tbody>
             {data?.map((f) => (
-              <tr key={f._id} className="border-t border-white/5">
+              <tr key={f._id} className="border-t border-white/5 text-center">
                 <Td>{f.title}</Td>
                 <Td>
                   <button
@@ -95,7 +86,7 @@ export default function FooterTable({
                   {f.updatedAt ? new Date(f.updatedAt).toLocaleString() : "-"}
                 </Td>
                 <Td>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 justify-center">
                     <Pen
                       size={14}
                       className="cursor-pointer"
@@ -109,7 +100,6 @@ export default function FooterTable({
                           footer_id: f._id,
                         });
                         onRefresh();
-                        // setItems(items.filter((i) => i._id !== f._id));
                       }}
                     />
                   </div>

@@ -13,6 +13,7 @@ import BonusClaimModal from "./BonusClaimModal";
 import UploadFileModal from "./UploadFileModal";
 import Footer from "./Footer";
 import api from "@/lib/axios";
+import NotificationCard from "./NotificationCard";
 
 export default function Home() {
   const router = useRouter();
@@ -41,6 +42,7 @@ export default function Home() {
   }, []);
   return (
     <>
+      <NotificationCard />
       <Navbar
         config={{
           logoUrl: logo,

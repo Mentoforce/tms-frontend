@@ -40,15 +40,19 @@ import { NotificationItem } from "@/types/notification";
 
 export default function NotificationsPage() {
   const [data, setData] = useState<NotificationItem[]>([]);
-
+  const fetchNotifications = async () => {
+    const res = await api.get("/notifications/admin");
+    console.log(res.data.data);
+    setData(res.data.data);
+  };
   useEffect(() => {
-    api.get("/admin/notifications").then((res) => setData(res.data));
+    fetchNotifications();
   }, []);
 
   return (
     <div className="p-6">
       <h1 className="text-xl font-semibold mb-6">Notifications</h1>
-      <NotificationTable data={data} />
+      <NotificationTable data={data} onRefresh={fetchNotifications} />
     </div>
   );
 }

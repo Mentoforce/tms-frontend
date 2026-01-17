@@ -29,9 +29,8 @@ export default function SelectOrganisation() {
           headers: { "Content-Type": "application/json" },
         }
       );
-      console.log(res);
       localStorage.setItem("org_code", code.trim());
-      setOrganisation(code.trim());
+      setOrganisation(res.data.data);
     } catch (err: any) {
       if (err.status == 404) setError("Organisation not found");
       else setError(err.message);

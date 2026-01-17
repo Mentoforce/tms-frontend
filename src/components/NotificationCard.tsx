@@ -43,7 +43,7 @@ export default function NotificationCard() {
           damping: 22,
         }}
         className="fixed top-16 right-6 max-w-sm rounded-xl p-4 shadow-lg bg-black/90 w-90 text-white z-100"
-        style={{ borderColor: accent, borderWidth: 1 }}
+        style={{ borderColor: accent, borderWidth: 0.5 }}
       >
         <button
           className="fixed right-10 bg-black cursor-pointer"

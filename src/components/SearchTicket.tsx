@@ -111,7 +111,7 @@ export default function SearchTicket({
           <div className="animate-in fade-in duration-500">
             {/* DETAILS SECTION */}
             <div className="mb-10">
-              <h3 className="text-2xl font-bold text-white mb-6">Details</h3>
+              <h3 className="text-2xl font-bold text-white mb-4">Details</h3>
               <div className="grid grid-cols-2 text-[15px] gap-y-6">
                 <div className="space-y-1">
                   <p className="text-white/40">
@@ -154,7 +154,7 @@ export default function SearchTicket({
 
             {/* STATUS MONITORING SECTION */}
             <div>
-              <h3 className="text-2xl font-bold text-white mb-10">
+              <h3 className="text-2xl font-bold text-white mb-4">
                 Status Monitoring
               </h3>
               <div className="flex flex-col">

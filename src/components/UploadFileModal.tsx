@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import api from "@/lib/axios";
-import { IconX } from "@tabler/icons-react";
+import { IconX, IconUpload } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 
 type FileItem = {
@@ -380,7 +380,9 @@ export default function UploadFileModal({
                       htmlFor="upload-files"
                       className="cursor-pointer flex flex-col items-center gap-2 text-white/70"
                     >
-                      <div className="text-xl">⬆</div>
+                      <div className="text-xl">
+                        <IconUpload size={18} stroke={2} />
+                      </div>
                       <p className="text-sm">
                         Drag & drop files here or{" "}
                         <span className="underline">browse</span>

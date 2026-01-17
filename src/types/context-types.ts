@@ -11,6 +11,7 @@ export interface OrganisationConfig {
   code: string;
   name: string;
   logo: string;
+  link: string;
   primaryColor: string;
 }
 

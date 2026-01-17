@@ -11,6 +11,7 @@ export default function OrganisationPage() {
   const [org, setOrg] = useState<any>(null);
 
   const [primaryColor, setPrimaryColor] = useState("#000000");
+  const [link, setLink] = useState("/");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
@@ -33,6 +34,7 @@ export default function OrganisationPage() {
   const updateOrganisation = async () => {
     const formData = new FormData();
     formData.append("primaryColor", primaryColor);
+    formData.append("link", link);
 
     if (logoFile) {
       formData.append("logo", logoFile);
@@ -113,6 +115,17 @@ export default function OrganisationPage() {
                   maxLength={7}
                   className="input uppercase"
                   placeholder="#000000"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm text-gray-400">Link</label>
+              <div className="flex items-center gap-4">
+                <input
+                  value={org.link}
+                  onChange={(e) => setLink(e.target.value)}
+                  className="h-10 w-full border border-white pl-2 cursor-pointer rounded"
                 />
               </div>
             </div>

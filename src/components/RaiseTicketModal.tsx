@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { IconCopy, IconCheck, IconUpload } from "@tabler/icons-react";
 import api from "@/lib/axios";
+import { useRouter } from "next/navigation";
+import { useOrganisation } from "@/context/OrganisationProvider";
 
 type Subject = {
   _id: string;
@@ -44,6 +46,9 @@ export default function RaiseTicketModal({
     return_channel: "email",
   });
 
+  const { organisation } = useOrganisation();
+  const router = useRouter();
+
   /* ---------------- Fetch Subjects ---------------- */
   useEffect(() => {
     api.get("/subjects").then((res) => setSubjects(res.data.data));
@@ -61,10 +66,10 @@ export default function RaiseTicketModal({
 
   function SuccessScreen({
     ticket,
-    onClose,
+    onPrimaryAction,
   }: {
     ticket: string;
-    onClose: () => void;
+    onPrimaryAction: () => void;
   }) {
     const [copied, setCopied] = useState(false);
 
@@ -76,7 +81,6 @@ export default function RaiseTicketModal({
 
     return (
       <div className="w-full max-w-md mx-auto px-6 pt-4 pb-9 text-white text-left space-y-5">
-        {/* PRIMARY LINE */}
         <p
           className="text-sm mb-3  font-medium"
           style={{ color: "var(--accent)" }}
@@ -84,13 +88,11 @@ export default function RaiseTicketModal({
           Your request has been received.
         </p>
 
-        {/* DESCRIPTION */}
         <p className="text-sm text-white/60 leading-relaxed">
           Your request will be reviewed and resolved as soon as possible. Please
           keep your Request ID until the process is complete.
         </p>
 
-        {/* TICKET ID */}
         <div
           className="flex items-center justify-center gap-3 rounded-lg px-4 py-3"
           style={{ backgroundColor: `${primarycolor}33` }}
@@ -112,9 +114,8 @@ export default function RaiseTicketModal({
           </button>
         </div>
 
-        {/* CTA BUTTON */}
         <button
-          onClick={handleClose}
+          onClick={onPrimaryAction}
           className="w-full py-3 rounded-lg text-sm font-bold text-black transition hover:opacity-90 cursor-pointer"
           style={{ backgroundColor: "var(--accent)" }}
         >
@@ -303,7 +304,26 @@ export default function RaiseTicketModal({
     });
     setSuccessTicket(null);
     setCounter(5);
-    onClose(); // call the original close function
+    onClose();
+  };
+
+  const primaryAction = () => {
+    if (!organisation?.link || organisation?.link == "/") {
+      setStep(0);
+      setDraft({
+        username: "",
+        subject_id: "",
+        sub_subject_id: "",
+        description: "",
+        audio: null,
+        files: [],
+        return_channel: "email",
+      });
+      setSuccessTicket(null);
+      setCounter(5);
+      onClose();
+    }
+    router.push(organisation?.link || "/");
   };
 
   return (
@@ -341,7 +361,10 @@ export default function RaiseTicketModal({
         </div>
 
         {successTicket ? (
-          <SuccessScreen ticket={successTicket} onClose={handleClose} />
+          <SuccessScreen
+            ticket={successTicket}
+            onPrimaryAction={primaryAction}
+          />
         ) : (
           <>
             {/* STEP 0 – BASIC INFO */}

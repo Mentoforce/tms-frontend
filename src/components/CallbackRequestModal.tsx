@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import api from "@/lib/axios";
 import { IconUser, IconPhone, IconCheck } from "@tabler/icons-react";
 import { motion } from "framer-motion";
+import { useOrganisation } from "@/context/OrganisationProvider";
+import { useRouter } from "next/navigation";
 
 const TOTAL_STEPS = 3;
 const DEFAULT_PRIMARY = "#DFD1A1";
@@ -36,6 +38,8 @@ export default function RequestCallbackModal({
 
   const usernameRegex = /^[a-zA-Z0-9]{4,}$/;
   const isUsernameValid = usernameRegex.test(draft.username);
+  const { organisation } = useOrganisation();
+  const router = useRouter();
 
   const handleClose = () => {
     setStep(0);
@@ -50,6 +54,24 @@ export default function RequestCallbackModal({
       preferred_time: "",
     });
     onClose();
+  };
+
+  const primaryAction = () => {
+    if (!organisation?.link || organisation?.link == "/") {
+      setStep(0);
+      setSuccessModal(false);
+      setCounter(3);
+      setIsMember(true);
+      setDraft({
+        username: "",
+        phone: "",
+        issue: "",
+        audio: null,
+        preferred_time: "",
+      });
+      onClose();
+    }
+    router.push(organisation?.link || "/");
   };
 
   /* ---------------- Submit ---------------- */
@@ -265,7 +287,10 @@ export default function RequestCallbackModal({
         </div>
 
         {successModal ? (
-          <SuccessScreen onClose={handleClose} onPrimaryAction={handleClose} />
+          <SuccessScreen
+            onClose={handleClose}
+            onPrimaryAction={primaryAction}
+          />
         ) : (
           <>
             {/* STEP CONTENT */}

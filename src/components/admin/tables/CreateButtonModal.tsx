@@ -29,10 +29,12 @@ const ICON_MAP: any = [
 
 export default function CreateButtonModal({
   initialData,
+  defaultRank,
   onClose,
   onSaved,
 }: {
   initialData?: any;
+  defaultRank: Number;
   onClose: () => void;
   onSaved: (config: any) => void;
 }) {
@@ -43,6 +45,7 @@ export default function CreateButtonModal({
     icon: "",
     action_type: "",
     action_target: "",
+    rank: defaultRank,
     is_active: true,
     quick_access: false,
   });
@@ -58,6 +61,7 @@ export default function CreateButtonModal({
         icon: initialData.icon || "",
         action_type: initialData.action.type || "",
         action_target: initialData.action.target || "",
+        rank: initialData.rank || 0,
         is_active: initialData.is_active ?? true,
         quick_access: initialData.quick_access ?? false,
       });
@@ -160,7 +164,17 @@ export default function CreateButtonModal({
               />
             </div>
           </div>
-
+          <div>
+            <label>Rank</label>
+            <input
+              type="number"
+              value={Number(form.rank)}
+              onChange={(e) =>
+                setForm({ ...form, rank: Number(e.target.value) })
+              }
+              className="m-2 p-2 border w-15 rounded-sm border-white"
+            />
+          </div>
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"

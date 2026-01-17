@@ -90,7 +90,7 @@ export default function BonusClaimModal({
             </h2>
             <button
               onClick={onClose}
-              className="text-white/80 hover:text-white text-2xl"
+              className="text-white/80 hover:text-white text-2xl cursor-pointer"
             >
               ✕
             </button>
@@ -107,7 +107,6 @@ export default function BonusClaimModal({
             <SuccessScreen onClose={onClose} />
           ) : (
             <>
-              {/* SECTION TITLE */}
               <h3
                 className="text-md font-base mb-3"
                 style={{ color: "var(--accent)" }}
@@ -115,7 +114,6 @@ export default function BonusClaimModal({
                 Bonus Details
               </h3>
 
-              {/* BONUS TYPE */}
               <div>
                 <label className="block text-sm text-white mb-2">
                   Bonus Type
@@ -263,7 +261,7 @@ function SuccessScreen({ onClose }: { onClose: () => void }) {
 
       <button
         onClick={onClose}
-        className="w-full py-3 rounded-lg text-sm font-bold text-black"
+        className="w-full py-3 rounded-lg text-sm font-bold text-black cursor-pointer"
         style={{ backgroundColor: "var(--accent)" }}
       >
         Close

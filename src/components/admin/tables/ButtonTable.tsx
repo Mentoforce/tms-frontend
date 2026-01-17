@@ -17,6 +17,7 @@ type ButtonConfig = {
     type: string;
     target: string;
   };
+  rank: number;
   is_active: boolean;
   quick_access: boolean;
 };
@@ -41,6 +42,7 @@ export default function ButtonTable({ config }: { config: ButtonConfig[] }) {
         {openModal && (
           <CreateButtonModal
             initialData={editingConfig}
+            defaultRank={configData.length + 1}
             onClose={() => {
               setOpenModal(false);
               setEditingConfig(null);
@@ -94,6 +96,7 @@ export default function ButtonTable({ config }: { config: ButtonConfig[] }) {
         {openModal && (
           <CreateButtonModal
             initialData={editingConfig}
+            defaultRank={configData.length + 1}
             onClose={() => {
               setOpenModal(false);
               setEditingConfig(null);
@@ -115,6 +118,7 @@ export default function ButtonTable({ config }: { config: ButtonConfig[] }) {
                 <Th>BUTTON</Th>
                 <Th>ACTION</Th>
                 <Th>PART</Th>
+                <Th>RANK</Th>
                 <Th>STATUS</Th>
                 <Th>UPDATE</Th>
               </tr>
@@ -137,7 +141,7 @@ export default function ButtonTable({ config }: { config: ButtonConfig[] }) {
                   <Td className="text-gray-400">
                     {b.quick_access ? "Quick Access" : "Quick Support"}
                   </Td>
-
+                  <Td>{b.rank ?? "-"}</Td>
                   <Td>
                     <button
                       className="cursor-pointer"

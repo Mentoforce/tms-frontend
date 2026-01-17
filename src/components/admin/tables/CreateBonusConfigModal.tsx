@@ -24,14 +24,17 @@ export default function CreateBonusConfigModal({
 
   const [loading, setLoading] = useState(false);
 
+  const toInputDate = (date?: string | Date) =>
+    date ? new Date(date).toISOString().slice(0, 10) : "";
+
   useEffect(() => {
     if (initialData) {
       setForm({
         _id: initialData._id || "",
         title: initialData.title || "",
         explanation: initialData.explanation || "",
-        start_date: initialData.start_date || "",
-        end_date: initialData.end_date || "",
+        start_date: toInputDate(initialData.start_date),
+        end_date: toInputDate(initialData.end_date),
         is_active: initialData.is_active ?? true,
       });
     }

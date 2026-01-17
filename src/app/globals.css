@@ -48,7 +48,7 @@ body {
 /* Dropdown options – default state */
 .select-clean option {
   background-color: #000000; /* black dropdown */
-  color: var(--accent); /* primary color text */
+  color: #ffffff; /* primary color text */
   padding: 14px 16px; /* increased spacing */
   line-height: 1.6; /* more breathing room */
 }
@@ -62,7 +62,7 @@ body {
 /* Selected option – kill blue highlight */
 .select-clean option:checked {
   background-color: #000000;
-  color: var(--accent);
+  color: #ffffff;
 }
 
 /* Focused option (Firefox fix) */

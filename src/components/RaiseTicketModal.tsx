@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { IconCopy, IconCheck } from "@tabler/icons-react";
+import { IconCopy, IconCheck, IconUpload } from "@tabler/icons-react";
 import api from "@/lib/axios";
 
 type Subject = {
@@ -140,6 +140,7 @@ export default function RaiseTicketModal({
   const [recordedDuration, setRecordedDuration] = useState(0); // final duration
 
   const [playProgress, setPlayProgress] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // time formatter
   const formatTime = (s: number) => {
@@ -254,22 +255,26 @@ export default function RaiseTicketModal({
 
   /* ---------------- Submit ---------------- */
   const submitTicket = async () => {
-    const fd = new FormData();
+    if (isSubmitting) return;
 
-    fd.append("username", draft.username);
-    fd.append("subject_id", draft.subject_id);
-    fd.append("sub_subject_id", draft.sub_subject_id);
-    fd.append("description", draft.description);
-    fd.append("return_channel", draft.return_channel);
+    try {
+      setIsSubmitting(true);
 
-    if (draft.audio) fd.append("audio", draft.audio);
+      const fd = new FormData();
+      fd.append("username", draft.username);
+      fd.append("subject_id", draft.subject_id);
+      fd.append("sub_subject_id", draft.sub_subject_id);
+      fd.append("description", draft.description);
+      fd.append("return_channel", draft.return_channel);
 
-    draft.files.forEach((f) => {
-      fd.append("files", f.file, f.name);
-    });
+      if (draft.audio) fd.append("audio", draft.audio);
+      draft.files.forEach((f) => fd.append("files", f.file, f.name));
 
-    const res = await api.post("/tickets/create", fd);
-    setSuccessTicket(res.data.data.ticket_number);
+      const res = await api.post("/tickets/create", fd);
+      setSuccessTicket(res.data.data.ticket_number);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!open) return null;
@@ -741,7 +746,9 @@ export default function RaiseTicketModal({
                     htmlFor="file-upload"
                     className="cursor-pointer flex flex-col items-center gap-2 text-white/70"
                   >
-                    <div className="text-xl">⬆</div>
+                    <div className="text-xl">
+                      <IconUpload size={18} stroke={2} />
+                    </div>
                     <p className="text-sm">
                       Drag & drop files here or{" "}
                       <span className="underline">browse</span>
@@ -936,10 +943,15 @@ export default function RaiseTicketModal({
                 {/* SEND BUTTON — FINAL ACTION */}
                 <button
                   onClick={submitTicket}
-                  className="cursor-pointer w-full mt-4 py-4 rounded-lg text-base font-bold text-black transition"
+                  disabled={isSubmitting}
+                  className={`w-full mt-4 py-4 rounded-lg text-base font-bold text-black transition ${
+                    isSubmitting
+                      ? "opacity-60 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`}
                   style={{ backgroundColor: "var(--accent)" }}
                 >
-                  Send →
+                  {isSubmitting ? "Sending..." : "Send →"}
                 </button>
               </div>
             )}

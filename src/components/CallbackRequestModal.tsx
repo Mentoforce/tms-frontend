@@ -393,12 +393,17 @@ export default function RequestCallbackModal({
                     style={{ border: "1px solid rgba(255,255,255,0.3)" }}
                   />
                   {/* OR */}
-                  <p
-                    className="text-s text-center mb-2"
-                    style={{ color: "var(--accent)" }}
-                  >
-                    OR
-                  </p>
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex-1 h-px"
+                      style={{ backgroundColor: "var(--accent)" }}
+                    />
+                    <span className="text-xs text-white/60 uppercase">or</span>
+                    <div
+                      className="flex-1 h-px"
+                      style={{ backgroundColor: "var(--accent)" }}
+                    />
+                  </div>
 
                   {/* Record button */}
                   {/* START RECORD */}

@@ -32,7 +32,6 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {/* ================= Mobile Top Bar ================= */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-slate-900 text-white">
         <div className="font-bold text-lg">Admin Panel</div>
 
@@ -41,7 +40,6 @@ export default function AdminSidebar() {
         </button>
       </div>
 
-      {/* ================= Overlay ================= */}
       {open && (
         <div
           className="fixed inset-0 z-40 bg-black/50"
@@ -49,7 +47,6 @@ export default function AdminSidebar() {
         />
       )}
 
-      {/* ================= Mobile Drawer ================= */}
       <aside
         className={`fixed top-0 right-0 z-50 h-full w-72 bg-slate-900 text-white transform transition-transform duration-300 ease-in-out
         ${open ? "translate-x-0" : "translate-x-full"}`}
@@ -80,7 +77,6 @@ export default function AdminSidebar() {
         </nav>
       </aside>
 
-      {/* ================= Desktop Sidebar ================= */}
       <aside className="hidden md:inline fixed w-64 bg-slate-900 text-white h-screen">
         <div className="p-4 font-bold text-lg">Admin Panel</div>
 
@@ -99,7 +95,6 @@ export default function AdminSidebar() {
         </nav>
       </aside>
 
-      {/* Spacer for mobile top bar */}
       <div className="md:hidden h-14" />
     </>
   );

@@ -83,7 +83,6 @@ export default function BonusClaimModal({
         className="w-full max-w-125 rounded-2xl bg-[#0A0A0A]"
         style={{ border: "1px solid var(--accent)" }}
       >
-        {/* HEADER */}
         <div className="px-6 sm:px-10 pt-7 pb-2">
           <div className="flex items-center justify-between">
             <h2 className="text-white font-medium text-2xl pt-2">
@@ -103,7 +102,6 @@ export default function BonusClaimModal({
           />
         </div>
 
-        {/* CONTENT */}
         <div className="px-10 pt-5 pb-12 space-y-4">
           {successModal ? (
             <SuccessScreen onClose={onClose} />
@@ -143,7 +141,6 @@ export default function BonusClaimModal({
                     ))}
                   </select>
 
-                  {/* Custom Arrow */}
                   <span
                     className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
                     style={{ color: "rgba(255,255,255,0.4)" }}
@@ -171,7 +168,6 @@ export default function BonusClaimModal({
                 )}
               </div>
 
-              {/* USERNAME */}
               <div>
                 <label className="block text-sm text-white mb-2">
                   Your Username
@@ -198,7 +194,6 @@ export default function BonusClaimModal({
                 )}
               </div>
 
-              {/* SUBMIT */}
               <button
                 onClick={handleSubmit}
                 disabled={
@@ -216,8 +211,6 @@ export default function BonusClaimModal({
     </div>
   );
 }
-
-/* ================= SUCCESS ================= */
 
 function SuccessScreen({ onClose }: { onClose: () => void }) {
   return (
@@ -264,7 +257,7 @@ function SuccessScreen({ onClose }: { onClose: () => void }) {
         />
       </motion.svg>
 
-      <p className="w-full text-sm text-white/70 text-left">
+      <p className="w-full text-base text-white/70 text-left">
         Your bonus claim request has been submitted successfully.
       </p>
 

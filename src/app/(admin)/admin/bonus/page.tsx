@@ -58,7 +58,7 @@ export default function TicketPage() {
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="bg-black border rounded-lg px-3 py-2"
+          className="bg-slate-900 border rounded-lg px-3 py-2"
         >
           <option value="all">All Cases</option>
           <option value="pending">Pending</option>

@@ -27,10 +27,7 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen bg-gray-900">
-      {/* Sidebar (fixed on mobile, static on desktop) */}
       <AdminSidebar />
-
-      {/* Main content */}
       <div className="md:ml-64 flex flex-col min-h-screen">
         <AdminHeader />
         <main className="p-6 pt-20 md:pt-6">{children}</main>

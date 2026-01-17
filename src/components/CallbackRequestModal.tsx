@@ -637,12 +637,11 @@ function SuccessScreen({
         </motion.svg>
       </div>
 
-      <h1 className="text-md font-base text-white/60">
+      <h1 className="text-base text-white/60 text-left">
         Your callback request has been received. Our team will reach out to you
         at your selected time slot.
       </h1>
 
-      {/* Primary CTA */}
       <button
         onClick={onPrimaryAction}
         className="w-full py-3 rounded-lg text-sm font-bold text-black text-center items-center hover:opacity-90 cursor-pointer"

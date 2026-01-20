@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import { useOrganisation } from "@/context/OrganisationProvider";
 import api from "@/lib/axios";
 
-export default function SelectOrganisation() {
+export default function SelectOrganisation({
+  redirectTo,
+}: {
+  redirectTo?: string;
+}) {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -22,18 +26,28 @@ export default function SelectOrganisation() {
       setLoading(true);
       setError("");
 
-      const res = await api.post(
-        "/check-org",
-        { code: code.trim() },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const res = await api.post("/check-org", {
+        code: code.trim(),
+      });
+
       localStorage.setItem("org_code", code.trim());
       setOrganisation(res.data.data);
+
+      if (redirectTo) {
+        router.replace(redirectTo);
+      }
     } catch (err: any) {
+      const status = err?.response?.status;
       if (err.status == 404) setError("Organisation not found");
       else setError(err.message);
+
+      if (status === 404) {
+        setError("Organisation not found");
+      } else {
+        setError(
+          err?.response?.data?.message || "Failed to validate organisation",
+        );
+      }
     } finally {
       setLoading(false);
     }

@@ -37,12 +37,15 @@ export default function FeatureCard({
   quick_access: boolean;
 }) {
   const Icon = ICON_MAP[icon] || IconTicket;
+  const iconSizeClass = quick_access
+    ? "w-[46px] h-[46px] sm:w-[56px] sm:h-[56px]"
+    : "w-[60px] h-[60px] sm:w-[60px] sm:h-[60px]";
   return (
     <button
       onClick={onClick}
       className={`${
-        quick_access ? "h-75" : "h-70"
-      } cursor-pointer w-full rounded-4xl flex flex-col items-center justify-center text-center gap-1 transition hover:scale-[1.02] active:scale-[0.99] `}
+        quick_access ? "sm:h-73.25" : "sm:h-70"
+      } h-52 cursor-pointer w-full sm:rounded-4xl rounded-2xl flex flex-col items-center justify-center text-center gap-1 transition hover:scale-[1.02] active:scale-[0.99] `}
       style={{
         backgroundColor: `${primarycolor}1A`,
         boxShadow: "0 10px 40px rgba(0,0,0,0.6)",
@@ -52,10 +55,8 @@ export default function FeatureCard({
       <div className="relative flex items-center justify-center w-14.5 h-14.5 mb-2">
         {quick_access && (
           <div
-            className="absolute rounded-full"
+            className="absolute rounded-full sm:w-11.25 w-[31.42px] sm:h-11.25 h-[32.36px]"
             style={{
-              width: "45px",
-              height: "45px",
               backgroundColor: primarycolor,
               opacity: 0.15,
               top: "20px",
@@ -66,15 +67,17 @@ export default function FeatureCard({
 
         {/* Icon sits relative and z-10 to stay above the circle */}
         <div className="relative z-10 text-[#BDBDBD]">
-          <Icon size={68} stroke={0.8} />
+          <Icon className={iconSizeClass} stroke={0.8} />
         </div>
       </div>
 
       {/* TITLE */}
       <h3
         className={`${
-          quick_access ? "text-[28px]" : "text-[18px]"
-        } mt-3 font-semibold text-[#FFFFFF]`}
+          quick_access
+            ? "sm:text-[28px] text-[20px]"
+            : "sm:text-[18px] text-[18.01px]"
+        } mt-1 font-semibold text-[#FFFFFF]`}
       >
         {title}
       </h3>

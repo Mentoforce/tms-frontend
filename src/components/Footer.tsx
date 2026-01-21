@@ -16,10 +16,11 @@ export default function Footer({ primarycolor }: { primarycolor?: string }) {
   if (!footer) return null;
 
   return (
-    <footer className="w-full mt-24">
+    <footer className="w-full sm:mt-24 mt-12">
       <div
-        className="w-full max-w-360 mx-auto h-px"
-        style={{ backgroundColor: `${accent}66` }}
+        aria-hidden
+        className="h-px w-[90%] mx-auto"
+        style={{ backgroundColor: accent }}
       />
 
       <div className="w-full max-w-360 mx-auto py-10 px-4 text-center text-sm text-[#BDBDBD]">

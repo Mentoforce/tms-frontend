@@ -72,13 +72,13 @@ export default function Home() {
       />
 
       {/* Feature Cards */}
-      <section className="w-full max-w-360 mx-auto px-4 md:px-6 mb-32">
-        <h2 className="mb-6 text-[35px] font-semibold tracking-tight text-[#BDBDBD] uppercase">
+      <section className="w-full max-w-360 mx-auto px-4 md:px-6 mb-16">
+        <h2 className="mb-6 sm:text-[35px] text-[20px] font-semibold tracking-tight text-[#BDBDBD] uppercase">
           QUICK ACCESS
         </h2>
 
         {/* FEATURE CARDS GRID*/}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 w-full gap-6 mb-32 auto-rows-[280px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 w-full gap-5">
           {features.map(
             (feature: any) =>
               feature.quick_access && (
@@ -93,16 +93,16 @@ export default function Home() {
                   primarycolor={primaryColor}
                   quick_access={feature.quick_access}
                 />
-              )
+              ),
           )}
         </div>
 
-        <h2 className="mb-6 text-[35px] font-semibold tracking-tight text-[#BDBDBD] uppercase">
+        <h2 className="my-6 mt-16 sm:text-[35px] text-[20px] font-semibold tracking-tight text-[#BDBDBD] uppercase">
           QUICK SUPPORT
         </h2>
 
         {/* FEATURE CARDS GRID*/}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-6 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-5 ">
           {features.map(
             (feature: any) =>
               !feature.quick_access && (
@@ -117,7 +117,7 @@ export default function Home() {
                   primarycolor={primaryColor}
                   quick_access={feature.quick_access}
                 />
-              )
+              ),
           )}
         </div>
       </section>

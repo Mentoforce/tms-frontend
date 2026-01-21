@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import api from "@/lib/axios";
-import { IconSearch, IconCheck } from "@tabler/icons-react";
+import {
+  IconSearch,
+  IconCheck,
+  IconCircle,
+  IconCircleFilled,
+} from "@tabler/icons-react";
 
 const DEFAULT_PRIMARY = "#DFD1A1";
 
@@ -56,13 +61,13 @@ export default function SearchTicket({
   };
 
   return (
-    <section className="w-full max-w-360 mx-auto px-4 md:px-6 mb-32">
-      <h2 className="mb-6 text-[35px] font-semibold tracking-tight text-[#BDBDBD] uppercase">
+    <section className="w-full max-w-360 mx-auto px-4 md:px-6 sm:mb-32 mb-12">
+      <h2 className="mb-6 sm:text-[35px] text-[20px] font-semibold tracking-tight text-[#BDBDBD] uppercase">
         TRANSACTION INQUIRY
       </h2>
 
       <div
-        className="w-full rounded-3xl min-h-97 flex flex-col px-6 py-10 md:px-20 md:py-16 gap-6"
+        className="w-full rounded-3xl sm:min-h-97 flex flex-col px-6 sm:py-10 py-8 md:px-20 md:py-16 gap-6 min-h-100"
         style={{ backgroundColor: `${accent}1A` }}
       >
         {!result ? (
@@ -73,7 +78,7 @@ export default function SearchTicket({
                   Ticket ID
                 </label>
                 <input
-                  className="w-full h-16 rounded-lg px-6 bg-[#0C0A06] text-white focus:outline-none mt-3"
+                  className="w-full sm:h-16 h-12 rounded-lg px-6 bg-[#0C0A06] text-white focus:outline-none mt-3"
                   placeholder="e.g. 3012-3LIT"
                   value={ticketNumber}
                   onChange={(e) => setTicketNumber(e.target.value)}
@@ -84,7 +89,7 @@ export default function SearchTicket({
                   Username
                 </label>
                 <input
-                  className="w-full h-16 rounded-lg px-6 bg-[#0C0A06] text-white focus:outline-none mt-3"
+                  className="w-full sm:h-16 h-12 rounded-lg px-6 bg-[#0C0A06] text-white focus:outline-none mt-3"
                   placeholder="e.g. Elitedesk123"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -95,7 +100,7 @@ export default function SearchTicket({
             <button
               onClick={handleSearch}
               disabled={loading}
-              className="cursor-pointer w-full h-16.5 rounded-lg font-semibold text-[18px] text-black flex items-center justify-center gap-2"
+              className="cursor-pointer w-full h-13 rounded-lg font-semibold text-[18px] text-black flex items-center justify-center gap-2"
               style={{ backgroundColor: accent }}
             >
               <IconSearch size={20} stroke={2.5} />
@@ -112,7 +117,7 @@ export default function SearchTicket({
             {/* DETAILS SECTION */}
             <div className="mb-10">
               <h3 className="text-2xl font-bold text-white mb-4">Details</h3>
-              <div className="grid grid-cols-2 text-[15px] gap-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 text-[15px] sm:gap-y-6">
                 <div className="space-y-1">
                   <p className="text-white/40">
                     Ticket ID:{" "}
@@ -121,11 +126,10 @@ export default function SearchTicket({
                     </span>
                   </p>
                   <p className="text-white/40">
-                    Status:{" "}
-                    <span className="text-white capitalize">
-                      {result.ticket.status}
-                    </span>
+                    Username:{" "}
+                    <span className="text-white ml-1">{username}</span>
                   </p>
+
                   <p className="text-white/40">
                     Category:{" "}
                     <span className="text-white ml-1">
@@ -134,16 +138,19 @@ export default function SearchTicket({
                     </span>
                   </p>
                 </div>
-                <div className="text-left  space-y-1">
+                <div className="space-y-1 text-left">
                   <p className="text-white/40">
-                    Username:{" "}
-                    <span className="text-white ml-1">{username}</span>
+                    Status:{" "}
+                    <span className="text-white capitalize">
+                      {result.ticket.status}
+                    </span>
                   </p>
+
                   <p className="text-white/40">
                     Last Update:{" "}
                     <span className="text-white ml-1">
                       {new Date(result.ticket.updatedAt).toLocaleDateString(
-                        "en-GB"
+                        "en-GB",
                       )}
                     </span>
                   </p>
@@ -154,7 +161,7 @@ export default function SearchTicket({
 
             {/* STATUS MONITORING SECTION */}
             <div>
-              <h3 className="text-2xl font-bold text-white mb-4">
+              <h3 className="text-2xl font-bold text-white mb-6">
                 Status Monitoring
               </h3>
               <div className="flex flex-col">
@@ -190,16 +197,17 @@ export default function SearchTicket({
 
                         {/* Status Content */}
                         <div className="pb-10">
-                          <p className="text-xl font-bold text-white capitalize leading-tight">
+                          <p className="text-lg font-bold text-white capitalize leading-tight">
                             {history.action.replace("_", " ")}
                           </p>
-                          <div className="flex gap-4 text-[14px] text-white/40 mt-1">
+                          <div className="flex gap-3 items-center text-[14px] text-white/40 mt-2">
                             <span>
                               Date:{" "}
                               <span className="text-white ml-1">
                                 {dateObj.toLocaleDateString("en-GB")}
                               </span>
                             </span>
+                            <IconCircleFilled size={3} />
                             <span>
                               Time:{" "}
                               <span className="text-white ml-1">
@@ -211,21 +219,21 @@ export default function SearchTicket({
                               </span>
                             </span>
                           </div>
-                          <p className="text-[14px] text-white/40 mt-1">
+                          {/* <p className="text-[14px] text-white/40 mt-1">
                             Action By:{" "}
                             <span className="text-white">
                               {history.admin_id ? "Admin" : "User"}
                             </span>
-                          </p>
+                          </p> */}
 
-                          <p className="text-[14px] text-white/60 mt-3">
+                          {/* <p className="text-[14px] text-white/60 mt-3">
                             Action:{" "}
                             <span className="text-white ml-1">
                               {history.action}
                             </span>
-                          </p>
+                          </p> */}
                           {history.comments && (
-                            <div className="mt-2 text-[14px] text-white/40">
+                            <div className="mt-1 text-[14px] text-white/40">
                               Comments:{" "}
                               <span className="text-white ml-1">
                                 {history.comments}
@@ -235,14 +243,14 @@ export default function SearchTicket({
                         </div>
                       </div>
                     );
-                  }
+                  },
                 )}
               </div>
             </div>
 
             <button
               onClick={() => setResult(null)}
-              className="mt-6 text-sm underline text-white/40 hover:text-white transition-colors"
+              className=" text-sm underline text-white/40 hover:text-white transition-colors"
             >
               Search another ticket
             </button>

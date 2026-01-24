@@ -13,12 +13,12 @@ import {
 } from "react";
 
 const OrganisationContext = createContext<OrganisationContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const OrganisationProvider = ({ children }: { children: ReactNode }) => {
   const [organisation, setOrganisation] = useState<OrganisationConfig | null>(
-    null
+    null,
   );
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -37,7 +37,7 @@ export const OrganisationProvider = ({ children }: { children: ReactNode }) => {
           { code: storedOrg.trim() },
           {
             headers: { "Content-Type": "application/json" },
-          }
+          },
         );
         setOrganisation(res.data.data);
       } catch (error) {

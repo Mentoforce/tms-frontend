@@ -1,3 +1,35 @@
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import api from "@/lib/axios";
+
+// const DEFAULT_PRIMARY = "#DFD1A1";
+
+// export default function Footer({ primarycolor }: { primarycolor?: string }) {
+//   const accent = primarycolor || DEFAULT_PRIMARY;
+//   const [footer, setFooter] = useState<any>(null);
+
+//   useEffect(() => {
+//     api.get("/footer").then((res) => setFooter(res.data.data));
+//   }, []);
+
+//   if (!footer) return null;
+
+//   return (
+//     <footer className="w-full sm:mt-24 mt-12">
+//       <div
+//         aria-hidden
+//         className="h-px w-[90%] mx-auto"
+//         style={{ backgroundColor: accent }}
+//       />
+
+//       <div className="w-full max-w-360 mx-auto py-10 px-4 text-center text-sm text-[#BDBDBD]">
+//         <div dangerouslySetInnerHTML={{ __html: footer.html_content }} />
+//       </div>
+//     </footer>
+//   );
+// }
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -16,15 +48,20 @@ export default function Footer({ primarycolor }: { primarycolor?: string }) {
   if (!footer) return null;
 
   return (
-    <footer className="w-full sm:mt-24 mt-12">
+    <footer className="w-full mt-20 md:mt-32 pb-10">
+      {/* SEPARATOR LINE - Matches Section Headings */}
       <div
         aria-hidden
-        className="h-px w-[90%] mx-auto"
+        className="w-full max-w-[328px] md:max-w-[840px] mx-auto h-[0.5px] opacity-20"
         style={{ backgroundColor: accent }}
       />
 
-      <div className="w-full max-w-360 mx-auto py-10 px-4 text-center text-sm text-[#BDBDBD]">
-        <div dangerouslySetInnerHTML={{ __html: footer.html_content }} />
+      {/* FOOTER CONTENT */}
+      <div className="w-full max-w-[328px] md:max-w-[840px] mx-auto pt-8 px-0 text-center text-[12px] md:text-[14px] text-[#BDBDBD] font-light leading-relaxed tracking-wide">
+        <div
+          className="opacity-60 hover:opacity-100 transition-opacity duration-300"
+          dangerouslySetInnerHTML={{ __html: footer.html_content }}
+        />
       </div>
     </footer>
   );

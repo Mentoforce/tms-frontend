@@ -154,10 +154,7 @@ export default function FeatureCard({
             {subtitle}
           </span>
         </div>
-        <Icon
-          className="w-[19.43px] h-[19.43px] md:w-7 md:h-7 text-[#BDBDBD]"
-          stroke={1.5}
-        />
+        <Icon className=" md:w-7 md:h-7 text-[#BDBDBD]" stroke={1.5} />
       </button>
     );
   }

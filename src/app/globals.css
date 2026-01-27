@@ -70,3 +70,8 @@ body {
   background-color: #111111;
   color: #ffffff;
 }
+
+.footer-html,
+.footer-html * {
+  color: var(--footer-accent) !important;
+}

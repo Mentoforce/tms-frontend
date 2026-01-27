@@ -136,28 +136,23 @@ export default function FeatureCard({
     return (
       <button
         onClick={onClick}
-        className="flex mx-auto w-full md:h-25.5 md:w-210 md:px-10 md:py-7.5 md:rounded-xl items-center justify-between md:border gap-2 border-[0.5px] h-16.25 rounded-lg p-4 hover:opacity-80 transition active:scale-[0.99]"
+        className="flex mx-auto w-full md:h-25.5 md:w-210 md:px-10 md:py-7.5 md:rounded-xl items-center justify-between md:border gap-6 border-[0.5px] h-16.25 rounded-lg p-4 hover:opacity-80 transition active:scale-[0.99]"
         style={{
           borderColor: primarycolor,
           backgroundColor: `${primarycolor}1A`,
+          color: `${primarycolor}`,
         }}
       >
-        <Icon
-          className="w-[19.43px] h-[19.43px] md:w-7 md:h-7 text-[#BDBDBD]"
-          stroke={1.5}
-        />
+        <Icon className="w-[19.43px] h-[19.43px] md:w-7 md:h-7" stroke={1.5} />
         <div className="flex flex-col text-center flex-1">
-          <span className="text-[12px] md:text-[20px] font-semibold md:font-semibold tracking-wider text-[#BDBDBD] uppercase">
+          <span className="text-[12px] md:text-[20px] font-semibold md:font-semibold tracking-wider uppercase">
             {title}
           </span>
-          <span className="text-[10px] md:text-[12px] font-light md:font-medium text-[#BDBDBD] opacity-60">
+          <span className="text-[10px] md:text-[14px] font-light md:font-medium opacity-60">
             {subtitle}
           </span>
         </div>
-        <Icon
-          className="w-[19.43px] h-[19.43px] md:w-7 md:h-7 text-[#BDBDBD]"
-          stroke={1.5}
-        />
+        <Icon className="w-[19.43px] h-[19.43px] md:w-7 md:h-7" stroke={1.5} />
       </button>
     );
   }
@@ -166,18 +161,22 @@ export default function FeatureCard({
   return (
     <button
       onClick={onClick}
-      className="w-full md:h-[102px] h-[100px] rounded-lg md:rounded-xl border-[0.5px] flex flex-col items-center justify-center gap-2 transition hover:opacity-80 active:scale-[0.99]"
+      className="w-full md:h-30 h-25 rounded-lg md:rounded-xl md:border border-[0.5px] flex flex-col items-center justify-center gap-3 md:gap-2 transition md:py-5 md:px-20 hover:opacity-80 active:scale-[0.99]"
       style={{
         borderColor: primarycolor,
         backgroundColor: `${primarycolor}1A`,
+        color: `${primarycolor}`,
       }}
     >
-      <Icon className="w-6 h-6 text-[#BDBDBD]" stroke={1.5} />
+      <Icon className="md:size-7.5 size-5" stroke={1.5} />
       <div className="flex flex-col items-center">
-        <span className="text-[11px] md:text-[15px] font-semibold md:font-bold text-white uppercase md:capitalize">
+        <span className="text-[11px] md:text-[16px] font-semibold md:font-bold uppercase md:capitalize">
           {title}
         </span>
-        <span className="text-[8px] md:text-[11px] font-light md:font-medium text-[#BDBDBD] text-center px-4 leading-tight opacity-60">
+        <span
+          className="text-[8px] md:text-[11px] font-light md:font-medium text-center px-2 leading-tight opacity-60 truncate w-full block"
+          title={subtitle} // Shows full text on hover
+        >
           {subtitle}
         </span>
       </div>

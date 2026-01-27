@@ -277,6 +277,11 @@ export default function SearchTicket({
   primarycolor?: string;
 }) {
   const accent = primarycolor || DEFAULT_PRIMARY;
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+
+  const ddmm = `${day}${month}`;
 
   const [ticketNumber, setTicketNumber] = useState("");
   const [username, setUsername] = useState("");
@@ -318,45 +323,53 @@ export default function SearchTicket({
   };
 
   return (
-    <section className="w-full max-w-[328px] md:max-w-[840px] mx-auto px-0 mb-20">
+    <section
+      className="w-full max-w-82 md:max-w-210 mx-auto px-0 mb-20 md:mt-8  "
+      style={{ color: `${accent}` }}
+    >
       {/* SECTION HEADING */}
       <div className="flex flex-col gap-1 mb-6 md:mb-8">
-        <h2 className="text-[18px] md:text-[30px] font-semibold md:font-bold uppercase text-[#BDBDBD] tracking-tight">
+        <h2 className="text-[18px] md:text-[30px] font-semibold md:font-bold uppercase tracking-tight mb-4">
           TRANSACTION INQUIRY
         </h2>
-        <div className="w-full h-[0.5px] bg-[#DFD1A1] opacity-20" />
+        <div
+          className="w-full h-[0.5px] opacity-20"
+          style={{ background: `${accent}` }}
+        />
       </div>
 
       <div
-        className="w-full rounded-2xl md:rounded-3xl flex flex-col px-5 py-8 md:px-12 md:py-12 gap-6 border-[0.5px]"
+        className="w-full rounded-xl md:rounded-3xl flex flex-col px-5 py-8 md:px-12 md:py-12 gap-6 border-[0.5px]"
         style={{
-          backgroundColor: `${accent}0D`, // 5% opacity for a subtle glass feel
-          borderColor: `${accent}33`, // 20% opacity border
+          backgroundColor: `${accent}1A`,
+          borderColor: `${accent}`,
         }}
       >
         {!result ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] md:text-[16px] font-semibold text-white/90">
+                <label className="text-[14px] md:text-[16px] font-semibold">
                   Ticket ID
                 </label>
                 <input
-                  className="w-full h-12 md:h-14 rounded-xl px-4 bg-[#0C0A06] text-white border-[0.5px] border-white/10 focus:outline-none focus:border-white/30 transition-all text-[14px]"
-                  placeholder="e.g. 3012-3LIT"
+                  className="w-full h-12 md:h-14 rounded-xl px-4 bg-[#0C0A06] border-[0.5px] border-white/10 focus:outline-none focus:border-white/30 transition-all text-[14px]"
+                  placeholder={`e.g. ${ddmm}-3LIT`}
                   value={ticketNumber}
                   onChange={(e) => setTicketNumber(e.target.value)}
+                  style={{ borderColor: `${accent}` }}
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] md:text-[16px] font-semibold text-white/90">
+                <label className="text-[14px] md:text-[16px] font-semibold">
                   Username
                 </label>
                 <input
-                  className="w-full h-12 md:h-14 rounded-xl px-4 bg-[#0C0A06] text-white border-[0.5px] border-white/10 focus:outline-none focus:border-white/30 transition-all text-[14px]"
+                  className="w-full h-12 md:h-14 rounded-xl px-4 bg-[#0C0A06] border-[0.5px] focus:outline-none focus:border-white/30 transition-all text-[14px]"
                   placeholder="e.g. Elitedesk123"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  style={{ borderColor: `${accent}` }}
                 />
               </div>
             </div>
@@ -371,33 +384,34 @@ export default function SearchTicket({
               {loading ? "Searching..." : "INQUIRE"}
             </button>
 
-            <p className="text-[11px] md:text-[13px] text-[#BDBDBD] opacity-60 leading-relaxed">
-              <span className="font-bold">Note:</span> You can check the status
-              of your transaction by entering your Ticket ID and username.
+            <p className="text-[11px] font-semibold md:text-[15.5px] opacity-60 leading-relaxed">
+              <span className="font-normal">Note:</span> You can check the
+              status of your transaction by entering your Ticket ID and
+              username.
             </p>
           </>
         ) : (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
             {/* DETAILS SECTION */}
             <div className="mb-8">
-              <h3 className="text-[18px] md:text-[22px] font-bold text-white mb-6">
+              <h3 className="text-[18px] md:text-[22px] font-bold mb-6">
                 Details
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 md:gap-y-6 text-[13px] md:text-[15px]">
                 <div className="space-y-2">
-                  <p className="text-[#BDBDBD]">
+                  <p>
                     Ticket ID:{" "}
                     <span className="text-white font-medium ml-1">
                       {result.ticket.ticket_number}
                     </span>
                   </p>
-                  <p className="text-[#BDBDBD]">
+                  <p>
                     Username:{" "}
                     <span className="text-white font-medium ml-1">
                       {username}
                     </span>
                   </p>
-                  <p className="text-[#BDBDBD]">
+                  <p>
                     Category:{" "}
                     <span className="text-white font-medium ml-1">
                       {result.ticket.subject_id?.title} ›{" "}
@@ -406,13 +420,13 @@ export default function SearchTicket({
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-[#BDBDBD]">
+                  <p>
                     Status:{" "}
                     <span className="text-white capitalize font-medium">
                       {result.ticket.status}
                     </span>
                   </p>
-                  <p className="text-[#BDBDBD]">
+                  <p>
                     Last Update:{" "}
                     <span className="text-white font-medium ml-1">
                       {new Date(result.ticket.updatedAt).toLocaleDateString(
@@ -427,7 +441,7 @@ export default function SearchTicket({
 
             {/* STATUS MONITORING SECTION */}
             <div>
-              <h3 className="text-[18px] md:text-[22px] font-bold text-white mb-8">
+              <h3 className="text-[18px] md:text-[22px] font-bold mb-8">
                 Status Monitoring
               </h3>
               <div className="flex flex-col">
@@ -441,7 +455,7 @@ export default function SearchTicket({
                       <div key={index} className="flex gap-6 md:gap-8 relative">
                         {!isLast && (
                           <div
-                            className="absolute left-[15px] top-8 w-[1px] h-full opacity-30"
+                            className="absolute left-3.75 top-8 w-px h-full opacity-30"
                             style={{ backgroundColor: color }}
                           />
                         )}
@@ -464,7 +478,7 @@ export default function SearchTicket({
                           <div className="flex gap-3 items-center text-[12px] md:text-[13px] text-[#BDBDBD] opacity-60 mt-2">
                             <span>
                               Date:{" "}
-                              <span className="text-white ml-1">
+                              <span className="ml-1">
                                 {dateObj.toLocaleDateString("en-GB")}
                               </span>
                             </span>
@@ -508,9 +522,7 @@ export default function SearchTicket({
         )}
 
         {error && (
-          <p className="text-[13px] text-red-400 font-bold bg-red-400/10 p-3 rounded-lg border-[0.5px] border-red-400/20">
-            {error}
-          </p>
+          <p className="text-[13px] text-red-400 font-semibold ">{error}</p>
         )}
       </div>
     </section>

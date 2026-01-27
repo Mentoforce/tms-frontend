@@ -157,7 +157,7 @@ export default function FeatureCard({
     );
   }
 
-  /* ---------------- QUICK SUPPORT CARD (Grid) ---------------- */
+  /* ---------------- QUICK SUPPORT CARD ---------------- */
   return (
     <button
       onClick={onClick}
@@ -175,7 +175,7 @@ export default function FeatureCard({
         </span>
         <span
           className="text-[8px] md:text-[11px] font-light md:font-medium text-center px-2 leading-tight opacity-60 truncate w-full block"
-          title={subtitle} // Shows full text on hover
+          title={subtitle}
         >
           {subtitle}
         </span>

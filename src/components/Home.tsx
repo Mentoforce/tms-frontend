@@ -198,9 +198,9 @@ export default function Home() {
         primarycolor={primaryColor}
       />
 
-      {/* ---------------- MAIN CONTAINER (840px Desktop / 328px Mobile) ---------------- */}
+      {/* ---------------- MAIN CONTAINER---------------- */}
       <section
-        className="w-full max-w-[328px] md:max-w-[840px] mx-auto px-0 py-12 flex flex-col gap-12 md:gap-20"
+        className="w-full max-w-82 md:max-w-210 mx-auto pt-0 pb-12 flex flex-col gap-12 md:gap-20"
         style={{ color: `${primaryColor}` }}
       >
         {/* QUICK ACCESS SECTION */}
@@ -234,7 +234,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* QUICK SUPPORT SECTION (All 7+ features) */}
+        {/* QUICK SUPPORT SECTION */}
         <div>
           <div className="flex flex-col gap-1 mb-6 md:mb-8">
             <h2 className="text-[18px] md:text-[30px] font-semibold md:font-bold uppercase tracking-tight mb-4">
@@ -242,8 +242,7 @@ export default function Home() {
             </h2>
             <div className="w-full h-[0.5px] bg-[#DFD1A1] opacity-20" />
           </div>
-          {/* Grid maintains 2 columns on all devices per Figma mobile specs */}
-          <div className="grid grid-cols-2 gap-3 md:gap-x-[22px] md:gap-y-5">
+          <div className="grid grid-cols-2 gap-3 md:gap-x-5.5 md:gap-y-5">
             {features.map(
               (feature: any) =>
                 !feature.quick_access && (

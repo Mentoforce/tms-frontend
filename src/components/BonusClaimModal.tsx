@@ -76,37 +76,37 @@ export default function BonusClaimModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 sm:px-6"
       style={{ ["--accent" as any]: accent, color: accent }}
     >
       <div
-        className="w-full max-w-125 rounded-2xl bg-[#0A0A0A]"
+        className="w-full max-w-130 rounded-2xl bg-[#0A0A0A] shadow-[0_0_60px_rgba(0,0,0,0.9)]"
         style={{ border: "1px solid var(--accent)" }}
       >
-        <div className="px-6 sm:px-10 pt-7 pb-2">
+        <div className="px-5 sm:px-10 pt-6 sm:pt-8 pb-1">
           <div className="flex items-center justify-between">
-            <h2 className="font-medium text-2xl pt-2">Claim Bonus</h2>
+            <h2 className="font-medium text-xl sm:text-2xl pt-3">
+              Claim Bonus
+            </h2>
             <button
               onClick={onClose}
-              className=" hover:opacity-80 text-2xl cursor-pointer"
+              className=" hover:opacity-70 text-xl sm:text-2xl pt-3 cursor-pointer"
             >
               ✕
             </button>
           </div>
 
           <div
-            className="mt-4 opacity-40"
+            className="mt-4 sm:mt-5 opacity-40"
             style={{ borderBottom: "1px solid" }}
           />
         </div>
 
-        <div className="px-10 pt-5 pb-12 space-y-4">
+        <div className="px-6 sm:px-10 py-6 space-y-6 pt-5 pb-10">
           {successModal ? (
             <SuccessScreen onClose={onClose} />
           ) : (
             <>
-              <h3 className="text-md font-base mb-3">Bonus Details</h3>
-
               <div>
                 <label className="block text-sm mb-2">Bonus Type</label>
 
@@ -147,10 +147,9 @@ export default function BonusClaimModal({
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
-                    className="overflow-hidden rounded-lg"
+                    className="overflow-hidden rounded-lg mt-2"
                     style={{
-                      border: "1px solid rgba(255,255,255,0.25)",
-                      background: "rgba(255,255,255,0.06)",
+                      border: `1px solid var(--accent)`,
                     }}
                   >
                     <div className="px-4 py-3 text-sm leading-relaxed opacity-80">
@@ -167,10 +166,9 @@ export default function BonusClaimModal({
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
-                  className="w-full mb-1 rounded-lg px-4 py-4 text-sm bg-transparent focus:outline-none placeholder:text-base"
+                  className="w-full mb-1 rounded-lg px-4 py-4 text-sm bg-current/2 focus:outline-none placeholder:text-base"
                   style={{
-                    border: `1px solid "var(--accent)"
-                    }`,
+                    border: `1px solid var(--accent)`,
                   }}
                 />
                 {username && !isUsernameValid && (

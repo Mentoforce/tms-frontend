@@ -63,7 +63,7 @@ export default function SelectOrganisation({
           value={code}
           onChange={(e) => setCode(e.target.value)}
           placeholder="Organisation Code"
-          className="w-full border px-3 py-2 rounded mb-3"
+          className="w-full border px-3 py-2 rounded mb-3 "
         />
 
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
@@ -71,7 +71,7 @@ export default function SelectOrganisation({
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full bg-black text-white py-2 rounded"
+          className="w-full bg-blue-500 text-black font-bold py-2 rounded"
         >
           {loading ? "Validating..." : "Continue"}
         </button>

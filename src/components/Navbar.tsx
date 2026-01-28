@@ -63,7 +63,7 @@ export default function Navbar({ config }: NavbarProps) {
           src={logoUrl}
           alt="Company Logo"
           className="
-            h-15 md:h-25
+            h-23 md:h-35
             w-auto object-contain
           "
         />

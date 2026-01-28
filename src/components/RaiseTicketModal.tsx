@@ -87,10 +87,10 @@ export default function RaiseTicketModal({
 
     return (
       <div
-        className="w-full flex flex-col max-w-md mx-auto sm:px-6 px-10 pt-4 pb-9 text-left space-y-5"
+        className="w-full flex flex-col max-w-md mx-auto text-left space-y-5 px-5 sm:px-10 py-5 sm:py-6"
         style={{ color: "var(--accent)" }}
       >
-        <p className="text-sm mb-3  font-medium">
+        <p className="text-sm mb-3 font-medium">
           Your request has been received.
         </p>
 
@@ -106,7 +106,7 @@ export default function RaiseTicketModal({
             border: "1px solid var(--accent)",
           }}
         >
-          <span className="font-mono font-bold  text-base">{ticket}</span>
+          <span className="font-mono font-bold text-base">{ticket}</span>
 
           <button
             onClick={copyTicket}
@@ -335,22 +335,22 @@ export default function RaiseTicketModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 sm:px-6"
       style={{ color: `${accent}`, ["--accent" as any]: accent }}
     >
       <div
-        className="w-full max-w-125 rounded-2xl bg-[#0A0A0A] shadow-[0_0_60px_rgba(0,0,0,0.9)]"
+        className="w-full max-w-130 rounded-2xl bg-[#0A0A0A] shadow-[0_0_60px_rgba(0,0,0,0.9)]"
         style={{ border: "1px solid var(--accent)" }}
       >
         {/* HEADER */}
-        <div className="px-10 pt-8 pb-2">
+        <div className="px-5 sm:px-10 pt-6 sm:pt-8 pb-1">
           <div className="flex items-center justify-between">
-            <h2 className="font-medium text-2xl pt-3">
+            <h2 className="font-medium text-xl sm:text-2xl pt-3">
               Request for Quick Support
             </h2>
             <button
               onClick={handleClose}
-              className=" hover:opacity-70 text-2xl pt-3 cursor-pointer"
+              className=" hover:opacity-70 text-xl sm:text-2xl pt-3 cursor-pointer"
             >
               ✕
             </button>
@@ -358,11 +358,10 @@ export default function RaiseTicketModal({
 
           {/* INSET DIVIDER */}
           <div
-            className="mt-5 opacity-40"
+            className="sm:mt-5 mt-4 opacity-40"
             style={{
               borderBottom: "1px solid",
-              marginLeft: "4px",
-              marginRight: "4px",
+              marginInline: "4px",
             }}
           />
         </div>
@@ -377,7 +376,7 @@ export default function RaiseTicketModal({
             {/* STEP 0 – BASIC INFO */}
             {step === 0 && (
               <div
-                className="px-10 pt-5 pb-12 space-y-4"
+                className="px-5 sm:px-10 py-5 sm:py-6 space-y-5"
                 style={{ color: `${accent}` }}
               >
                 <div>
@@ -485,7 +484,7 @@ export default function RaiseTicketModal({
                 <button
                   disabled={!canMoveForward}
                   onClick={() => setStep(1)}
-                  className="w-full mt-4 py-3 rounded-lg text-base font-bold text-black cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed "
+                  className="w-full mt-4 py-3 rounded-lg text-base font-bold text-black cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed mb-4"
                   style={{ backgroundColor: "var(--accent)" }}
                 >
                   Move Forward →
@@ -494,7 +493,7 @@ export default function RaiseTicketModal({
             )}
 
             {step === 1 && (
-              <div className="px-10 pt-2 pb-6 space-y-6">
+              <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-5">
                 <div className="rounded-xl border border-current/30 bg-white/2 px-6 py-5 space-y-3">
                   {/* TITLE */}
                   <h3
@@ -533,7 +532,7 @@ export default function RaiseTicketModal({
             )}
 
             {step === 2 && (
-              <div className="px-10 py-6 space-y-6">
+              <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-5">
                 {/* DESCRIPTION */}
                 <div>
                   <label className="block text-sm mb-2">
@@ -714,7 +713,7 @@ export default function RaiseTicketModal({
             )}
 
             {step === 3 && (
-              <div className="px-10 py-5 space-y-4">
+              <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-5">
                 {/* HEADER */}
                 <div className="flex justify-between text-sm flex-col sm:flex-row ">
                   <span className="font-medium text-(--accent)">
@@ -840,7 +839,7 @@ export default function RaiseTicketModal({
             )}
 
             {step === 4 && (
-              <div className="px-10 py-5 space-y-5">
+              <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-5">
                 {/* TITLE */}
                 <div>
                   <h3 className="text-sm font-base">Return Channel</h3>
@@ -910,7 +909,7 @@ export default function RaiseTicketModal({
             )}
 
             {step === 5 && (
-              <div className="px-10 py-6 space-y-6 text-sm">
+              <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-5 text-sm">
                 {/* TITLE */}
                 <h3
                   className="text-base font-medium"

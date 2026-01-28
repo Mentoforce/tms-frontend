@@ -77,7 +77,7 @@ export default function BonusClaimModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4"
-      style={{ ["--accent" as any]: accent }}
+      style={{ ["--accent" as any]: accent, color: accent }}
     >
       <div
         className="w-full max-w-125 rounded-2xl bg-[#0A0A0A]"
@@ -85,20 +85,18 @@ export default function BonusClaimModal({
       >
         <div className="px-6 sm:px-10 pt-7 pb-2">
           <div className="flex items-center justify-between">
-            <h2 className="text-white font-medium text-2xl pt-2">
-              Claim Bonus
-            </h2>
+            <h2 className="font-medium text-2xl pt-2">Claim Bonus</h2>
             <button
               onClick={onClose}
-              className="text-white/80 hover:text-white text-2xl cursor-pointer"
+              className=" hover:opacity-80 text-2xl cursor-pointer"
             >
               ✕
             </button>
           </div>
 
           <div
-            className="mt-4"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.3)" }}
+            className="mt-4 opacity-40"
+            style={{ borderBottom: "1px solid" }}
           />
         </div>
 
@@ -107,42 +105,38 @@ export default function BonusClaimModal({
             <SuccessScreen onClose={onClose} />
           ) : (
             <>
-              <h3
-                className="text-md font-base mb-3"
-                style={{ color: "var(--accent)" }}
-              >
-                Bonus Details
-              </h3>
+              <h3 className="text-md font-base mb-3">Bonus Details</h3>
 
               <div>
-                <label className="block text-sm text-white mb-2">
-                  Bonus Type
-                </label>
+                <label className="block text-sm mb-2">Bonus Type</label>
 
                 <div className="relative">
                   <select
                     value={selectedBonus?._id || ""}
                     onChange={(e) => {
                       const bonus = bonusConfigs.find(
-                        (b) => b._id === e.target.value
+                        (b) => b._id === e.target.value,
                       );
                       setSelectedBonus(bonus || null);
                     }}
-                    className="select-clean mb-1 w-full rounded-lg px-4 py-4 pr-12 text-sm bg-transparent text-white focus:outline-none"
-                    style={{ border: "1px solid rgba(255,255,255,0.4)" }}
+                    className="select-clean mb-1 w-full rounded-lg px-4 py-4 pr-12 text-sm bg-transparent focus:outline-none cursor-pointer"
+                    style={{ border: "1px solid" }}
                   >
-                    <option value="">Choose a bonus type</option>
+                    <option value="" style={{ color: accent }}>
+                      Choose a bonus type
+                    </option>
                     {bonusConfigs.map((bonus) => (
-                      <option key={bonus._id} value={bonus._id}>
+                      <option
+                        key={bonus._id}
+                        value={bonus._id}
+                        style={{ color: accent }}
+                      >
                         {bonus.title}
                       </option>
                     ))}
                   </select>
 
-                  <span
-                    className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
-                    style={{ color: "rgba(255,255,255,0.4)" }}
-                  >
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
                     ▾
                   </span>
                 </div>
@@ -159,7 +153,7 @@ export default function BonusClaimModal({
                       background: "rgba(255,255,255,0.06)",
                     }}
                   >
-                    <div className="px-4 py-3 text-sm leading-relaxed text-white/80">
+                    <div className="px-4 py-3 text-sm leading-relaxed opacity-80">
                       {selectedBonus.explanation}
                     </div>
                   </motion.div>
@@ -167,20 +161,15 @@ export default function BonusClaimModal({
               </div>
 
               <div>
-                <label className="block text-sm text-white mb-2">
-                  Your Username
-                </label>
+                <label className="block text-sm mb-2">Your Username</label>
 
                 <input
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
-                  className="w-full mb-1 rounded-lg px-4 py-4 text-sm bg-transparent text-white placeholder:text-white/40 focus:outline-none placeholder:text-base"
+                  className="w-full mb-1 rounded-lg px-4 py-4 text-sm bg-transparent focus:outline-none placeholder:text-base"
                   style={{
-                    border: `1px solid ${
-                      username && !isUsernameValid
-                        ? "red"
-                        : "rgba(255,255,255,0.4)"
+                    border: `1px solid "var(--accent)"
                     }`,
                   }}
                 />
@@ -212,7 +201,10 @@ export default function BonusClaimModal({
 
 function SuccessScreen({ onClose }: { onClose: () => void }) {
   return (
-    <div className="flex flex-col items-center space-y-4">
+    <div
+      className="flex flex-col items-center space-y-4"
+      style={{ color: "var(--accent)" }}
+    >
       <motion.svg
         width="66"
         height="66"
@@ -255,7 +247,7 @@ function SuccessScreen({ onClose }: { onClose: () => void }) {
         />
       </motion.svg>
 
-      <p className="w-full text-base text-white/70 text-left">
+      <p className="w-full text-base opacity-70 text-left">
         Your bonus claim request has been submitted successfully.
       </p>
 

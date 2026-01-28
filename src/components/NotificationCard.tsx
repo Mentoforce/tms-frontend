@@ -127,32 +127,35 @@ export default function NotificationCard() {
         }}
         className="
           fixed z-100
-          top-26 sm:top-40
+          top-5
           left-4 right-4 sm:left-auto sm:right-6
-          w-auto sm:w-90
+          w-auto sm:w-110
           rounded-xl p-4
-          bg-black/90 text-white shadow-lg
+          bg-black/90 shadow-lg
         "
-        style={{ borderColor: accent, borderWidth: 0.5 }}
+        style={{ borderColor: accent, borderWidth: 0.5, color: accent }}
       >
         <button
-          className="absolute top-3 right-3 cursor-pointer text-white/70 hover:text-white"
+          className="absolute top-3 right-3 cursor-pointer text-current/70 hover:text-current"
           onClick={close}
         >
           <X size={18} />
         </button>
 
-        <div className="flex gap-3 pr-6">
-          <Icon className="shrink-0" />
+        <div className="flex items-center gap-3 pr-6 pb-5">
+          <div className="p-1 rounded-full border solid border-current/50">
+            <Icon />
+          </div>
           <div>
             <p className="font-semibold leading-tight">{notification?.title}</p>
-            <p className="text-sm text-white/70">{notification?.message}</p>
           </div>
         </div>
-
+        <hr className="opacity-30" />
+        <p className="text-sm text-current/70 p-5">{notification?.message}</p>
+        <hr className="opacity-30" />
         <button
           onClick={dismiss}
-          className="text-xs mt-3 underline text-white/60 cursor-pointer"
+          className="text-xs mt-5 underline text-current/60 cursor-pointer"
         >
           Don’t show again
         </button>

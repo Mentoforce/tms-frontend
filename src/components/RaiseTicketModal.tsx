@@ -5,6 +5,12 @@ import { IconCopy, IconCheck, IconUpload } from "@tabler/icons-react";
 import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import { useOrganisation } from "@/context/OrganisationProvider";
+import {
+  IconBrandWhatsapp,
+  IconMail,
+  IconPhone,
+  IconBrandTelegram,
+} from "@tabler/icons-react";
 
 type Subject = {
   _id: string;
@@ -80,30 +86,31 @@ export default function RaiseTicketModal({
     };
 
     return (
-      <div className="w-full max-w-md mx-auto px-6 pt-4 pb-9 text-white text-left space-y-5">
-        <p
-          className="text-sm mb-3  font-medium"
-          style={{ color: "var(--accent)" }}
-        >
+      <div
+        className="w-full flex flex-col max-w-md mx-auto sm:px-6 px-10 pt-4 pb-9 text-left space-y-5"
+        style={{ color: "var(--accent)" }}
+      >
+        <p className="text-sm mb-3  font-medium">
           Your request has been received.
         </p>
 
-        <p className="text-sm text-white/60 leading-relaxed">
+        <p className="text-sm text-current/60 leading-relaxed">
           Your request will be reviewed and resolved as soon as possible. Please
           keep your Request ID until the process is complete.
         </p>
 
         <div
           className="flex items-center justify-center gap-3 rounded-lg px-4 py-3"
-          style={{ backgroundColor: `${primarycolor}33` }}
+          style={{
+            backgroundColor: `${primarycolor}33`,
+            border: "1px solid var(--accent)",
+          }}
         >
-          <span className="font-mono font-bold text-white text-base">
-            {ticket}
-          </span>
+          <span className="font-mono font-bold  text-base">{ticket}</span>
 
           <button
             onClick={copyTicket}
-            className="text-white/80 hover:text-white transition"
+            className="text-current/80 hover:text-current transition"
             aria-label="Copy ticket ID"
           >
             {copied ? (
@@ -116,7 +123,7 @@ export default function RaiseTicketModal({
 
         <button
           onClick={onPrimaryAction}
-          className="w-full py-3 rounded-lg text-sm font-bold text-black transition hover:opacity-90 cursor-pointer"
+          className="w-full py-3 mb-4 rounded-lg text-sm font-bold text-black transition hover:opacity-90 cursor-pointer"
           style={{ backgroundColor: "var(--accent)" }}
         >
           Go to the Website →
@@ -329,7 +336,7 @@ export default function RaiseTicketModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4"
-      style={{ ["--accent" as any]: accent }}
+      style={{ color: `${accent}`, ["--accent" as any]: accent }}
     >
       <div
         className="w-full max-w-125 rounded-2xl bg-[#0A0A0A] shadow-[0_0_60px_rgba(0,0,0,0.9)]"
@@ -338,12 +345,12 @@ export default function RaiseTicketModal({
         {/* HEADER */}
         <div className="px-10 pt-8 pb-2">
           <div className="flex items-center justify-between">
-            <h2 className="text-white font-medium text-2xl pt-3">
+            <h2 className="font-medium text-2xl pt-3">
               Request for Quick Support
             </h2>
             <button
               onClick={handleClose}
-              className="text-white hover:text-white/70 text-2xl pt-3 cursor-pointer"
+              className=" hover:opacity-70 text-2xl pt-3 cursor-pointer"
             >
               ✕
             </button>
@@ -351,9 +358,9 @@ export default function RaiseTicketModal({
 
           {/* INSET DIVIDER */}
           <div
-            className="mt-5"
+            className="mt-5 opacity-40"
             style={{
-              borderBottom: "1px solid rgba(255,255,255,0.3)",
+              borderBottom: "1px solid",
               marginLeft: "4px",
               marginRight: "4px",
             }}
@@ -369,17 +376,12 @@ export default function RaiseTicketModal({
           <>
             {/* STEP 0 – BASIC INFO */}
             {step === 0 && (
-              <div className="px-10 pt-5 pb-12 space-y-4">
-                <h3
-                  className="text-md font-base mb-3"
-                  style={{ color: "var(--accent)" }}
-                >
-                  Basic Details
-                </h3>
+              <div
+                className="px-10 pt-5 pb-12 space-y-4"
+                style={{ color: `${accent}` }}
+              >
                 <div>
-                  <label className="block text-sm text-white mb-2">
-                    Your Username
-                  </label>
+                  <label className="block text-sm  mb-2">Your Username</label>
 
                   <input
                     value={draft.username}
@@ -387,13 +389,10 @@ export default function RaiseTicketModal({
                       setDraft({ ...draft, username: e.target.value })
                     }
                     placeholder="Enter your username"
-                    className="w-full mb-1 rounded-lg px-4 py-4 text-sm bg-transparent text-white placeholder:text-white/40 focus:outline-none placeholder:text-base"
+                    className="w-full mb-1 rounded-lg px-4 py-4 text-sm bg-transparent focus:outline-none placeholder:text-base"
                     style={{
-                      border: `1px solid ${
-                        draft.username && !isUsernameValid
-                          ? "red"
-                          : "rgba(255,255,255,0.4)"
-                      }`,
+                      border: `1px solid`,
+                      color: accent,
                     }}
                   />
 
@@ -407,9 +406,7 @@ export default function RaiseTicketModal({
                 </div>
 
                 <div>
-                  <label className="block text-sm text-white mb-2">
-                    Main Topic
-                  </label>
+                  <label className="block text-sm mb-2">Main Topic</label>
 
                   <div className="relative">
                     <select
@@ -425,8 +422,8 @@ export default function RaiseTicketModal({
                           sub_subject_id: "",
                         });
                       }}
-                      className="select-clean mb-1 w-full rounded-lg px-4 py-4 pr-12 text-sm bg-transparent text-white focus:outline-none"
-                      style={{ border: "1px solid rgba(255,255,255,0.4)" }}
+                      className="select-clean mb-1 w-full rounded-lg px-4 py-4 pr-12 text-sm bg-transparent focus:outline-none"
+                      style={{ border: "1px solid " }}
                     >
                       <option value="">Choose a main topic</option>
                       {subjects.map((s) => (
@@ -439,7 +436,7 @@ export default function RaiseTicketModal({
                     {/* Custom Arrow */}
                     <span
                       className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
-                      style={{ color: "rgba(255,255,255,0.4)" }}
+                      style={{ color: `${accent}` }}
                     >
                       ▾
                     </span>
@@ -447,9 +444,7 @@ export default function RaiseTicketModal({
                 </div>
 
                 <div>
-                  <label className="block text-sm text-white mb-2">
-                    Sub Topic
-                  </label>
+                  <label className="block text-sm mb-2">Sub Topic</label>
 
                   <div className="relative">
                     <select
@@ -465,8 +460,8 @@ export default function RaiseTicketModal({
                           description: ss?.predefined_text || "",
                         });
                       }}
-                      className="select-clean w-full rounded-lg px-4 py-4 pr-12 text-sm bg-transparent text-white disabled:opacity-50 focus:outline-none"
-                      style={{ border: "1px solid rgba(255,255,255,0.4)" }}
+                      className="select-clean w-full rounded-lg px-4 py-4 pr-12 text-sm bg-transparent disabled:opacity-50 focus:outline-none"
+                      style={{ border: "1px solid " }}
                     >
                       <option value="">First, choose the main topic</option>
                       {subSubjects.map((ss) => (
@@ -479,7 +474,7 @@ export default function RaiseTicketModal({
                     {/* Custom Arrow */}
                     <span
                       className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
-                      style={{ color: "rgba(255,255,255,0.4)" }}
+                      style={{ color: `${accent}` }}
                     >
                       ▾
                     </span>
@@ -499,33 +494,35 @@ export default function RaiseTicketModal({
             )}
 
             {step === 1 && (
-              <div className="px-10 py-6 space-y-6">
-                {/* TITLE */}
-                <h3
-                  className="text-white text-sm font-base"
-                  style={{ color: "var(--accent)" }}
-                >
-                  Information Regarding Your{" "}
-                  {
-                    subSubjects.find((s) => s._id === draft.sub_subject_id)
-                      ?.title
-                  }{" "}
-                  Request
-                </h3>
+              <div className="px-10 pt-2 pb-6 space-y-6">
+                <div className="rounded-xl border border-current/30 bg-white/2 px-6 py-5 space-y-3">
+                  {/* TITLE */}
+                  <h3
+                    className="text-sm font-base"
+                    style={{ color: "var(--accent)" }}
+                  >
+                    Information Regarding Your{" "}
+                    {
+                      subSubjects.find((s) => s._id === draft.sub_subject_id)
+                        ?.title
+                    }{" "}
+                    Request
+                  </h3>
 
-                {/* DESCRIPTION FROM BACKEND */}
-                <p className="text-sm leading-relaxed text-white/60">
-                  {
-                    subSubjects.find((s) => s._id === draft.sub_subject_id)
-                      ?.information
-                  }
-                </p>
+                  {/* DESCRIPTION FROM BACKEND */}
+                  <p className="text-sm leading-relaxed opacity-60">
+                    {
+                      subSubjects.find((s) => s._id === draft.sub_subject_id)
+                        ?.information
+                    }
+                  </p>
+                </div>
 
                 {/* CONTINUE BUTTON */}
                 <button
                   disabled={counter > 0}
                   onClick={() => setStep(2)}
-                  className="cursor-pointer w-full py-3 rounded-lg text-base font-bold text-black flex items-center justify-center gap-2 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="cursor-pointer w-full py-3 mb-4 rounded-lg text-base font-bold text-black flex items-center justify-center gap-2 transition disabled:opacity-40 disabled:cursor-not-allowed"
                   style={{
                     backgroundColor: "var(--accent)",
                   }}
@@ -539,7 +536,7 @@ export default function RaiseTicketModal({
               <div className="px-10 py-6 space-y-6">
                 {/* DESCRIPTION */}
                 <div>
-                  <label className="block text-sm text-white mb-1">
+                  <label className="block text-sm mb-2">
                     Describe Your Issue
                   </label>
                   <textarea
@@ -548,7 +545,7 @@ export default function RaiseTicketModal({
                       setDraft({ ...draft, description: e.target.value })
                     }
                     placeholder="Write your message here..."
-                    className="w-full min-h-40 rounded-lg px-4 py-3 text-sm bg-transparent text-white placeholder:text-white/40 resize-none focus:outline-none"
+                    className="w-full min-h-40 rounded-lg px-4 py-3 text-sm bg-white/2 placeholder:text-current/40 resize-none focus:outline-none"
                     style={{
                       border: "1px solid var(--accent)",
                       lineHeight: "1.9",
@@ -562,7 +559,7 @@ export default function RaiseTicketModal({
                     className="flex-1 h-px"
                     style={{ backgroundColor: "var(--accent)" }}
                   />
-                  <span className="text-xs text-white/60 uppercase">or</span>
+                  <span className="text-xs text-current/60 uppercase">or</span>
                   <div
                     className="flex-1 h-px"
                     style={{ backgroundColor: "var(--accent)" }}
@@ -604,7 +601,7 @@ export default function RaiseTicketModal({
 
                     {/* RECORDING PROGRESS */}
                     <div className="space-y-1">
-                      <div className="h-1 bg-white/30 rounded overflow-hidden">
+                      <div className="h-1 bg-current/30 rounded overflow-hidden">
                         <div
                           className="h-full transition-[width] duration-200"
                           style={{
@@ -613,7 +610,7 @@ export default function RaiseTicketModal({
                           }}
                         />
                       </div>
-                      <div className="flex justify-between text-xs text-white/60">
+                      <div className="flex justify-between text-xs text-current/60">
                         <span>{formatTime(recordingElapsed)}</span>
                         <span>{formatTime(MAX_RECORDING_TIME)}</span>
                       </div>
@@ -672,7 +669,7 @@ export default function RaiseTicketModal({
 
                     {/* PLAYBACK PROGRESS */}
                     <div className="space-y-1">
-                      <div className="h-1 bg-white/30 rounded overflow-hidden">
+                      <div className="h-1 bg-current/30 rounded overflow-hidden">
                         <div
                           className="h-full transition-[width] duration-200"
                           style={{
@@ -687,7 +684,7 @@ export default function RaiseTicketModal({
                           }}
                         />
                       </div>
-                      <div className="flex justify-between text-xs text-white/60">
+                      <div className="flex justify-between text-xs text-current/60">
                         <span>{formatTime(playProgress)}</span>
                         <span>
                           {audioRef.current
@@ -699,7 +696,7 @@ export default function RaiseTicketModal({
                   </>
                 )}
 
-                <p className="text-xs text-white/50 mb-6">
+                <p className="text-xs text-current/50 mb-6">
                   Note: You can submit your request using text (at least 20
                   characters) or audio (5–120 seconds).
                 </p>
@@ -708,7 +705,7 @@ export default function RaiseTicketModal({
                 <button
                   disabled={!canContinue}
                   onClick={() => setStep(3)}
-                  className="w-full py-3 rounded-lg text-base font-bold text-black cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed "
+                  className="w-full py-3 mb-4 rounded-lg text-base font-bold text-black cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed "
                   style={{ backgroundColor: "var(--accent)" }}
                 >
                   Continue →
@@ -719,12 +716,12 @@ export default function RaiseTicketModal({
             {step === 3 && (
               <div className="px-10 py-5 space-y-4">
                 {/* HEADER */}
-                <div className="flex items-center justify-between text-sm">
+                <div className="flex justify-between text-sm flex-col sm:flex-row ">
                   <span className="font-medium text-(--accent)">
                     Additional Files{" "}
-                    <span className="text-white/50">(Optional)</span>
+                    <span className="text-current/50">(Optional)</span>
                   </span>
-                  <span className="text-white/50">
+                  <span className="text-current/50">
                     {draft.files.length}/4 files uploaded
                   </span>
                 </div>
@@ -750,7 +747,7 @@ export default function RaiseTicketModal({
                     });
                   }}
                   className="rounded-xl border border-dashed text-center py-10 transition"
-                  style={{ borderColor: "rgba(255,255,255,0.4)" }}
+                  style={{ borderColor: "var(--accent)" }}
                 >
                   <input
                     type="file"
@@ -778,7 +775,7 @@ export default function RaiseTicketModal({
 
                   <label
                     htmlFor="file-upload"
-                    className="cursor-pointer flex flex-col items-center gap-2 text-white/70"
+                    className="cursor-pointer flex flex-col items-center gap-2 text-current/70"
                   >
                     <div className="text-xl">
                       <IconUpload size={18} stroke={2} />
@@ -787,7 +784,7 @@ export default function RaiseTicketModal({
                       Drag & drop files here or{" "}
                       <span className="underline">browse</span>
                     </p>
-                    <p className="text-xs text-white/40">
+                    <p className="text-xs text-current/40">
                       (PDF/Photo: 10MB • Video: 50MB)
                     </p>
                   </label>
@@ -812,7 +809,7 @@ export default function RaiseTicketModal({
                             };
                             setDraft({ ...draft, files: updated });
                           }}
-                          className="flex-1 bg-transparent text-white text-sm focus:outline-none"
+                          className="flex-1 bg-transparent text-sm focus:outline-none"
                         />
 
                         <button
@@ -834,7 +831,7 @@ export default function RaiseTicketModal({
                 {/* CONTINUE */}
                 <button
                   onClick={() => setStep(step + 1)}
-                  className="cursor-pointer w-full mt-4 py-3 rounded-lg  text-base font-bold text-black"
+                  className="cursor-pointer w-full mt-2 mb-4 py-3 rounded-lg  text-base font-bold text-black"
                   style={{ backgroundColor: "var(--accent)" }}
                 >
                   Continue →
@@ -846,23 +843,29 @@ export default function RaiseTicketModal({
               <div className="px-10 py-5 space-y-5">
                 {/* TITLE */}
                 <div>
-                  <h3
-                    className="text-lg font-base text-white"
-                    style={{ color: "var(--accent)" }}
-                  >
-                    Return Channel
-                  </h3>
-                  <p className="text-sm text-white/50 mt-1">
+                  <h3 className="text-sm font-base">Return Channel</h3>
+                  <p className="text-sm text-current/50 mt-2">
                     Choose the channel through which you will receive feedback
                     regarding your request.
                   </p>
                 </div>
 
                 {/* OPTIONS */}
-                {["Email", "Telephone", "Whatsapp", "Telegram"].map(
-                  (option) => {
-                    const value = option.toLowerCase();
-
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { label: "Email", value: "email", Icon: IconMail },
+                    { label: "Telephone", value: "telephone", Icon: IconPhone },
+                    {
+                      label: "Whatsapp",
+                      value: "whatsapp",
+                      Icon: IconBrandWhatsapp,
+                    },
+                    {
+                      label: "Telegram",
+                      value: "telegram",
+                      Icon: IconBrandTelegram,
+                    },
+                  ].map(({ label, value, Icon }) => {
                     const isSelected = draft.return_channel === value;
 
                     return (
@@ -872,46 +875,27 @@ export default function RaiseTicketModal({
                         onClick={() =>
                           setDraft({ ...draft, return_channel: value })
                         }
-                        className="w-full flex items-center gap-3 px-4 py-4 rounded-lg text-sm transition"
+                        className="flex items-center gap-3 px-5 py-4 rounded-xl text-sm transition"
                         style={{
-                          border: isSelected
-                            ? "1px solid var(--accent)"
-                            : "1px solid rgba(255,255,255,0.4)",
+                          border: `1px solid currentColor`,
+                          opacity: isSelected ? 1 : 0.5,
                           background: isSelected
-                            ? "rgba(255,255,255,0.04)"
+                            ? "rgba(0,0,0,0.2)"
                             : "transparent",
                         }}
                       >
-                        {/* RADIO */}
-                        <span
-                          className="h-4 w-4 rounded-full flex items-center justify-center"
-                          style={{ border: "1px solid var(--accent)" }}
-                        >
-                          {isSelected && (
-                            <span
-                              className="h-2 w-2 rounded-full"
-                              style={{ backgroundColor: "var(--accent)" }}
-                            />
-                          )}
-                        </span>
-
-                        <span
-                          className={
-                            isSelected ? "text-white" : "text-white/60"
-                          }
-                        >
-                          {option}
-                        </span>
+                        <Icon size={18} stroke={1.5} />
+                        <span className="font-medium">{label}</span>
                       </button>
                     );
-                  },
-                )}
+                  })}
+                </div>
 
-                {/* CONTINUE */}
+                {/* CONTINUE — untouched */}
                 <button
                   disabled={!draft.return_channel}
                   onClick={() => setStep(step + 1)}
-                  className="cursor-pointer w-full mt-4 py-3 rounded-lg text-base font-bold transition"
+                  className="cursor-pointer w-full mt-4 mb-4 py-3 rounded-lg text-base font-bold transition"
                   style={{
                     backgroundColor: draft.return_channel
                       ? "var(--accent)"
@@ -936,48 +920,50 @@ export default function RaiseTicketModal({
                 </h3>
 
                 {/* SUMMARY */}
-                <div className="space-y-2 text-white/70">
+                <div className="space-y-2 text-current/70">
                   <div className="grid grid-cols-2">
-                    <span className="w-44 text-white/50">Username:</span>
-                    <span className="text-white">{draft.username}</span>
+                    <span className="w-44 text-current/50">Username:</span>
+                    <span>{draft.username}</span>
                   </div>
 
                   <div className="grid grid-cols-2">
-                    <span className="w-44 text-white/50">Subject:</span>
-                    <span className="text-white">
+                    <span className="w-44 text-current/50">Subject:</span>
+                    <span>
                       {subjects.find((s) => s._id === draft.subject_id)?.title}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2">
-                    <span className="w-44 text-white/50">Request Details:</span>
-                    <span className="text-white whitespace-pre-line">
+                    <span className="w-44 text-current/50">
+                      Request Details:
+                    </span>
+                    <span className=" whitespace-pre-line">
                       {draft.description || "-"}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2">
-                    <span className="w-44 text-white/50">
+                    <span className="w-44 text-current/50">
                       Number of Attached Files:
                     </span>
-                    <span className="text-white">{draft.files.length}</span>
+                    <span>{draft.files.length}</span>
                   </div>
 
                   <div className="grid grid-cols-2">
-                    <span className="w-44 text-white/50">Return Channel:</span>
-                    <span className="capitalize text-white">
-                      {draft.return_channel}
+                    <span className="w-44 text-current/50">
+                      Return Channel:
                     </span>
+                    <span className="capitalize ">{draft.return_channel}</span>
                   </div>
                 </div>
 
                 {/* DIVIDER */}
-                <div className="h-px bg-white/10" />
+                <div className="h-px bg-current/10" />
 
                 <button
                   onClick={submitTicket}
                   disabled={isSubmitting}
-                  className={`w-full mt-4 py-4 rounded-lg text-base font-bold text-black transition ${
+                  className={`w-full mt-4 mb-4 py-4 rounded-lg text-base font-bold text-black transition ${
                     isSubmitting
                       ? "opacity-60 cursor-not-allowed"
                       : "cursor-pointer"

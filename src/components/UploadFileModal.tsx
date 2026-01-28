@@ -169,12 +169,14 @@ export default function UploadFileModal({
         style={{ border: "1px solid" }}
       >
         {/* HEADER */}
-        <div className="px-6 sm:px-10 pt-7 pb-2">
+        <div className="px-5 sm:px-10 pt-6 sm:pt-8 pb-1">
           <div className="flex items-center justify-between">
-            <h2 className=" font-medium text-2xl pt-2">File Upload</h2>
+            <h2 className=" font-medium text-xl sm:text-2xl pt-3">
+              File Upload
+            </h2>
             <button
               onClick={handleClose}
-              className="hover:opacity-80 text-2xl cursor-pointer"
+              className="hover:opacity-70 text-xl sm:text-2xl pt-3 cursor-pointer"
             >
               ✕
             </button>

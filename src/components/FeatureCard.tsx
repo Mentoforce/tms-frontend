@@ -136,7 +136,7 @@ export default function FeatureCard({
     return (
       <button
         onClick={onClick}
-        className="cursor-pointer flex mx-auto w-full md:h-25.5 md:px-10 md:py-7.5 md:rounded-xl items-center justify-between md:border gap-6 border-[0.5px] h-16.25 rounded-lg p-4 hover:opacity-80 transition active:scale-[0.99]"
+        className="cursor-pointer flex w-full md:mx-0 md:h-25.5 md:px-10 md:py-7.5 md:rounded-xl items-center justify-between md:border gap-6 border-[0.5px] h-16.25 rounded-lg p-4 hover:opacity-80 transition active:scale-[0.99]"
         style={{
           borderColor: primarycolor,
           backgroundColor: `${primarycolor}1A`,

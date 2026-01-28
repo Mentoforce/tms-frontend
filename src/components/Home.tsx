@@ -200,11 +200,11 @@ export default function Home() {
 
       {/* ---------------- MAIN CONTAINER---------------- */}
       <section
-        className="w-full min-w-82 max-w-90 md:max-w-210 mx-auto pt-0 pb-12 flex flex-col gap-12 md:gap-20"
+        className="w-full min-w-72 max-w-90 md:max-w-210 mx-auto pt-0 pb-12 flex flex-col gap-12 md:gap-20"
         style={{ color: `${primaryColor}` }}
       >
         {/* QUICK ACCESS SECTION */}
-        <div>
+        <div className="mx-1">
           <div className="flex flex-col gap-1 mb-6 md:mb-8">
             <h2 className="text-[20px] md:text-[30px] font-semibold uppercase tracking-tight mb-4">
               Quick Access
@@ -235,7 +235,7 @@ export default function Home() {
         </div>
 
         {/* QUICK SUPPORT SECTION */}
-        <div>
+        <div className="mx-1">
           <div className="flex flex-col gap-1 mb-6 md:mb-8">
             <h2 className="text-[20px] md:text-[30px] font-semibold uppercase tracking-tight mb-4">
               Quick Support

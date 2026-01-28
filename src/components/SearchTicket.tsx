@@ -324,7 +324,7 @@ export default function SearchTicket({
 
   return (
     <section
-      className="w-full min-w-82 max-w-90 md:max-w-210 mx-auto px-0 mb-20 "
+      className="w-full min-w-82 max-w-90 md:max-w-210 mx-auto px-0 mb-20"
       style={{ color: `${accent}` }}
     >
       {/* SECTION HEADING */}
@@ -339,7 +339,7 @@ export default function SearchTicket({
       </div>
 
       <div
-        className="w-full rounded-xl md:rounded-3xl flex flex-col px-5 py-8 md:px-12 md:py-12 gap-6 border-[0.5px]"
+        className="w-full rounded-lg md:rounded-xl flex flex-col px-5 py-8 md:px-12 md:py-12 gap-6 border-[0.5px]"
         style={{
           backgroundColor: `${accent}1A`,
           borderColor: `${accent}`,
@@ -400,20 +400,18 @@ export default function SearchTicket({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 md:gap-y-6 text-[13px] md:text-[15px]">
                 <div className="space-y-2">
                   <p>
-                    Ticket ID:{" "}
-                    <span className="text-white font-medium ml-1">
+                    <span className="opacity-60">Ticket ID: </span>
+                    <span className=" font-medium ml-1">
                       {result.ticket.ticket_number}
                     </span>
                   </p>
                   <p>
-                    Username:{" "}
-                    <span className="text-white font-medium ml-1">
-                      {username}
-                    </span>
+                    <span className="opacity-60">Username: </span>
+                    <span className=" font-medium ml-1">{username}</span>
                   </p>
                   <p>
-                    Category:{" "}
-                    <span className="text-white font-medium ml-1">
+                    <span className="opacity-60">Category: </span>
+                    <span className=" font-medium ml-1">
                       {result.ticket.subject_id?.title} ›{" "}
                       {result.ticket.sub_subject_id?.title}
                     </span>
@@ -421,14 +419,14 @@ export default function SearchTicket({
                 </div>
                 <div className="space-y-2">
                   <p>
-                    Status:{" "}
-                    <span className="text-white capitalize font-medium">
+                    <span className="opacity-60">Status: </span>
+                    <span className=" capitalize font-medium">
                       {result.ticket.status}
                     </span>
                   </p>
                   <p>
-                    Last Update:{" "}
-                    <span className="text-white font-medium ml-1">
+                    <span className="opacity-60">Last Update: </span>
+                    <span className="font-medium ml-1">
                       {new Date(result.ticket.updatedAt).toLocaleDateString(
                         "en-GB",
                       )}
@@ -436,7 +434,7 @@ export default function SearchTicket({
                   </p>
                 </div>
               </div>
-              <div className="h-[0.5px] bg-white/10 mt-8" />
+              <div className="h-[0.5px] bg-current/10 mt-8" />
             </div>
 
             {/* STATUS MONITORING SECTION */}
@@ -472,10 +470,10 @@ export default function SearchTicket({
                         </div>
 
                         <div className="pb-10">
-                          <p className="text-[15px] md:text-[17px] font-bold text-white capitalize leading-tight">
+                          <p className="text-[15px] md:text-[17px] font-bold  capitalize leading-tight">
                             {history.action.replace("_", " ")}
                           </p>
-                          <div className="flex gap-3 items-center text-[12px] md:text-[13px] text-[#BDBDBD] opacity-60 mt-2">
+                          <div className="flex gap-3 items-center text-[12px] md:text-[13px] opacity-60 mt-2">
                             <span>
                               Date:{" "}
                               <span className="ml-1">
@@ -485,7 +483,7 @@ export default function SearchTicket({
                             <IconCircleFilled size={3} />
                             <span>
                               Time:{" "}
-                              <span className="text-white ml-1">
+                              <span className=" ml-1">
                                 {dateObj.toLocaleTimeString([], {
                                   hour: "2-digit",
                                   minute: "2-digit",
@@ -495,13 +493,9 @@ export default function SearchTicket({
                             </span>
                           </div>
                           {history.comments && (
-                            <div className="mt-3 p-3 rounded-lg bg-white/5 border-[0.5px] border-white/5 text-[12px] md:text-[13px] text-[#BDBDBD]">
-                              <span className="font-bold text-white/40 block mb-1">
-                                Comments:
-                              </span>
-                              <span className="text-white/80">
-                                {history.comments}
-                              </span>
+                            <div className="text-xs opacity-60">
+                              <span className=" mb-1">Comments: </span>
+                              <span className="ml-1">{history.comments}</span>
                             </div>
                           )}
                         </div>
@@ -514,7 +508,7 @@ export default function SearchTicket({
 
             <button
               onClick={() => setResult(null)}
-              className="mt-4 text-[13px] font-medium text-white/40 hover:text-white underline transition-colors"
+              className="mt-4 text-[13px] font-medium text-current/40 hover:text-current cursor-pointer underline transition-colors"
             >
               Search another ticket
             </button>

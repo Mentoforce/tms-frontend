@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import { useOrganisation } from "@/context/OrganisationProvider";
 import { useRouter } from "next/navigation";
 
-const TOTAL_STEPS = 3;
 const DEFAULT_PRIMARY = "#DFD1A1";
 
 export default function RequestCallbackModal({
@@ -40,6 +39,10 @@ export default function RequestCallbackModal({
   const isUsernameValid = usernameRegex.test(draft.username);
   const { organisation } = useOrganisation();
   const router = useRouter();
+
+  const handleBack = () => {
+    setStep((prev) => prev - 1);
+  };
 
   const handleClose = () => {
     setStep(0);
@@ -225,7 +228,7 @@ export default function RequestCallbackModal({
       min += 10 - (min % 10);
 
       const arr: string[] = [];
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < 9; i++) {
         if (min >= 60) {
           hr++;
           min = 0;
@@ -257,7 +260,7 @@ export default function RequestCallbackModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 sm:px-6"
-      style={{ ["--accent" as any]: accent }}
+      style={{ ["--accent" as any]: accent, color: accent }}
     >
       <div
         className="w-full max-w-130 rounded-2xl bg-[#0A0A0A] shadow-[0_0_60px_rgba(0,0,0,0.9)]"
@@ -266,21 +269,21 @@ export default function RequestCallbackModal({
         {/* HEADER */}
         <div className="px-5 sm:px-10 pt-6 sm:pt-8 pb-1">
           <div className="flex items-center justify-between">
-            <h2 className="text-white font-medium text-2xl sm:text-2xl pt-3">
+            <h2 className=" font-medium text-2xl sm:text-2xl pt-3">
               Request Callback
             </h2>
             <button
               onClick={handleClose}
-              className="text-white hover:text-white/70 text-xl sm:text-2xl pt-3 cursor-pointer"
+              className="hover:opacity-70 text-xl sm:text-2xl pt-3 cursor-pointer"
             >
               ✕
             </button>
           </div>
 
           <div
-            className="mt-4 sm:mt-5"
+            className="mt-4 sm:mt-5 opacity-40"
             style={{
-              borderBottom: "1px solid rgba(255,255,255,0.3)",
+              borderBottom: "1px solid",
               marginInline: "4px",
             }}
           />
@@ -307,7 +310,7 @@ export default function RequestCallbackModal({
 
                   {/* Membership question */}
                   <div className="space-y-2">
-                    <p className="text-sm font-base text-white">
+                    <p className="text-sm font-base">
                       Do you have a membership?
                     </p>
 
@@ -320,8 +323,8 @@ export default function RequestCallbackModal({
                           backgroundColor: !isMember
                             ? "var(--accent)"
                             : "transparent",
-                          color: !isMember ? "#000" : "rgba(255,255,255)",
-                          border: "1px solid rgba(255,255,255,0.3)",
+                          color: !isMember ? "#000" : "var(--accent)",
+                          border: "1px solid",
                         }}
                       >
                         No
@@ -336,8 +339,8 @@ export default function RequestCallbackModal({
                           backgroundColor: isMember
                             ? "var(--accent)"
                             : "transparent",
-                          color: isMember ? "#000" : "rgba(255,255,255)",
-                          border: "1px solid rgba(255,255,255,0.3)",
+                          color: isMember ? "#000" : "var(--accent)",
+                          border: "1px solid",
                         }}
                       >
                         Yes
@@ -346,15 +349,15 @@ export default function RequestCallbackModal({
                   </div>
 
                   <div className="flex flex-col gap-2 mb-5">
-                    <label className="text-sm font-base text-white">
+                    <label className="text-sm font-base">
                       {isMember ? "Your Username" : "Phone Number"}
                     </label>
 
                     <div
                       className="flex items-center gap-3 px-4 py-3 rounded-lg"
-                      style={{ border: "1px solid rgba(255,255,255,0.3)" }}
+                      style={{ border: "1px solid" }}
                     >
-                      <span className="text-white/60">
+                      <span className="opacity-60">
                         {isMember ? (
                           <IconUser size={18} stroke={1.5} />
                         ) : (
@@ -373,7 +376,7 @@ export default function RequestCallbackModal({
                             [isMember ? "username" : "phone"]: e.target.value,
                           })
                         }
-                        className="flex-1 bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none"
+                        className="flex-1 bg-transparent text-sm focus:outline-none"
                       />
                     </div>
                     {draft.username && !isUsernameValid && (
@@ -400,12 +403,7 @@ export default function RequestCallbackModal({
               {step === 1 && (
                 <div className="space-y-4">
                   {/* Subtitle */}
-                  <p
-                    className="text-sm mb-2"
-                    style={{ color: "var(--accent)" }}
-                  >
-                    Explain your request
-                  </p>
+                  <p className="text-sm mb-2">Explain your request</p>
 
                   {/* Textarea */}
                   <textarea
@@ -414,8 +412,8 @@ export default function RequestCallbackModal({
                       setDraft({ ...draft, issue: e.target.value })
                     }
                     placeholder="Briefly describe your problem (or record a voice message)..."
-                    className="w-full min-h-35 rounded-lg px-4 py-3 text-sm bg-transparent text-white placeholder:text-white/40 resize-none focus:outline-none mb-1 "
-                    style={{ border: "1px solid rgba(255,255,255,0.3)" }}
+                    className="w-full min-h-35 rounded-lg px-4 py-3 text-sm bg-transparent resize-none focus:outline-none mb-1 "
+                    style={{ border: "1px solid" }}
                   />
                   {/* OR */}
                   <div className="flex items-center gap-3">
@@ -423,7 +421,9 @@ export default function RequestCallbackModal({
                       className="flex-1 h-px"
                       style={{ backgroundColor: "var(--accent)" }}
                     />
-                    <span className="text-xs text-white/60 uppercase">or</span>
+                    <span className="text-xs text-current/60 uppercase">
+                      or
+                    </span>
                     <div
                       className="flex-1 h-px"
                       style={{ backgroundColor: "var(--accent)" }}
@@ -466,7 +466,7 @@ export default function RequestCallbackModal({
 
                       {/* RECORDING PROGRESS */}
                       <div className="space-y-1">
-                        <div className="h-1 bg-white/30 rounded overflow-hidden">
+                        <div className="h-1 bg-current/30 rounded overflow-hidden">
                           <div
                             className="h-full transition-[width] duration-200"
                             style={{
@@ -475,7 +475,7 @@ export default function RequestCallbackModal({
                             }}
                           />
                         </div>
-                        <div className="flex justify-between text-xs text-white/60">
+                        <div className="flex justify-between text-xs text-current/60">
                           <span>{formatTime(recordingElapsed)}</span>
                           <span>{formatTime(MAX_RECORDING_TIME)}</span>
                         </div>
@@ -542,7 +542,7 @@ export default function RequestCallbackModal({
 
                       {/* PLAYBACK PROGRESS */}
                       <div className="space-y-1">
-                        <div className="h-1 bg-white/30 rounded overflow-hidden">
+                        <div className="h-1 bg-current/30 rounded overflow-hidden">
                           <div
                             className="h-full transition-[width] duration-200"
                             style={{
@@ -551,7 +551,7 @@ export default function RequestCallbackModal({
                             }}
                           />
                         </div>
-                        <div className="flex justify-between text-xs text-white/60">
+                        <div className="flex justify-between text-xs text-current/60">
                           {/* <span>00:00</span> */}
                           <span>{formatTime(playProgress)}</span>
 
@@ -562,20 +562,28 @@ export default function RequestCallbackModal({
                   )}
 
                   {/* Note */}
-                  <p className="text-xs text-white/50 mb-6">
+                  <p className="text-xs opacity-50 mb-6">
                     Note: You can submit your request using text (at least 20
                     characters) or audio (5–120 seconds).
                   </p>
 
                   {/* Forward */}
-                  <button
-                    disabled={!canContinue}
-                    onClick={() => setStep(2)}
-                    className="cursor-pointer w-full py-3 rounded-lg text-md font-bold text-black hover:opacity-90 mt-2 mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ backgroundColor: "var(--accent)" }}
-                  >
-                    Move Forward →
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleBack}
+                      className="border solid mt-2 mb-6 rounded-lg text-md px-5 cursor-pointer"
+                    >
+                      Back
+                    </button>
+                    <button
+                      disabled={!canContinue}
+                      onClick={() => setStep(2)}
+                      className="cursor-pointer w-full py-3 rounded-lg text-md font-bold text-black hover:opacity-90 mt-2 mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{ backgroundColor: "var(--accent)" }}
+                    >
+                      Move Forward →
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -583,12 +591,7 @@ export default function RequestCallbackModal({
               {step === 2 && (
                 <div className="space-y-6">
                   {/* Title */}
-                  <p
-                    className="text-sm font-base mb-3"
-                    style={{ color: "var(--accent)" }}
-                  >
-                    Preferred Time
-                  </p>
+                  <p className="text-sm font-base mb-3">Preferred Time</p>
 
                   {/* Time slots */}
                   <div className="grid grid-cols-3 gap-3">
@@ -603,15 +606,11 @@ export default function RequestCallbackModal({
                           }
                           className="cursor-pointer py-4 rounded-lg text-sm font-medium transition"
                           style={{
-                            border: selected
-                              ? "1px solid var(--accent)"
-                              : "1px solid rgba(255,255,255,0.35)",
+                            border: "1px solid var(--accent)",
                             backgroundColor: selected
-                              ? "rgba(255,255,255,0.04)"
-                              : "transparent",
-                            color: selected
                               ? "var(--accent)"
-                              : "rgba(255,255,255,0.75)",
+                              : "transparent",
+                            color: selected ? "#000" : "var(--accent)",
                           }}
                         >
                           {c}
@@ -619,15 +618,22 @@ export default function RequestCallbackModal({
                       );
                     })}
                   </div>
-
-                  <button
-                    onClick={submitCallbackRequest}
-                    disabled={!canSubmit}
-                    className="cursor-pointer w-full py-3 rounded-lg text-md font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
-                    style={{ backgroundColor: "var(--accent)" }}
-                  >
-                    Submit Request →
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleBack}
+                      className="border solid mb-5 rounded-lg text-md px-5 cursor-pointer"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={submitCallbackRequest}
+                      disabled={!canSubmit}
+                      className="cursor-pointer w-full py-3 rounded-lg text-md font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
+                      style={{ backgroundColor: "var(--accent)" }}
+                    >
+                      Submit Request →
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -647,7 +653,10 @@ function SuccessScreen({
   onPrimaryAction?: () => void;
 }) {
   return (
-    <div className="px-5 sm:px-10 py-10 sm:py-12 flex flex-col space-y-6">
+    <div
+      className="px-5 sm:px-10 py-10 sm:py-12 flex flex-col space-y-6"
+      style={{ color: "var(--accent)" }}
+    >
       {/* Success Icon */}
       <div className="flex justify-center items-center">
         <motion.svg
@@ -699,7 +708,7 @@ function SuccessScreen({
         </motion.svg>
       </div>
 
-      <h1 className="text-base text-white/60 text-left">
+      <h1 className="text-base opacity-60 text-left">
         Your callback request has been received. Our team will reach out to you
         at your selected time slot.
       </h1>

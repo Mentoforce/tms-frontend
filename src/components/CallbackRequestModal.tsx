@@ -269,7 +269,7 @@ export default function RequestCallbackModal({
         {/* HEADER */}
         <div className="px-5 sm:px-10 pt-6 sm:pt-8 pb-1">
           <div className="flex items-center justify-between">
-            <h2 className=" font-medium text-2xl sm:text-2xl pt-3">
+            <h2 className=" font-medium text-xl sm:text-2xl pt-3">
               Request Callback
             </h2>
             <button

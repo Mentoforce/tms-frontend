@@ -324,7 +324,7 @@ export default function SearchTicket({
 
   return (
     <section
-      className="w-full max-w-82 md:max-w-210 mx-auto px-0 mb-20 md:mt-8  "
+      className="w-full min-w-82 max-w-90 md:max-w-210 mx-auto px-0 mb-20 "
       style={{ color: `${accent}` }}
     >
       {/* SECTION HEADING */}

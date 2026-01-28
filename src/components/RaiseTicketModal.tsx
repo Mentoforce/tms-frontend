@@ -416,7 +416,7 @@ export default function RaiseTicketModal({
                       value={draft.subject_id}
                       onChange={(e) => {
                         const subject = subjects.find(
-                          (s) => s._id === e.target.value
+                          (s) => s._id === e.target.value,
                         );
                         setSubSubjects(subject?.sub_subjects || []);
                         setDraft({
@@ -457,7 +457,7 @@ export default function RaiseTicketModal({
                       value={draft.sub_subject_id}
                       onChange={(e) => {
                         const ss = subSubjects.find(
-                          (x) => x._id === e.target.value
+                          (x) => x._id === e.target.value,
                         );
                         setDraft({
                           ...draft,
@@ -637,23 +637,34 @@ export default function RaiseTicketModal({
                       }}
                     />
 
-                    <div className="flex gap-3">
+                    <div className="grid grid-cols-2 gap-3">
                       <button
                         onClick={togglePlayAudio}
-                        className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
+                        disabled={isPlaying}
+                        className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                         style={{ backgroundColor: accent }}
                       >
-                        {isPlaying ? "⏸ Pause" : "▶ Play Recording"}
+                        {"▶ Play Recording"}
+                      </button>
+                      <button
+                        onClick={togglePlayAudio}
+                        disabled={!isPlaying}
+                        className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                        style={{ backgroundColor: accent }}
+                      >
+                        {"⏸ Pause Recording"}
                       </button>
 
                       <button
                         onClick={deleteRecording}
-                        className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer"
-                        style={{
-                          border: `1px solid ${accent}`,
-                          color: accent,
-                          background: "transparent",
-                        }}
+                        className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer text-white bg-red-500"
+                      >
+                        Delete Recording
+                      </button>
+
+                      <button
+                        onClick={deleteRecording}
+                        className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer text-white bg-green-600"
                       >
                         Record Again
                       </button>
@@ -893,7 +904,7 @@ export default function RaiseTicketModal({
                         </span>
                       </button>
                     );
-                  }
+                  },
                 )}
 
                 {/* CONTINUE */}

@@ -200,7 +200,7 @@ export default function Home() {
 
       {/* ---------------- MAIN CONTAINER---------------- */}
       <section
-        className="w-full max-w-82 md:max-w-210 mx-auto pt-0 pb-12 flex flex-col gap-12 md:gap-20"
+        className="w-full min-w-82 max-w-90 md:max-w-210 mx-auto pt-0 pb-12 flex flex-col gap-12 md:gap-20"
         style={{ color: `${primaryColor}` }}
       >
         {/* QUICK ACCESS SECTION */}

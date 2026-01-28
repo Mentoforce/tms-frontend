@@ -48,18 +48,36 @@ export default function Footer({ primarycolor }: { primarycolor?: string }) {
   if (!footer) return null;
 
   return (
-    <footer className="w-full mt-20 md:mt-32 pb-10">
-      {/* SEPARATOR LINE - Matches Section Headings */}
+    <footer className="w-full mt-15 pb-10">
       <div
         aria-hidden
-        className="w-full max-w-[328px] md:max-w-[840px] mx-auto h-[0.5px] opacity-20"
+        className="
+          w-full
+          max-w-82 md:max-w-210
+          mx-auto
+          h-px md:h-[0.5px]
+          opacity-20
+        "
         style={{ backgroundColor: accent }}
       />
 
       {/* FOOTER CONTENT */}
-      <div className="w-full max-w-[328px] md:max-w-[840px] mx-auto pt-8 px-0 text-center text-[12px] md:text-[14px] text-[#BDBDBD] font-light leading-relaxed tracking-wide">
+      <div
+        className="
+          w-full
+          max-w-82 md:max-w-210
+          mx-auto
+          pt-8
+          text-center
+          text-[12px] md:text-[14px]
+          font-light
+          leading-relaxed
+          tracking-wide
+        "
+        style={{ ["--footer-accent" as any]: accent }}
+      >
         <div
-          className="opacity-60 hover:opacity-100 transition-opacity duration-300"
+          className="opacity-60 footer-html"
           dangerouslySetInnerHTML={{ __html: footer.html_content }}
         />
       </div>

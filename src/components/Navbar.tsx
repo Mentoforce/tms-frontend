@@ -56,14 +56,14 @@ export default function Navbar({ config }: NavbarProps) {
       <div
         className="
           flex items-center justify-center
-          w-full mx-auto sm:py-[60px] py-[40px]
+          w-full mx-auto sm:py-15 py-10
         "
       >
         <img
           src={logoUrl}
           alt="Company Logo"
           className="
-            h-[60px] md:h-[100px]
+            h-15 md:h-25
             w-auto object-contain
           "
         />

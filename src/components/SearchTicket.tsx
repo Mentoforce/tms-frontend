@@ -329,7 +329,7 @@ export default function SearchTicket({
     >
       {/* SECTION HEADING */}
       <div className="flex flex-col gap-1 mb-6 md:mb-8">
-        <h2 className="text-[18px] md:text-[30px] font-semibold md:font-bold uppercase tracking-tight mb-4">
+        <h2 className="text-[20px] md:text-[30px] font-semibold uppercase tracking-tight mb-4">
           TRANSACTION INQUIRY
         </h2>
         <div

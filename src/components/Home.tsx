@@ -206,11 +206,11 @@ export default function Home() {
         {/* QUICK ACCESS SECTION */}
         <div>
           <div className="flex flex-col gap-1 mb-6 md:mb-8">
-            <h2 className="text-[18px] md:text-[30px] font-semibold md:font-bold uppercase tracking-tight mb-4">
+            <h2 className="text-[20px] md:text-[30px] font-semibold uppercase tracking-tight mb-4">
               Quick Access
             </h2>
             <div
-              className="w-full h-[0.5px] opacity-20"
+              className="w-full h-px md:h-[0.5px] opacity-20"
               style={{ backgroundColor: `${primaryColor}` }}
             />
           </div>
@@ -237,10 +237,13 @@ export default function Home() {
         {/* QUICK SUPPORT SECTION */}
         <div>
           <div className="flex flex-col gap-1 mb-6 md:mb-8">
-            <h2 className="text-[18px] md:text-[30px] font-semibold md:font-bold uppercase tracking-tight mb-4">
+            <h2 className="text-[20px] md:text-[30px] font-semibold uppercase tracking-tight mb-4">
               Quick Support
             </h2>
-            <div className="w-full h-[0.5px] bg-[#DFD1A1] opacity-20" />
+            <div
+              className="w-full h-px md:h-[0.5px] opacity-20"
+              style={{ backgroundColor: `${primaryColor}` }}
+            />
           </div>
           <div className="grid grid-cols-2 gap-3 md:gap-x-5.5 md:gap-y-5">
             {features.map(

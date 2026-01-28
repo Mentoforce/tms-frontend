@@ -162,29 +162,27 @@ export default function UploadFileModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4"
-      style={{ ["--accent" as any]: accent }}
+      style={{ ["--accent" as any]: accent, color: accent }}
     >
       <div
         className="w-full max-w-125 rounded-2xl bg-[#0A0A0A]"
-        style={{ border: "1px solid var(--accent)" }}
+        style={{ border: "1px solid" }}
       >
         {/* HEADER */}
         <div className="px-6 sm:px-10 pt-7 pb-2">
           <div className="flex items-center justify-between">
-            <h2 className="text-white font-medium text-2xl pt-2">
-              File Upload
-            </h2>
+            <h2 className=" font-medium text-2xl pt-2">File Upload</h2>
             <button
               onClick={handleClose}
-              className="text-white/80 hover:text-white text-2xl cursor-pointer"
+              className="hover:opacity-80 text-2xl cursor-pointer"
             >
               ✕
             </button>
           </div>
 
           <div
-            className="mt-4"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.3)" }}
+            className="mt-4 opacity-40"
+            style={{ borderBottom: "1px solid" }}
           />
         </div>
 
@@ -233,7 +231,7 @@ export default function UploadFileModal({
                 />
               </motion.svg>
 
-              <p className="w-full mt-6 text-base text-white/70 text-left">
+              <p className="w-full mt-6 text-base text-current/70 text-left">
                 Files have been uploaded successfully.
               </p>
 
@@ -255,12 +253,10 @@ export default function UploadFileModal({
                   </h3>
 
                   <div>
-                    <label className="block text-sm text-white mb-2">
-                      Ticket Number
-                    </label>
+                    <label className="block text-sm mb-2">Ticket Number</label>
                     <input
-                      className="w-full mb-1 rounded-lg px-4 py-3 text-sm bg-transparent text-white focus:outline-none"
-                      style={{ border: "1px solid rgba(255,255,255,0.35)" }}
+                      className="w-full mb-1 rounded-lg px-4 py-3 text-sm bg-transparent focus:outline-none"
+                      style={{ border: "1px solid" }}
                       placeholder="Enter ticket number"
                       value={ticketNumber}
                       onChange={(e) => {
@@ -271,24 +267,16 @@ export default function UploadFileModal({
                   </div>
 
                   <div>
-                    <label className="block text-sm text-white mb-2">
-                      Username
-                    </label>
+                    <label className="block text-sm mb-2">Username</label>
                     <input
-                      className="w-full mb-1 rounded-lg px-4 py-3 text-sm bg-transparent text-white focus:outline-none"
+                      className="w-full mb-1 rounded-lg px-4 py-3 text-sm bg-transparent focus:outline-none"
                       placeholder="Enter your username"
                       value={username}
                       onChange={(e) => {
                         setUsername(e.target.value);
                         setError(null);
                       }}
-                      style={{
-                        border: `1px solid ${
-                          username && !isUsernameValid
-                            ? "red"
-                            : "rgba(255,255,255,0.4)"
-                        }`,
-                      }}
+                      style={{ border: "1px solid" }}
                     />
                   </div>
                   {username && !isUsernameValid && (
@@ -316,9 +304,9 @@ export default function UploadFileModal({
               {/* STEP 1 */}
               {step === 1 && (
                 <div className="space-y-5">
-                  <p className="text-sm text-white/60">
+                  <p className="text-sm text-current/60">
                     Ticket ID:{" "}
-                    <span className="text-white font-mono">
+                    <span className="font-mono">
                       {ticketData.ticket.ticket_number}
                     </span>
                   </p>
@@ -327,12 +315,12 @@ export default function UploadFileModal({
                     <div
                       key={file._id}
                       className="flex items-center justify-between px-3 py-2 rounded-lg"
-                      style={{ border: "1px solid rgba(255,255,255,0.3)" }}
+                      style={{ border: "1px solid" }}
                     >
                       <a
                         href={file.file_url}
                         target="_blank"
-                        className="text-sm text-white underline"
+                        className="text-sm underline"
                       >
                         {file.file_name}
                       </a>
@@ -354,7 +342,7 @@ export default function UploadFileModal({
                     >
                       Files:
                     </span>
-                    <span className="text-white/50">
+                    <span className="opacity-50">
                       {(ticketData?.ticket?.files?.length || 0) + files.length}
                       /4 files uploaded
                     </span>
@@ -378,7 +366,7 @@ export default function UploadFileModal({
                     />
                     <label
                       htmlFor="upload-files"
-                      className="cursor-pointer flex flex-col items-center gap-2 text-white/70"
+                      className="cursor-pointer flex flex-col items-center gap-2 text-current/70"
                     >
                       <div className="text-xl">
                         <IconUpload size={18} stroke={2} />
@@ -387,7 +375,7 @@ export default function UploadFileModal({
                         Drag & drop files here or{" "}
                         <span className="underline">browse</span>
                       </p>
-                      <p className="text-xs text-white/40">
+                      <p className="text-xs text-current/40">
                         (PDF/Photo: 10MB • Video: 50MB)
                       </p>
                     </label>
@@ -404,7 +392,7 @@ export default function UploadFileModal({
                           <input
                             value={f.name}
                             onChange={(e) => updateFileName(i, e.target.value)}
-                            className="flex-1 bg-transparent text-white text-sm focus:outline-none"
+                            className="flex-1 bg-transparent text-sm focus:outline-none"
                           />
                           <button
                             onClick={() =>

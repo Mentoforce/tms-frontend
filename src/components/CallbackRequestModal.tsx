@@ -233,7 +233,7 @@ export default function RequestCallbackModal({
         if (hr > 23) hr = 0;
 
         arr.push(
-          `${hr.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}`
+          `${hr.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}`,
         );
         min += 10;
       }
@@ -486,7 +486,7 @@ export default function RequestCallbackModal({
                   {/* PLAYBACK */}
                   {draft.audio && audioUrl && (
                     <>
-                      <div className="flex gap-3">
+                      {/* <div className="flex gap-3">
                         <button
                           onClick={togglePlayAudio}
                           className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
@@ -503,6 +503,38 @@ export default function RequestCallbackModal({
                             color: "var(--accent)",
                             background: "transparent",
                           }}
+                        >
+                          Record Again
+                        </button>
+                      </div> */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          onClick={togglePlayAudio}
+                          disabled={isPlaying}
+                          className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                          style={{ backgroundColor: accent }}
+                        >
+                          {"▶ Play Recording"}
+                        </button>
+                        <button
+                          onClick={togglePlayAudio}
+                          disabled={!isPlaying}
+                          className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                          style={{ backgroundColor: accent }}
+                        >
+                          {"⏸ Pause Recording"}
+                        </button>
+
+                        <button
+                          onClick={deleteRecording}
+                          className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer text-white bg-red-500"
+                        >
+                          Delete Recording
+                        </button>
+
+                        <button
+                          onClick={deleteRecording}
+                          className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer text-white bg-green-600"
                         >
                           Record Again
                         </button>

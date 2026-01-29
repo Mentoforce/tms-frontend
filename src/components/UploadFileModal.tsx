@@ -295,7 +295,7 @@ export default function UploadFileModal({
                   <button
                     onClick={verifyTicket}
                     disabled={!isVerifyEnabled || loading}
-                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold text-black mb-5 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="cursor-pointer w-full py-3 rounded-lg mt-5 text-sm font-bold text-black mb-5 transition disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
                     {loading ? "Verifying..." : "Verify Ticket →"}
@@ -336,7 +336,6 @@ export default function UploadFileModal({
                     </div>
                   ))}
 
-                  {/* ✅ ONLY LOGIC CHANGE IS HERE */}
                   <div className="flex items-center justify-between text-sm">
                     <span
                       className="font-medium"
@@ -416,7 +415,7 @@ export default function UploadFileModal({
                   <button
                     onClick={uploadFiles}
                     disabled={loading || files.length === 0}
-                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
+                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold text-black transition disabled:opacity-40 mt-4 disabled:cursor-not-allowed mb-5"
                     style={{ backgroundColor: "var(--accent)" }}
                   >
                     {loading ? "Uploading..." : "Upload Files →"}

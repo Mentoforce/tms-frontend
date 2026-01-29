@@ -87,7 +87,7 @@ export default function RaiseTicketModal({
 
     return (
       <div
-        className="w-full flex flex-col max-w-md mx-auto text-left space-y-5 px-5 sm:px-10 py-5 sm:py-6"
+        className="w-full flex flex-col max-w-md mx-auto text-left space-y-5 px-6 sm:px-3 py-5 sm:py-6"
         style={{ color: "var(--accent)" }}
       >
         <p className="text-sm mb-3 font-medium">
@@ -493,7 +493,7 @@ export default function RaiseTicketModal({
             )}
 
             {step === 1 && (
-              <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-5">
+              <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-9">
                 <div className="rounded-xl border border-current/30 bg-white/2 px-6 py-5 space-y-3">
                   {/* TITLE */}
                   <h3
@@ -704,7 +704,7 @@ export default function RaiseTicketModal({
                 <button
                   disabled={!canContinue}
                   onClick={() => setStep(3)}
-                  className="w-full py-3 mb-4 rounded-lg text-base font-bold text-black cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed "
+                  className="w-full py-3 mt-4 mb-4 rounded-lg text-base font-bold text-black cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed "
                   style={{ backgroundColor: "var(--accent)" }}
                 >
                   Continue →
@@ -830,7 +830,7 @@ export default function RaiseTicketModal({
                 {/* CONTINUE */}
                 <button
                   onClick={() => setStep(step + 1)}
-                  className="cursor-pointer w-full mt-2 mb-4 py-3 rounded-lg  text-base font-bold text-black"
+                  className="cursor-pointer w-full mt-4 mb-4 py-3 rounded-lg  text-base font-bold text-black"
                   style={{ backgroundColor: "var(--accent)" }}
                 >
                   Continue →
@@ -928,7 +928,12 @@ export default function RaiseTicketModal({
                   <div className="grid grid-cols-2">
                     <span className="w-44 text-current/50">Subject:</span>
                     <span>
-                      {subjects.find((s) => s._id === draft.subject_id)?.title}
+                      {subjects.find((s) => s._id === draft.subject_id)?.title}{" "}
+                      ›{" "}
+                      {
+                        subSubjects.find((s) => s._id === draft.sub_subject_id)
+                          ?.title
+                      }
                     </span>
                   </div>
 

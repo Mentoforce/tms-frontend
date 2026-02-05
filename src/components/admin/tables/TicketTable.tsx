@@ -6,6 +6,16 @@ import TicketViewModal from "./TicketViewModal";
 import { transformStatus } from "@/lib/tableUtils";
 import Td from "./util/Td";
 import Th from "./util/Th";
+import api from "@/lib/axios";
+
+const STATUS_CLASS_MAP: Record<string, string> = {
+  pending: "bg-blue-500/15 text-blue-400",
+  created: "bg-blue-500/15 text-blue-400",
+  updated: "bg-purple-500/15 text-purple-400",
+  resolved: "bg-green-500/15 text-green-400",
+  rejected: "bg-red-500/15 text-red-400",
+  files_missing: "bg-yellow-500/15 text-yellow-400",
+};
 
 type Ticket = {
   _id: string;
@@ -29,6 +39,18 @@ export default function TicketTable({
   onTicketUpdated: (updatedTicket: any) => void;
 }) {
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const updateTicketStatus = async (ticket: Ticket, newStatus: string) => {
+    await api.post("/tickets/update-ticket", {
+      ticket_id: ticket._id,
+      status: newStatus,
+    });
+
+    onTicketUpdated({
+      ...ticket,
+      status: newStatus,
+      updatedAt: new Date().toISOString(),
+    });
+  };
 
   if (!tickets || tickets.length === 0) {
     return (
@@ -88,7 +110,14 @@ export default function TicketTable({
                 </Td>
 
                 <Td>
-                  <StatusPill status={t.status} />
+                  {t.status !== "resolved" ? (
+                    <StatusDropdown
+                      status={t.status}
+                      onChange={(newStatus) => updateTicketStatus(t, newStatus)}
+                    />
+                  ) : (
+                    <StatusPill status={t.status} />
+                  )}
                 </Td>
 
                 <Td className="text-gray-300">{t.return_channel}</Td>
@@ -132,20 +161,64 @@ export default function TicketTable({
 }
 
 function StatusPill({ status }: { status: Ticket["status"] }) {
-  const map: Record<string, string> = {
-    pending: "bg-blue-500/15 text-blue-400",
-    created: "bg-blue-500/15 text-blue-400",
-    updated: "bg-purple-500/15 text-purple-400",
-    resolved: "bg-green-500/15 text-green-400",
-    rejected: "bg-red-500/15 text-red-400",
-    files_missing: "bg-yellow-500/15 text-yellow-400",
-  };
-
   return (
     <span
-      className={`px-3 py-1 rounded-full text-xs font-medium ${map[status]}`}
+      className={`px-3 py-1 rounded-full text-xs font-medium ${STATUS_CLASS_MAP[status]}`}
     >
       {transformStatus(status)}
     </span>
+  );
+}
+
+function StatusDropdown({
+  status,
+  onChange,
+}: {
+  status: string;
+  onChange: (status: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  const STATUSES = [
+    "pending",
+    "updated",
+    "files_missing",
+    "resolved",
+    "rejected",
+  ];
+
+  return (
+    <div className="relative inline-block">
+      {/* Trigger */}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${STATUS_CLASS_MAP[status]}`}
+      >
+        {transformStatus(status)}
+        <span className="text-xs opacity-60">▾</span>
+      </button>
+
+      {/* Dropdown */}
+      {open && (
+        <div className="absolute z-20 mt-2 w-40 rounded-lg border border-white/10 bg-[#0B0F1A] shadow-lg">
+          {STATUSES.map((s) => (
+            <button
+              key={s}
+              onClick={() => {
+                onChange(s);
+                setOpen(false);
+              }}
+              className={`w-full text-left px-3 py-2 text-xs hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg`}
+            >
+              <span
+                className={`inline-block px-3 py-1 rounded-full font-medium ${STATUS_CLASS_MAP[s]}`}
+              >
+                {transformStatus(s)}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

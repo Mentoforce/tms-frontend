@@ -6,6 +6,7 @@ import Td from "./util/Td";
 import Th from "./util/Th";
 import { transformStatus } from "@/lib/tableUtils";
 import CallbackViewModal from "./CallbackRequestModal";
+import api from "@/lib/axios";
 
 type CallbackRequest = {
   _id: string;
@@ -20,6 +21,14 @@ type CallbackRequest = {
   audio?: string;
 };
 
+const CALLBACK_STATUS_CLASS_MAP: Record<string, string> = {
+  pending: "bg-blue-500/15 text-blue-400",
+  waiting: "bg-blue-500/15 text-blue-400",
+  missed: "bg-yellow-500/15 text-yellow-400",
+  resolved: "bg-green-500/15 text-green-400",
+  rejected: "bg-red-500/15 text-red-400",
+};
+
 export default function CallbackRequestTable({
   callback,
   onCallbackUpdated,
@@ -28,6 +37,22 @@ export default function CallbackRequestTable({
   onCallbackUpdated: (updatedCallback: any) => void;
 }) {
   const [selectedCallback, setSelectedCallback] = useState<any>(null);
+
+  const updateCallbackStatus = async (
+    callback: CallbackRequest,
+    newStatus: string,
+  ) => {
+    await api.post("/tickets/update-callback-request", {
+      request_id: callback._id,
+      status: newStatus,
+    });
+
+    onCallbackUpdated({
+      ...callback,
+      status: newStatus,
+      updatedAt: new Date().toISOString(),
+    });
+  };
 
   if (!callback || callback.length === 0) {
     return (
@@ -89,7 +114,16 @@ export default function CallbackRequestTable({
                   )}
                 </Td>
                 <Td>
-                  <StatusPill status={c.status} />
+                  {c.status !== "resolved" ? (
+                    <CallbackStatusDropdown
+                      status={c.status}
+                      onChange={(newStatus) =>
+                        updateCallbackStatus(c, newStatus)
+                      }
+                    />
+                  ) : (
+                    <StatusPill status={c.status} />
+                  )}
                 </Td>
 
                 <Td className="text-gray-400">
@@ -114,19 +148,56 @@ export default function CallbackRequestTable({
 }
 
 function StatusPill({ status }: { status: CallbackRequest["status"] }) {
-  const map: Record<string, string> = {
-    pending: "bg-blue-500/15 text-blue-400",
-    waiting: "bg-blue-500/15 text-blue-400",
-    resolved: "bg-green-500/15 text-green-400",
-    rejected: "bg-red-500/15 text-red-400",
-    missed: "bg-yellow-500/15 text-yellow-400",
-  };
-
   return (
     <span
-      className={`px-3 py-1 rounded-full text-xs font-medium ${map[status]}`}
+      className={`px-3 py-1 rounded-full text-xs font-medium ${CALLBACK_STATUS_CLASS_MAP[status]}`}
     >
       {transformStatus(status)}
     </span>
+  );
+}
+
+function CallbackStatusDropdown({
+  status,
+  onChange,
+}: {
+  status: string;
+  onChange: (status: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  const STATUSES = ["pending", "waiting", "missed", "resolved", "rejected"];
+
+  return (
+    <div className="relative inline-block">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${CALLBACK_STATUS_CLASS_MAP[status]}`}
+      >
+        {transformStatus(status)}
+        <span className="opacity-60">▾</span>
+      </button>
+
+      {open && (
+        <div className="absolute z-20 mt-2 w-44 rounded-lg border border-white/10 bg-[#0B0F1A] shadow-lg">
+          {STATUSES.map((s) => (
+            <button
+              key={s}
+              onClick={() => {
+                onChange(s);
+                setOpen(false);
+              }}
+              className="w-full text-left px-3 py-2 hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg"
+            >
+              <span
+                className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${CALLBACK_STATUS_CLASS_MAP[s]}`}
+              >
+                {transformStatus(s)}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

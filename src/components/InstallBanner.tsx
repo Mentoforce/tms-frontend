@@ -16,7 +16,7 @@ export default function InstallBanner() {
         fixed top-4 left-1/2 -translate-x-1/2
         max-w-xl w-[calc(100%-2rem)]
         z-250 rounded-2xl
-        bg-gradient-to-br from-neutral-900 via-black to-neutral-800
+        bg-linear-to-br from-neutral-900 via-black to-neutral-800
         text-white
         border border-white/15
         p-4

@@ -1,20 +1,34 @@
+// hooks/useInstallPrompt.ts
 import { useEffect, useState } from "react";
+import { BeforeInstallPromptEvent } from "../../global";
 
-let deferredPrompt: any = null;
+let deferredPrompt: BeforeInstallPromptEvent | null = null;
 
 export function useInstallPrompt() {
   const [canInstall, setCanInstall] = useState(false);
 
   useEffect(() => {
-    const handler = (e: any) => {
-      e.preventDefault();
-      deferredPrompt = e;
+    if (typeof window === "undefined") return;
+
+    const onBeforeInstall = (e: Event) => {
+      const promptEvent = e as BeforeInstallPromptEvent;
+      promptEvent.preventDefault();
+      deferredPrompt = promptEvent;
       setCanInstall(true);
     };
 
-    window.addEventListener("beforeinstallprompt", handler);
-    return () =>
-      window.removeEventListener("beforeinstallprompt", handler);
+    const onInstalled = () => {
+      deferredPrompt = null;
+      setCanInstall(false);
+    };
+
+    window.addEventListener("beforeinstallprompt", onBeforeInstall);
+    window.addEventListener("appinstalled", onInstalled);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onBeforeInstall);
+      window.removeEventListener("appinstalled", onInstalled);
+    };
   }, []);
 
   const install = async () => {
@@ -22,6 +36,7 @@ export function useInstallPrompt() {
 
     deferredPrompt.prompt();
     await deferredPrompt.userChoice;
+
     deferredPrompt = null;
     setCanInstall(false);
   };

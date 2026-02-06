@@ -339,7 +339,7 @@ export default function SearchTicket({ theme }: { theme?: ThemeType }) {
         className="w-full rounded-lg md:rounded-xl flex flex-col px-5 py-8 md:px-12 md:py-12 gap-6 border-[0.5px]"
         style={{
           backgroundColor: `${theme?.base_color}1A`,
-          borderColor: `${theme?.primary_color}`,
+          borderColor: `${theme?.border_color}`,
         }}
       >
         {!result ? (

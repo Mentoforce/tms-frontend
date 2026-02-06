@@ -11,6 +11,7 @@ import {
   IconPhone,
   IconBrandTelegram,
 } from "@tabler/icons-react";
+import { ThemeType } from "@/types/context-types";
 
 type Subject = {
   _id: string;
@@ -24,23 +25,24 @@ type Subject = {
 
 const TOTAL_STEPS = 6;
 const DEFAULT_PRIMARY = "#DFD1A1";
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
 
 export default function RaiseTicketModal({
   open,
   onClose,
-  primarycolor,
+  theme,
 }: {
   open: boolean;
   onClose: () => void;
-  primarycolor?: string;
+  theme?: ThemeType;
 }) {
-  const accent = primarycolor || DEFAULT_PRIMARY;
-
   const [step, setStep] = useState(0);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [subSubjects, setSubSubjects] = useState<any[]>([]);
   const [successTicket, setSuccessTicket] = useState<string | null>(null);
   const [counter, setCounter] = useState(5);
+  const [fileError, setFileError] = useState<string | null>(null);
 
   const [draft, setDraft] = useState({
     username: "",
@@ -48,12 +50,25 @@ export default function RaiseTicketModal({
     sub_subject_id: "",
     description: "",
     audio: null as Blob | null,
-    files: [] as { file: File; name: string }[],
+    files: [] as {
+      file: File;
+      name: string;
+      note: string;
+    }[],
     return_channel: "email",
   });
 
   const { organisation } = useOrganisation();
   const router = useRouter();
+
+  // Extract theme colors with fallbacks
+  const primarycolor = theme?.primary_color || DEFAULT_PRIMARY;
+  const baseColor = theme?.base_color || "#0A0A0A";
+  const bgColor = theme?.bg_color || "transparent";
+  const subColor = theme?.sub_color || "rgba(255,255,255,0.5)";
+  const borderColor = theme?.border_color || primarycolor;
+  const modalBgColor = theme?.modal_bg_color || "#0A0A0A";
+  const accent = primarycolor;
 
   /* ---------------- Fetch Subjects ---------------- */
   useEffect(() => {
@@ -87,8 +102,8 @@ export default function RaiseTicketModal({
 
     return (
       <div
-        className="w-full flex flex-col max-w-md mx-auto text-left space-y-5 px-6 sm:px-3 py-5 sm:py-6"
-        style={{ color: "var(--accent)" }}
+        className="w-full flex flex-col max-w-md mx-auto text-left space-y-5 px-5 sm:px-10 py-5 sm:py-6"
+        style={{ color: primarycolor }}
       >
         <p className="text-sm mb-3 font-medium">
           Your request has been received.
@@ -103,7 +118,7 @@ export default function RaiseTicketModal({
           className="flex items-center justify-center gap-3 rounded-lg px-4 py-3"
           style={{
             backgroundColor: `${primarycolor}33`,
-            border: "1px solid var(--accent)",
+            border: `1px solid ${primarycolor}`,
           }}
         >
           <span className="font-mono font-bold text-base">{ticket}</span>
@@ -123,8 +138,8 @@ export default function RaiseTicketModal({
 
         <button
           onClick={onPrimaryAction}
-          className="w-full py-3 mb-4 rounded-lg text-sm font-bold text-black transition hover:opacity-90 cursor-pointer"
-          style={{ backgroundColor: "var(--accent)" }}
+          className="w-full py-3 mb-4 rounded-lg text-sm font-bold transition hover:opacity-90 cursor-pointer"
+          style={{ backgroundColor: primarycolor, color: modalBgColor }}
         >
           Go to the Website →
         </button>
@@ -141,12 +156,9 @@ export default function RaiseTicketModal({
 
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-
   const [recordingElapsed, setRecordingElapsed] = useState(0); // seconds
   const [recordedDuration, setRecordedDuration] = useState(0); // final duration
-
   const [playProgress, setPlayProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -167,48 +179,55 @@ export default function RaiseTicketModal({
       clearInterval(recordingInterval.current);
     }
 
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
-    const chunks: BlobPart[] = [];
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks: BlobPart[] = [];
 
-    recorder.ondataavailable = (e) => chunks.push(e.data);
+      recorder.ondataavailable = (e) => chunks.push(e.data);
 
-    recorder.onstop = () => {
-      const audioBlob = new Blob(chunks, { type: "audio/webm" });
+      recorder.onstop = () => {
+        const audioBlob = new Blob(chunks, { type: "audio/webm" });
 
-      setDraft((d) => ({ ...d, audio: audioBlob }));
-      setAudioUrl(URL.createObjectURL(audioBlob));
-      setRecordedDuration(recordingElapsed);
+        setDraft((d) => ({ ...d, audio: audioBlob }));
+        setAudioUrl(URL.createObjectURL(audioBlob));
+        setRecordedDuration(recordingElapsed);
 
-      setIsRecording(false);
+        setIsRecording(false);
+        setRecordingElapsed(0);
+
+        stream.getTracks().forEach((t) => t.stop());
+        if (recordingInterval.current) clearInterval(recordingInterval.current);
+        recordingInterval.current = null;
+      };
+
+      recorder.start();
+      mediaRecorder.current = recorder;
+
+      setIsRecording(true);
       setRecordingElapsed(0);
 
-      stream.getTracks().forEach((t) => t.stop());
-      if (recordingInterval.current) clearInterval(recordingInterval.current);
-      recordingInterval.current = null;
-    };
-
-    recorder.start();
-    mediaRecorder.current = recorder;
-
-    setIsRecording(true);
-    setRecordingElapsed(0);
-
-    // Start interval
-    recordingInterval.current = setInterval(() => {
-      setRecordingElapsed((prev) => {
-        if (prev + 1 >= MAX_RECORDING_TIME) {
-          recorder.stop();
-          return MAX_RECORDING_TIME;
-        }
-        return prev + 1;
-      });
-    }, 1000);
+      // Start interval
+      recordingInterval.current = setInterval(() => {
+        setRecordingElapsed((prev) => {
+          if (prev + 1 >= MAX_RECORDING_TIME) {
+            recorder.stop();
+            return MAX_RECORDING_TIME;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    } catch (error) {
+      console.error("Error accessing microphone:", error);
+      alert("Could not access microphone. Please check permissions.");
+    }
   };
 
   /* ---------- STOP RECORDING ---------- */
   const stopRecording = () => {
-    mediaRecorder.current?.stop();
+    if (mediaRecorder.current && mediaRecorder.current.state === "recording") {
+      mediaRecorder.current.stop();
+    }
     if (recordingInterval.current) clearInterval(recordingInterval.current);
   };
 
@@ -261,31 +280,130 @@ export default function RaiseTicketModal({
   const isAudioValid = !!draft.audio;
   const canContinue = isTextValid || isAudioValid;
 
+  /* ---------------- File Validation ---------------- */
+  const validateFiles = (
+    files: File[],
+  ): { valid: boolean; errors: string[] } => {
+    const errors: string[] = [];
+
+    files.forEach((file) => {
+      const maxSize = file.type.startsWith("video/")
+        ? MAX_VIDEO_SIZE
+        : MAX_FILE_SIZE;
+
+      if (file.size > maxSize) {
+        const maxSizeMB = maxSize / (1024 * 1024);
+        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        errors.push(
+          `${file.name}: ${fileSizeMB}MB exceeds ${maxSizeMB}MB limit`,
+        );
+      }
+    });
+
+    return {
+      valid: errors.length === 0,
+      errors,
+    };
+  };
+
+  /* ---------------- Handle File Upload ---------------- */
+  const handleFileUpload = (selectedFiles: FileList | File[]) => {
+    const filesArray = Array.from(selectedFiles);
+
+    if (draft.files.length + filesArray.length > 4) {
+      setFileError("Maximum 4 files allowed");
+      return;
+    }
+
+    const validation = validateFiles(filesArray);
+
+    if (!validation.valid) {
+      setFileError(validation.errors.join(", "));
+      return;
+    }
+
+    setFileError(null);
+
+    const filesToAdd = filesArray.map((file) => ({
+      file,
+      name: file.name,
+      note: "",
+    }));
+
+    setDraft({
+      ...draft,
+      files: [...draft.files, ...filesToAdd],
+    });
+  };
+
   /* ---------------- Submit ---------------- */
   const submitTicket = async () => {
-    if (isSubmitting) return;
+    setIsSubmitting(true);
 
     try {
-      setIsSubmitting(true);
+      console.log(
+        "Submitting ticket with files:",
+        draft.files.map((f) => ({
+          name: f.name,
+          size: f.file.size,
+          note: f.note,
+        })),
+      );
 
       const fd = new FormData();
+
       fd.append("username", draft.username);
       fd.append("subject_id", draft.subject_id);
       fd.append("sub_subject_id", draft.sub_subject_id);
       fd.append("description", draft.description);
       fd.append("return_channel", draft.return_channel);
 
-      if (draft.audio) fd.append("audio", draft.audio);
-      draft.files.forEach((f) => fd.append("files", f.file, f.name));
+      // Append file notes as array
+      draft.files.forEach((f) => {
+        fd.append("file_notes[]", f.note || "");
+      });
 
-      const res = await api.post("/tickets/create", fd);
+      // Append files
+      draft.files.forEach((f) => {
+        fd.append("files", f.file);
+      });
+
+      // Append audio if exists
+      if (draft.audio) {
+        // Validate audio size
+        if (draft.audio.size > MAX_FILE_SIZE) {
+          throw new Error("Audio file exceeds 10MB limit");
+        }
+        fd.append("audio", draft.audio);
+      }
+
+      // Debug: Log FormData entries
+      console.log("FormData entries:");
+      for (let pair of fd.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
+      const res = await api.post("/tickets/create", fd, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       setSuccessTicket(res.data.data.ticket_number);
+    } catch (error: any) {
+      console.error("Error submitting ticket:", error);
+
+      // Show user-friendly error message
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to submit ticket. Please try again.";
+
+      alert(`Error: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  if (!open) return null;
 
   /* ---------------- Validation ---------------- */
 
@@ -311,6 +429,7 @@ export default function RaiseTicketModal({
     });
     setSuccessTicket(null);
     setCounter(5);
+    setFileError(null);
     onClose();
   };
 
@@ -328,19 +447,25 @@ export default function RaiseTicketModal({
       });
       setSuccessTicket(null);
       setCounter(5);
+      setFileError(null);
       onClose();
     }
     router.push(organisation?.link || "/");
   };
 
+  if (!open) return null;
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 sm:px-6"
-      style={{ color: `${accent}`, ["--accent" as any]: accent }}
+      style={{ color: primarycolor }}
     >
       <div
-        className="w-full max-w-130 rounded-2xl bg-[#0A0A0A] shadow-[0_0_60px_rgba(0,0,0,0.9)]"
-        style={{ border: "1px solid var(--accent)" }}
+        className="w-full max-w-130 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.9)]"
+        style={{
+          backgroundColor: modalBgColor,
+          border: `1px solid ${borderColor}`,
+        }}
       >
         {/* HEADER */}
         <div className="px-5 sm:px-10 pt-6 sm:pt-8 pb-1">
@@ -351,6 +476,7 @@ export default function RaiseTicketModal({
             <button
               onClick={handleClose}
               className=" hover:opacity-70 text-xl sm:text-2xl pt-3 cursor-pointer"
+              style={{ color: primarycolor }}
             >
               ✕
             </button>
@@ -360,7 +486,7 @@ export default function RaiseTicketModal({
           <div
             className="sm:mt-5 mt-4 opacity-40"
             style={{
-              borderBottom: "1px solid",
+              borderBottom: `1px solid ${borderColor}`,
               marginInline: "4px",
             }}
           />
@@ -377,7 +503,7 @@ export default function RaiseTicketModal({
             {step === 0 && (
               <div
                 className="px-5 sm:px-10 py-5 sm:py-6 space-y-5"
-                style={{ color: `${accent}` }}
+                style={{ color: primarycolor }}
               >
                 <div>
                   <label className="block text-sm  mb-2">Your Username</label>
@@ -390,8 +516,8 @@ export default function RaiseTicketModal({
                     placeholder="Enter your username"
                     className="w-full mb-1 rounded-lg px-4 py-4 text-sm bg-transparent focus:outline-none placeholder:text-base"
                     style={{
-                      border: `1px solid`,
-                      color: accent,
+                      border: `1px solid ${borderColor}`,
+                      color: primarycolor,
                     }}
                   />
 
@@ -422,7 +548,7 @@ export default function RaiseTicketModal({
                         });
                       }}
                       className="select-clean mb-1 w-full rounded-lg px-4 py-4 pr-12 text-sm bg-transparent focus:outline-none"
-                      style={{ border: "1px solid " }}
+                      style={{ border: `1px solid ${borderColor}` }}
                     >
                       <option value="">Choose a main topic</option>
                       {subjects.map((s) => (
@@ -435,7 +561,7 @@ export default function RaiseTicketModal({
                     {/* Custom Arrow */}
                     <span
                       className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
-                      style={{ color: `${accent}` }}
+                      style={{ color: primarycolor }}
                     >
                       ▾
                     </span>
@@ -460,7 +586,7 @@ export default function RaiseTicketModal({
                         });
                       }}
                       className="select-clean w-full rounded-lg px-4 py-4 pr-12 text-sm bg-transparent disabled:opacity-50 focus:outline-none"
-                      style={{ border: "1px solid " }}
+                      style={{ border: `1px solid ${borderColor}` }}
                     >
                       <option value="">First, choose the main topic</option>
                       {subSubjects.map((ss) => (
@@ -473,7 +599,7 @@ export default function RaiseTicketModal({
                     {/* Custom Arrow */}
                     <span
                       className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
-                      style={{ color: `${accent}` }}
+                      style={{ color: primarycolor }}
                     >
                       ▾
                     </span>
@@ -484,8 +610,8 @@ export default function RaiseTicketModal({
                 <button
                   disabled={!canMoveForward}
                   onClick={() => setStep(1)}
-                  className="w-full mt-4 py-3 rounded-lg text-base font-bold text-black cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed mb-4"
-                  style={{ backgroundColor: "var(--accent)" }}
+                  className="w-full mt-4 py-3 rounded-lg text-base font-bold cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed mb-4"
+                  style={{ backgroundColor: primarycolor, color: modalBgColor }}
                 >
                   Move Forward →
                 </button>
@@ -493,13 +619,20 @@ export default function RaiseTicketModal({
             )}
 
             {step === 1 && (
-              <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-9">
-                <div className="rounded-xl border border-current/30 bg-white/2 px-6 py-5 space-y-3">
+              <div
+                className="px-5 sm:px-10 py-5 sm:py-6 space-y-5"
+                style={{ color: primarycolor }}
+              >
+                <div
+                  className="rounded-xl px-6 py-5 space-y-3"
+                  style={{
+                    border: `1px solid ${borderColor}`,
+                    backgroundColor:
+                      `${primarycolor}2A` || "rgba(255,255,255,0.1)",
+                  }}
+                >
                   {/* TITLE */}
-                  <h3
-                    className="text-sm font-base"
-                    style={{ color: "var(--accent)" }}
-                  >
+                  <h3 className="text-sm font-base">
                     Information Regarding Your{" "}
                     {
                       subSubjects.find((s) => s._id === draft.sub_subject_id)
@@ -509,7 +642,10 @@ export default function RaiseTicketModal({
                   </h3>
 
                   {/* DESCRIPTION FROM BACKEND */}
-                  <p className="text-sm leading-relaxed opacity-60">
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{ color: theme?.sub_color || primarycolor }}
+                  >
                     {
                       subSubjects.find((s) => s._id === draft.sub_subject_id)
                         ?.information
@@ -521,9 +657,10 @@ export default function RaiseTicketModal({
                 <button
                   disabled={counter > 0}
                   onClick={() => setStep(2)}
-                  className="cursor-pointer w-full py-3 mb-4 rounded-lg text-base font-bold text-black flex items-center justify-center gap-2 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="cursor-pointer w-full py-3 mb-4 rounded-lg text-base font-bold flex items-center justify-center gap-2 transition disabled:opacity-40 disabled:cursor-not-allowed"
                   style={{
-                    backgroundColor: "var(--accent)",
+                    backgroundColor: primarycolor,
+                    color: modalBgColor,
                   }}
                 >
                   Continue →{counter > 0 && <span>({counter})</span>}
@@ -532,7 +669,10 @@ export default function RaiseTicketModal({
             )}
 
             {step === 2 && (
-              <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-5">
+              <div
+                className="px-5 sm:px-10 py-5 sm:py-6 space-y-5"
+                style={{ color: primarycolor }}
+              >
                 {/* DESCRIPTION */}
                 <div>
                   <label className="block text-sm mb-2">
@@ -544,10 +684,13 @@ export default function RaiseTicketModal({
                       setDraft({ ...draft, description: e.target.value })
                     }
                     placeholder="Write your message here..."
-                    className="w-full min-h-40 rounded-lg px-4 py-3 text-sm bg-white/2 placeholder:text-current/40 resize-none focus:outline-none"
+                    className="w-full min-h-40 rounded-lg px-4 py-3 text-sm placeholder:text-current/40 resize-none focus:outline-none"
                     style={{
-                      border: "1px solid var(--accent)",
+                      border: `1px solid ${borderColor}`,
+                      backgroundColor:
+                        `${primarycolor}2A` || "rgba(255,255,255,0.02)",
                       lineHeight: "1.9",
+                      color: primarycolor,
                     }}
                   />
                 </div>
@@ -556,12 +699,17 @@ export default function RaiseTicketModal({
                 <div className="flex items-center gap-3">
                   <div
                     className="flex-1 h-px"
-                    style={{ backgroundColor: "var(--accent)" }}
+                    style={{ backgroundColor: borderColor }}
                   />
-                  <span className="text-xs text-current/60 uppercase">or</span>
+                  <span
+                    className="text-xs uppercase"
+                    style={{ color: subColor }}
+                  >
+                    or
+                  </span>
                   <div
                     className="flex-1 h-px"
-                    style={{ backgroundColor: "var(--accent)" }}
+                    style={{ backgroundColor: borderColor }}
                   />
                 </div>
 
@@ -569,9 +717,10 @@ export default function RaiseTicketModal({
                 {!isRecording && !draft.audio && (
                   <button
                     onClick={startRecording}
-                    className="w-full border py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
+                    className="w-full border py-3 rounded-lg text-sm font-medium cursor-pointer"
                     style={{
-                      color: "var(--accent)",
+                      borderColor: borderColor,
+                      color: primarycolor,
                     }}
                   >
                     Start Recording
@@ -584,15 +733,18 @@ export default function RaiseTicketModal({
                     <div className="flex gap-3">
                       <button
                         onClick={stopRecording}
-                        className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
-                        style={{ backgroundColor: "var(--accent)" }}
+                        className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer"
+                        style={{
+                          backgroundColor: primarycolor,
+                          color: modalBgColor,
+                        }}
                       >
                         ⏹ Stop Recording
                       </button>
 
                       <button
                         onClick={deleteRecording}
-                        className="flex-1 py-3 rounded-lg text-sm font-medium text-white bg-red-500 cursor-pointer"
+                        className="flex-1 py-3 rounded-lg text-sm font-medium text-white bg-red-600 cursor-pointer"
                       >
                         🗑 Delete
                       </button>
@@ -600,16 +752,22 @@ export default function RaiseTicketModal({
 
                     {/* RECORDING PROGRESS */}
                     <div className="space-y-1">
-                      <div className="h-1 bg-current/30 rounded overflow-hidden">
+                      <div
+                        className="h-1 rounded overflow-hidden"
+                        style={{ backgroundColor: `${primarycolor}7A` }}
+                      >
                         <div
                           className="h-full transition-[width] duration-200"
                           style={{
                             width: `${recordingPercent}%`,
-                            backgroundColor: "var(--accent)",
+                            backgroundColor: primarycolor,
                           }}
                         />
                       </div>
-                      <div className="flex justify-between text-xs text-current/60">
+                      <div
+                        className="flex justify-between text-xs"
+                        style={{ color: primarycolor }}
+                      >
                         <span>{formatTime(recordingElapsed)}</span>
                         <span>{formatTime(MAX_RECORDING_TIME)}</span>
                       </div>
@@ -637,29 +795,38 @@ export default function RaiseTicketModal({
                       <button
                         onClick={togglePlayAudio}
                         disabled={isPlaying}
-                        className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                        style={{ backgroundColor: accent }}
+                        className="flex-1 py-3 rounded-lg text-sm font-medium  cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                        style={{
+                          backgroundColor: primarycolor,
+                          color: modalBgColor,
+                        }}
                       >
                         {"▶ Play Recording"}
                       </button>
                       <button
                         onClick={togglePlayAudio}
                         disabled={!isPlaying}
-                        className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                        style={{ backgroundColor: accent }}
+                        className="flex-1 py-3 rounded-lg text-sm font-medium  cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                        style={{
+                          backgroundColor: primarycolor,
+                          color: modalBgColor,
+                        }}
                       >
                         {"⏸ Pause Recording"}
                       </button>
 
                       <button
                         onClick={deleteRecording}
-                        className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer text-white bg-red-500"
+                        className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer text-white bg-red-600"
                       >
                         Delete Recording
                       </button>
 
                       <button
-                        onClick={deleteRecording}
+                        onClick={() => {
+                          deleteRecording();
+                          startRecording();
+                        }}
                         className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer text-white bg-green-600"
                       >
                         Record Again
@@ -668,7 +835,10 @@ export default function RaiseTicketModal({
 
                     {/* PLAYBACK PROGRESS */}
                     <div className="space-y-1">
-                      <div className="h-1 bg-current/30 rounded overflow-hidden">
+                      <div
+                        className="h-1 rounded overflow-hidden"
+                        style={{ backgroundColor: `${primarycolor}7A` }}
+                      >
                         <div
                           className="h-full transition-[width] duration-200"
                           style={{
@@ -679,11 +849,14 @@ export default function RaiseTicketModal({
                                   100
                                 }%`
                               : "0%",
-                            backgroundColor: accent,
+                            backgroundColor: primarycolor,
                           }}
                         />
                       </div>
-                      <div className="flex justify-between text-xs text-current/60">
+                      <div
+                        className="flex justify-between text-xs"
+                        style={{ color: primarycolor }}
+                      >
                         <span>{formatTime(playProgress)}</span>
                         <span>
                           {audioRef.current
@@ -695,7 +868,7 @@ export default function RaiseTicketModal({
                   </>
                 )}
 
-                <p className="text-xs text-current/50 mb-6">
+                <p className="text-xs mb-6" style={{ color: primarycolor }}>
                   Note: You can submit your request using text (at least 20
                   characters) or audio (5–120 seconds).
                 </p>
@@ -704,23 +877,29 @@ export default function RaiseTicketModal({
                 <button
                   disabled={!canContinue}
                   onClick={() => setStep(3)}
-                  className="w-full py-3 mt-4 mb-4 rounded-lg text-base font-bold text-black cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed "
-                  style={{ backgroundColor: "var(--accent)" }}
+                  className="w-full py-3 mb-4 rounded-lg text-base font-bold cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed "
+                  style={{ backgroundColor: primarycolor, color: modalBgColor }}
                 >
                   Continue →
                 </button>
               </div>
             )}
 
+            {/* STEP 3 - FILE UPLOAD */}
             {step === 3 && (
-              <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-5">
+              <div
+                className="px-5 sm:px-10 py-5 sm:py-6 space-y-5"
+                style={{ color: primarycolor }}
+              >
                 {/* HEADER */}
                 <div className="flex justify-between text-sm flex-col sm:flex-row ">
-                  <span className="font-medium text-(--accent)">
+                  <span className="font-medium">
                     Additional Files{" "}
-                    <span className="text-current/50">(Optional)</span>
+                    <span style={{ color: `${primarycolor}7A` }}>
+                      (Optional)
+                    </span>
                   </span>
-                  <span className="text-current/50">
+                  <span style={{ color: primarycolor }}>
                     {draft.files.length}/4 files uploaded
                   </span>
                 </div>
@@ -730,23 +909,15 @@ export default function RaiseTicketModal({
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={(e) => {
                     e.preventDefault();
-
-                    if (draft.files.length >= 4) return;
-                    const dropped = Array.from(e.dataTransfer.files);
-                    const remaining = 4 - draft.files.length;
-
-                    const filesToAdd = dropped.slice(0, remaining).map((f) => ({
-                      file: f,
-                      name: f.name,
-                    }));
-
-                    setDraft({
-                      ...draft,
-                      files: [...draft.files, ...filesToAdd],
-                    });
+                    handleFileUpload(e.dataTransfer.files);
                   }}
-                  className="rounded-xl border border-dashed text-center py-10 transition"
-                  style={{ borderColor: "var(--accent)" }}
+                  className="rounded-xl border border-dashed text-center py-10 transition cursor-pointer"
+                  style={{
+                    borderColor: fileError ? "#ef4444" : `${primarycolor}AA`,
+                    backgroundColor: fileError
+                      ? "rgba(239, 68, 68, 0.1)"
+                      : "transparent",
+                  }}
                 >
                   <input
                     type="file"
@@ -755,26 +926,17 @@ export default function RaiseTicketModal({
                     className="hidden"
                     id="file-upload"
                     onChange={(e) => {
-                      const selected = Array.from(e.target.files || []);
-                      const remaining = 4 - draft.files.length;
-
-                      const filesToAdd = selected
-                        .slice(0, remaining)
-                        .map((f) => ({
-                          file: f,
-                          name: f.name,
-                        }));
-
-                      setDraft({
-                        ...draft,
-                        files: [...draft.files, ...filesToAdd],
-                      });
+                      if (e.target.files) {
+                        handleFileUpload(e.target.files);
+                      }
+                      e.target.value = ""; // Reset input
                     }}
                   />
 
                   <label
                     htmlFor="file-upload"
-                    className="cursor-pointer flex flex-col items-center gap-2 text-current/70"
+                    className="cursor-pointer flex flex-col items-center gap-2"
+                    style={{ color: primarycolor }}
                   >
                     <div className="text-xl">
                       <IconUpload size={18} stroke={2} />
@@ -783,45 +945,73 @@ export default function RaiseTicketModal({
                       Drag & drop files here or{" "}
                       <span className="underline">browse</span>
                     </p>
-                    <p className="text-xs text-current/40">
+                    <p className="text-xs" style={{ color: primarycolor }}>
                       (PDF/Photo: 10MB • Video: 50MB)
                     </p>
+                    {fileError && (
+                      <p className="text-red-400 text-xs mt-2 max-w-xs">
+                        {fileError}
+                      </p>
+                    )}
                   </label>
                 </div>
 
-                {/* FILE LIST */}
+                {/* FILE LIST WITH NOTES */}
                 {draft.files.length > 0 && (
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {draft.files.map((f, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center gap-2 rounded-lg px-3 py-2"
-                        style={{ border: "1px solid var(--accent)" }}
+                        className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg px-3 py-3"
+                        style={{ border: `1px solid ${borderColor}` }}
                       >
-                        <input
-                          value={f.name}
-                          onChange={(e) => {
-                            const updated = [...draft.files];
-                            updated[idx] = {
-                              ...updated[idx],
-                              name: e.target.value,
-                            };
-                            setDraft({ ...draft, files: updated });
-                          }}
-                          className="flex-1 bg-transparent text-sm focus:outline-none"
-                        />
+                        <div className="flex-1">
+                          <div
+                            className="text-sm"
+                            style={{ color: primarycolor }}
+                          >
+                            {f.name.slice(0, 15)}
+                            {f.name.length > 15 ? "..." : ""}
+                          </div>
+                          <div className="text-xs" style={{ color: subColor }}>
+                            {(f.file.size / (1024 * 1024)).toFixed(2)} MB
+                          </div>
+                        </div>
 
-                        <button
-                          onClick={() =>
-                            setDraft({
-                              ...draft,
-                              files: draft.files.filter((_, i) => i !== idx),
-                            })
-                          }
-                          className="text-red-400 text-xs hover:text-red-300"
-                        >
-                          Remove
-                        </button>
+                        <div className="flex gap-4 items-center">
+                          <input
+                            value={f.note}
+                            maxLength={15}
+                            placeholder="Note (optional, max 15 chars)"
+                            onChange={(e) => {
+                              const updated = [...draft.files];
+                              updated[idx] = {
+                                ...updated[idx],
+                                note: e.target.value,
+                              };
+                              setDraft({ ...draft, files: updated });
+                            }}
+                            className="rounded px-3 py-1.5 text-xs bg-transparent focus:outline-none"
+                            style={{
+                              border: `1px solid ${borderColor}`,
+                              color: subColor,
+                              opacity: 0.8,
+                            }}
+                          />
+
+                          <button
+                            onClick={() => {
+                              setDraft({
+                                ...draft,
+                                files: draft.files.filter((_, i) => i !== idx),
+                              });
+                              setFileError(null);
+                            }}
+                            className="text-red-600 text-xs hover:text-red-300 whitespace-nowrap"
+                          >
+                            Remove
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -829,9 +1019,12 @@ export default function RaiseTicketModal({
 
                 {/* CONTINUE */}
                 <button
-                  onClick={() => setStep(step + 1)}
-                  className="cursor-pointer w-full mt-4 mb-4 py-3 rounded-lg  text-base font-bold text-black"
-                  style={{ backgroundColor: "var(--accent)" }}
+                  onClick={() => {
+                    setFileError(null);
+                    setStep(step + 1);
+                  }}
+                  className="cursor-pointer w-full mt-2 mb-4 py-3 rounded-lg text-base font-bold"
+                  style={{ backgroundColor: primarycolor, color: modalBgColor }}
                 >
                   Continue →
                 </button>
@@ -839,11 +1032,14 @@ export default function RaiseTicketModal({
             )}
 
             {step === 4 && (
-              <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-5">
+              <div
+                className="px-5 sm:px-10 py-5 sm:py-6 space-y-5"
+                style={{ color: primarycolor }}
+              >
                 {/* TITLE */}
                 <div>
                   <h3 className="text-sm font-base">Return Channel</h3>
-                  <p className="text-sm text-current/50 mt-2">
+                  <p className="text-sm mt-2" style={{ color: primarycolor }}>
                     Choose the channel through which you will receive feedback
                     regarding your request.
                   </p>
@@ -876,11 +1072,12 @@ export default function RaiseTicketModal({
                         }
                         className="flex items-center gap-3 px-5 py-4 rounded-xl text-sm transition"
                         style={{
-                          border: `1px solid currentColor`,
+                          border: `1px solid ${borderColor}`,
                           opacity: isSelected ? 1 : 0.5,
                           background: isSelected
                             ? "rgba(0,0,0,0.2)"
                             : "transparent",
+                          color: primarycolor,
                         }}
                       >
                         <Icon size={18} stroke={1.5} />
@@ -890,16 +1087,16 @@ export default function RaiseTicketModal({
                   })}
                 </div>
 
-                {/* CONTINUE — untouched */}
+                {/* CONTINUE */}
                 <button
                   disabled={!draft.return_channel}
                   onClick={() => setStep(step + 1)}
-                  className="cursor-pointer w-full mt-4 mb-4 py-3 rounded-lg text-base font-bold transition"
+                  className="w-full mt-4 mb-4 py-3 rounded-lg text-base font-bold transition"
                   style={{
                     backgroundColor: draft.return_channel
-                      ? "var(--accent)"
+                      ? primarycolor
                       : "rgba(255,255,255,0.2)",
-                    color: draft.return_channel ? "#000" : "#999",
+                    color: draft.return_channel ? modalBgColor : "",
                     cursor: draft.return_channel ? "pointer" : "not-allowed",
                   }}
                 >
@@ -909,24 +1106,24 @@ export default function RaiseTicketModal({
             )}
 
             {step === 5 && (
-              <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-5 text-sm">
+              <div
+                className="px-5 sm:px-10 py-5 sm:py-6 space-y-5 text-sm"
+                style={{ color: primarycolor }}
+              >
                 {/* TITLE */}
-                <h3
-                  className="text-base font-medium"
-                  style={{ color: "var(--accent)" }}
-                >
-                  Request Summary
-                </h3>
+                <h3 className="text-base font-medium">Request Summary</h3>
 
                 {/* SUMMARY */}
-                <div className="space-y-2 text-current/70">
+                <div className="space-y-2">
                   <div className="grid grid-cols-2">
-                    <span className="w-44 text-current/50">Username:</span>
+                    <span style={{ color: `${primarycolor}AA` }}>
+                      Username:
+                    </span>
                     <span>{draft.username}</span>
                   </div>
 
                   <div className="grid grid-cols-2">
-                    <span className="w-44 text-current/50">Subject:</span>
+                    <span style={{ color: `${primarycolor}AA` }}>Subject:</span>
                     <span>
                       {subjects.find((s) => s._id === draft.subject_id)?.title}{" "}
                       ›{" "}
@@ -938,7 +1135,7 @@ export default function RaiseTicketModal({
                   </div>
 
                   <div className="grid grid-cols-2">
-                    <span className="w-44 text-current/50">
+                    <span style={{ color: `${primarycolor}AA` }}>
                       Request Details:
                     </span>
                     <span className=" whitespace-pre-line">
@@ -947,14 +1144,14 @@ export default function RaiseTicketModal({
                   </div>
 
                   <div className="grid grid-cols-2">
-                    <span className="w-44 text-current/50">
+                    <span style={{ color: `${primarycolor}AA` }}>
                       Number of Attached Files:
                     </span>
                     <span>{draft.files.length}</span>
                   </div>
 
                   <div className="grid grid-cols-2">
-                    <span className="w-44 text-current/50">
+                    <span style={{ color: `${primarycolor}AA` }}>
                       Return Channel:
                     </span>
                     <span className="capitalize ">{draft.return_channel}</span>
@@ -962,17 +1159,20 @@ export default function RaiseTicketModal({
                 </div>
 
                 {/* DIVIDER */}
-                <div className="h-px bg-current/10" />
+                <div
+                  className="h-px"
+                  style={{ backgroundColor: borderColor }}
+                />
 
                 <button
                   onClick={submitTicket}
                   disabled={isSubmitting}
-                  className={`w-full mt-4 mb-4 py-4 rounded-lg text-base font-bold text-black transition ${
+                  className={`w-full mt-4 mb-4 py-4 rounded-lg text-base font-bold transition ${
                     isSubmitting
                       ? "opacity-60 cursor-not-allowed"
                       : "cursor-pointer"
                   }`}
-                  style={{ backgroundColor: "var(--accent)" }}
+                  style={{ backgroundColor: primarycolor, color: modalBgColor }}
                 >
                   {isSubmitting ? "Sending..." : "Send →"}
                 </button>

@@ -12,7 +12,7 @@ export interface OrganisationConfig {
   name: string;
   logo: string;
   link: string;
-  primaryColor: string;
+  theme: ThemeType;
 }
 
 export type FeatureActionType = "modal" | "redirect";
@@ -26,4 +26,13 @@ export interface FeatureConfig {
     type: FeatureActionType;
     target: string; // modal key OR route
   };
+}
+
+export interface ThemeType {
+  primary_color?: string;
+  base_color?: string;
+  bg_color?: string;
+  sub_color?: string;
+  border_color?: string;
+  modal_bg_color?: string;
 }

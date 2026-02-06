@@ -268,15 +268,12 @@
 import { useState } from "react";
 import api from "@/lib/axios";
 import { IconSearch, IconCheck, IconCircleFilled } from "@tabler/icons-react";
+import { ThemeType } from "@/types/context-types";
 
 const DEFAULT_PRIMARY = "#DFD1A1";
 
-export default function SearchTicket({
-  primarycolor,
-}: {
-  primarycolor?: string;
-}) {
-  const accent = primarycolor || DEFAULT_PRIMARY;
+export default function SearchTicket({ theme }: { theme?: ThemeType }) {
+  const accent = theme?.primary_color || DEFAULT_PRIMARY;
   const now = new Date();
   const day = String(now.getDate()).padStart(2, "0");
   const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -325,7 +322,7 @@ export default function SearchTicket({
   return (
     <section
       className="w-full min-w-72 max-w-90 md:max-w-210 mx-auto px-0 mb-20"
-      style={{ color: `${accent}` }}
+      style={{ color: `${theme?.primary_color}` }}
     >
       {/* SECTION HEADING */}
       <div className="flex flex-col gap-1 mb-6 md:mb-8">
@@ -334,15 +331,15 @@ export default function SearchTicket({
         </h2>
         <div
           className="w-full h-[0.5px] opacity-20"
-          style={{ background: `${accent}` }}
+          style={{ background: `${theme?.border_color}` }}
         />
       </div>
 
       <div
         className="w-full rounded-lg md:rounded-xl flex flex-col px-5 py-8 md:px-12 md:py-12 gap-6 border-[0.5px]"
         style={{
-          backgroundColor: `${accent}1A`,
-          borderColor: `${accent}`,
+          backgroundColor: `${theme?.base_color}1A`,
+          borderColor: `${theme?.primary_color}`,
         }}
       >
         {!result ? (
@@ -353,11 +350,11 @@ export default function SearchTicket({
                   Ticket ID
                 </label>
                 <input
-                  className="w-full h-12 md:h-14 rounded-xl px-4 bg-[#0C0A06] border-[0.5px] border-white/10 focus:outline-none focus:border-white/30 transition-all text-[14px]"
+                  className="w-full h-12 md:h-14 rounded-xl px-4  border-[0.5px] focus:outline-none transition-all text-[14px]"
                   placeholder={`e.g. ${ddmm}-3LIT`}
                   value={ticketNumber}
                   onChange={(e) => setTicketNumber(e.target.value)}
-                  style={{ borderColor: `${accent}` }}
+                  style={{ borderColor: `${theme?.border_color}` }}
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -365,11 +362,11 @@ export default function SearchTicket({
                   Username
                 </label>
                 <input
-                  className="w-full h-12 md:h-14 rounded-xl px-4 bg-[#0C0A06] border-[0.5px] focus:outline-none focus:border-white/30 transition-all text-[14px]"
+                  className="w-full h-12 md:h-14 rounded-xl px-4 border-[0.5px] focus:outline-none transition-all text-[14px]"
                   placeholder="e.g. Elitedesk123"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  style={{ borderColor: `${accent}` }}
+                  style={{ borderColor: `${theme?.border_color}` }}
                 />
               </div>
             </div>
@@ -378,7 +375,10 @@ export default function SearchTicket({
               onClick={handleSearch}
               disabled={loading}
               className="cursor-pointer w-full h-12 md:h-14 rounded-xl font-bold text-[16px] text-black flex items-center justify-center gap-2 transition hover:opacity-90 active:scale-[0.98]"
-              style={{ backgroundColor: accent }}
+              style={{
+                backgroundColor: theme?.primary_color,
+                color: `${theme?.bg_color}`,
+              }}
             >
               <IconSearch size={20} stroke={2.5} />
               {loading ? "Searching..." : "INQUIRE"}
@@ -516,7 +516,7 @@ export default function SearchTicket({
         )}
 
         {error && (
-          <p className="text-[13px] text-red-400 font-semibold ">{error}</p>
+          <p className="text-[13px] text-red-600 font-semibold ">{error}</p>
         )}
       </div>
     </section>

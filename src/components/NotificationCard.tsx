@@ -94,8 +94,9 @@ export default function NotificationCard() {
   const { organisation } = useOrganisation();
   const { current, dismiss, close } = useNotifications();
   const notification = current;
-  const accent = organisation?.primaryColor || "#DFD1A1";
+  const accent = organisation?.theme.primary_color || "#DFD1A1";
   const Icon = icons[notification?.type || "info"];
+  const theme = organisation?.theme;
 
   useEffect(() => {
     if (!notification) return;
@@ -131,9 +132,15 @@ export default function NotificationCard() {
           left-4 right-4 sm:left-auto sm:right-6
           w-auto sm:w-110
           rounded-xl p-4
-          bg-black/90 shadow-lg
+          shadow-lg
+          bg-current/90
         "
-        style={{ borderColor: accent, borderWidth: 0.5, color: accent }}
+        style={{
+          borderColor: theme?.border_color,
+          borderWidth: 0.5,
+          color: accent,
+          backgroundColor: theme?.bg_color,
+        }}
       >
         <button
           className="absolute top-3 right-3 cursor-pointer text-current/70 hover:text-current"
@@ -151,7 +158,9 @@ export default function NotificationCard() {
           </div>
         </div>
         <hr className="opacity-30" />
-        <p className="text-sm text-current/70 p-5">{notification?.message}</p>
+        <p className="text-sm p-5" style={{ color: theme?.sub_color }}>
+          {notification?.message}
+        </p>
         <hr className="opacity-30" />
         <button
           onClick={dismiss}

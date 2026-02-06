@@ -52,7 +52,7 @@ export default function Navbar({ config }: NavbarProps) {
   const { logoUrl } = config;
 
   return (
-    <header className="w-full flex flex-col bg-[#0A0A0A]">
+    <header className="w-full flex flex-col ">
       <div
         className="
           flex items-center justify-center

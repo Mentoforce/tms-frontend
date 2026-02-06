@@ -90,6 +90,7 @@
 //   );
 // }
 
+import { ThemeType } from "@/types/context-types";
 import {
   IconTicket,
   IconPhoneCall,
@@ -119,14 +120,14 @@ export default function FeatureCard({
   title,
   subtitle,
   onClick,
-  primarycolor,
+  theme,
   quick_access,
 }: {
   icon: string;
   title: string;
   subtitle: string;
   onClick: () => void;
-  primarycolor: string;
+  theme: ThemeType;
   quick_access: boolean;
 }) {
   const Icon = ICON_MAP[icon] || IconTicket;
@@ -138,9 +139,9 @@ export default function FeatureCard({
         onClick={onClick}
         className="cursor-pointer flex w-full md:mx-0 md:h-25.5 md:px-10 md:py-7.5 md:rounded-xl items-center justify-between md:border gap-6 border-[0.5px] h-16.25 rounded-lg p-4 hover:opacity-80 transition active:scale-[0.99]"
         style={{
-          borderColor: primarycolor,
-          backgroundColor: `${primarycolor}1A`,
-          color: `${primarycolor}`,
+          borderColor: theme.border_color,
+          backgroundColor: `${theme.base_color}1A`,
+          color: `${theme.primary_color}`,
         }}
       >
         <Icon className="w-[19.43px] h-[19.43px] md:w-7 md:h-7" stroke={1.5} />
@@ -148,7 +149,10 @@ export default function FeatureCard({
           <span className="text-[12px] md:text-[20px] font-semibold md:font-semibold tracking-wider uppercase">
             {title}
           </span>
-          <span className="text-[10px] md:text-[14px] font-light md:font-medium opacity-60">
+          <span
+            className="text-[10px] md:text-[14px] font-light md:font-medium opacity-60"
+            style={{ color: theme.sub_color }}
+          >
             {subtitle}
           </span>
         </div>
@@ -163,9 +167,9 @@ export default function FeatureCard({
       onClick={onClick}
       className="cursor-pointer w-full md:h-30 h-25 rounded-lg md:rounded-xl md:border border-[0.5px] flex flex-col items-center justify-center gap-3 md:gap-2 transition md:py-5 md:px-20 hover:opacity-80 active:scale-[0.99]"
       style={{
-        borderColor: primarycolor,
-        backgroundColor: `${primarycolor}1A`,
-        color: `${primarycolor}`,
+        borderColor: theme.border_color,
+        backgroundColor: `${theme.base_color}1A`,
+        color: `${theme.primary_color}`,
       }}
     >
       <Icon className="md:size-7.5 size-5" stroke={1.5} />
@@ -176,6 +180,7 @@ export default function FeatureCard({
         <span
           className="text-[8px] md:text-[11px] font-light md:font-medium text-center px-2 leading-tight opacity-60 truncate w-full block"
           title={subtitle}
+          style={{ color: theme.sub_color }}
         >
           {subtitle}
         </span>

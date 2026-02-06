@@ -12,6 +12,7 @@ type Props = {
     _id: string;
     file_name: string;
     file_url: string;
+    file_note?: string;
   };
 };
 
@@ -50,6 +51,7 @@ export default function FileCard({ file }: Props) {
       <p className="text-sm text-white truncate" title={file.file_name}>
         {file.file_name}
       </p>
+      <p className="text-xs text-gray-400 truncate">{file.file_note}</p>
 
       {/* BADGE + ACTIONS */}
       <div className="flex items-center justify-between">

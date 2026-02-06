@@ -34,11 +34,12 @@
 
 import { useEffect, useState } from "react";
 import api from "@/lib/axios";
+import { ThemeType } from "@/types/context-types";
 
 const DEFAULT_PRIMARY = "#DFD1A1";
 
-export default function Footer({ primarycolor }: { primarycolor?: string }) {
-  const accent = primarycolor || DEFAULT_PRIMARY;
+export default function Footer({ theme }: { theme?: ThemeType }) {
+  const accent = theme?.primary_color || DEFAULT_PRIMARY;
   const [footer, setFooter] = useState<any>(null);
 
   useEffect(() => {

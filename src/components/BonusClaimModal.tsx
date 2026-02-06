@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "@/lib/axios";
 import { motion } from "framer-motion";
+import { ThemeType } from "@/types/context-types";
 
 interface BonusConfig {
   _id: string;
@@ -16,13 +17,16 @@ const DEFAULT_PRIMARY = "#DFD1A1";
 export default function BonusClaimModal({
   open,
   onClose,
-  primarycolor,
+  theme,
 }: {
   open: boolean;
   onClose: () => void;
-  primarycolor: string;
+  theme?: ThemeType;
 }) {
-  const accent = primarycolor || DEFAULT_PRIMARY;
+  // Extract theme colors with fallbacks
+  const primarycolor = theme?.primary_color || DEFAULT_PRIMARY;
+  const borderColor = theme?.border_color || primarycolor;
+  const modalBgColor = theme?.modal_bg_color || "#0A0A0A";
 
   const [bonusConfigs, setBonusConfigs] = useState<BonusConfig[]>([]);
   const [selectedBonus, setSelectedBonus] = useState<BonusConfig | null>(null);
@@ -77,11 +81,14 @@ export default function BonusClaimModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 sm:px-6"
-      style={{ ["--accent" as any]: accent, color: accent }}
+      style={{ color: primarycolor }}
     >
       <div
-        className="w-full max-w-130 rounded-2xl bg-[#0A0A0A] shadow-[0_0_60px_rgba(0,0,0,0.9)]"
-        style={{ border: "1px solid var(--accent)" }}
+        className="w-full max-w-130 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.9)]"
+        style={{
+          backgroundColor: modalBgColor,
+          border: `1px solid ${borderColor}`,
+        }}
       >
         <div className="px-5 sm:px-10 pt-6 sm:pt-8 pb-1">
           <div className="flex items-center justify-between">
@@ -90,7 +97,8 @@ export default function BonusClaimModal({
             </h2>
             <button
               onClick={onClose}
-              className=" hover:opacity-70 text-xl sm:text-2xl pt-3 cursor-pointer"
+              className="hover:opacity-70 text-xl sm:text-2xl pt-3 cursor-pointer"
+              style={{ color: primarycolor }}
             >
               ✕
             </button>
@@ -98,13 +106,17 @@ export default function BonusClaimModal({
 
           <div
             className="mt-4 sm:mt-5 opacity-40"
-            style={{ borderBottom: "1px solid" }}
+            style={{ borderBottom: `1px solid ${borderColor}` }}
           />
         </div>
 
         <div className="px-6 sm:px-10 py-6 space-y-6 pt-5 pb-10">
           {successModal ? (
-            <SuccessScreen onClose={onClose} />
+            <SuccessScreen
+              onClose={onClose}
+              primarycolor={primarycolor}
+              modalBgColor={modalBgColor}
+            />
           ) : (
             <>
               <div>
@@ -120,23 +132,29 @@ export default function BonusClaimModal({
                       setSelectedBonus(bonus || null);
                     }}
                     className="select-clean mb-1 w-full rounded-lg px-4 py-4 pr-12 text-sm bg-transparent focus:outline-none cursor-pointer"
-                    style={{ border: "1px solid" }}
+                    style={{
+                      border: `1px solid ${borderColor}`,
+                      color: primarycolor,
+                    }}
                   >
-                    <option value="" style={{ color: accent }}>
+                    <option value="" style={{ color: primarycolor }}>
                       Choose a bonus type
                     </option>
                     {bonusConfigs.map((bonus) => (
                       <option
                         key={bonus._id}
                         value={bonus._id}
-                        style={{ color: accent }}
+                        style={{ color: primarycolor }}
                       >
                         {bonus.title}
                       </option>
                     ))}
                   </select>
 
-                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
+                  <span
+                    className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+                    style={{ color: primarycolor }}
+                  >
                     ▾
                   </span>
                 </div>
@@ -149,10 +167,16 @@ export default function BonusClaimModal({
                     transition={{ duration: 0.25, ease: "easeOut" }}
                     className="overflow-hidden rounded-lg mt-2"
                     style={{
-                      border: `1px solid var(--accent)`,
+                      border: `1px solid ${borderColor}`,
                     }}
                   >
-                    <div className="px-4 py-3 text-sm leading-relaxed opacity-80">
+                    <div
+                      className="px-4 py-3 text-sm leading-relaxed"
+                      style={{
+                        color: primarycolor,
+                        opacity: 0.8,
+                      }}
+                    >
                       {selectedBonus.explanation}
                     </div>
                   </motion.div>
@@ -166,9 +190,10 @@ export default function BonusClaimModal({
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
-                  className="w-full mb-1 rounded-lg px-4 py-4 text-sm bg-current/2 focus:outline-none placeholder:text-base"
+                  className="w-full mb-1 rounded-lg px-4 py-4 text-sm bg-transparent focus:outline-none placeholder:text-base"
                   style={{
-                    border: `1px solid var(--accent)`,
+                    border: `1px solid ${borderColor}`,
+                    color: primarycolor,
                   }}
                 />
                 {username && !isUsernameValid && (
@@ -184,8 +209,11 @@ export default function BonusClaimModal({
                 disabled={
                   !username || !isUsernameValid || !selectedBonus || loading
                 }
-                className="cursor-pointer w-full mt-4 py-3 rounded-lg text-base font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ backgroundColor: "var(--accent)" }}
+                className="cursor-pointer w-full mt-4 py-3 rounded-lg text-base font-bold transition disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: primarycolor,
+                  color: modalBgColor,
+                }}
               >
                 {loading ? "Submitting..." : "Submit →"}
               </button>
@@ -197,11 +225,19 @@ export default function BonusClaimModal({
   );
 }
 
-function SuccessScreen({ onClose }: { onClose: () => void }) {
+function SuccessScreen({
+  onClose,
+  primarycolor,
+  modalBgColor,
+}: {
+  onClose: () => void;
+  primarycolor: string;
+  modalBgColor: string;
+}) {
   return (
     <div
       className="flex flex-col items-center space-y-4"
-      style={{ color: "var(--accent)" }}
+      style={{ color: primarycolor }}
     >
       <motion.svg
         width="66"
@@ -245,14 +281,23 @@ function SuccessScreen({ onClose }: { onClose: () => void }) {
         />
       </motion.svg>
 
-      <p className="w-full text-base opacity-70 text-left">
+      <p
+        className="w-full text-base text-left"
+        style={{
+          color: primarycolor,
+          opacity: 0.7,
+        }}
+      >
         Your bonus claim request has been submitted successfully.
       </p>
 
       <button
         onClick={onClose}
-        className="w-full py-3 rounded-lg text-sm font-bold text-black cursor-pointer"
-        style={{ backgroundColor: "var(--accent)" }}
+        className="w-full py-3 rounded-lg text-sm font-bold cursor-pointer"
+        style={{
+          backgroundColor: primarycolor,
+          color: modalBgColor,
+        }}
       >
         Close
       </button>

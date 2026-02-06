@@ -4,10 +4,12 @@ import { useState } from "react";
 import api from "@/lib/axios";
 import { IconX, IconUpload } from "@tabler/icons-react";
 import { motion } from "framer-motion";
+import { ThemeType } from "@/types/context-types";
 
 type FileItem = {
   file: File;
   name: string;
+  note: string; // 🔽 ADDED: note field
 };
 
 const DEFAULT_PRIMARY = "#DFD1A1";
@@ -15,13 +17,16 @@ const DEFAULT_PRIMARY = "#DFD1A1";
 export default function UploadFileModal({
   open,
   onClose,
-  primarycolor,
+  theme,
 }: {
   open: boolean;
   onClose: () => void;
-  primarycolor?: string;
+  theme?: ThemeType;
 }) {
-  const accent = primarycolor || DEFAULT_PRIMARY;
+  // Extract theme colors with fallbacks
+  const primarycolor = theme?.primary_color || DEFAULT_PRIMARY;
+  const borderColor = theme?.border_color || primarycolor;
+  const modalBgColor = theme?.modal_bg_color || "#0A0A0A";
 
   const [step, setStep] = useState<0 | 1>(0);
   const [ticketNumber, setTicketNumber] = useState("");
@@ -67,7 +72,11 @@ export default function UploadFileModal({
 
     setFiles((prev) => [
       ...prev,
-      ...incoming.map((f) => ({ file: f, name: f.name })),
+      ...incoming.map((f) => ({
+        file: f,
+        name: f.name,
+        note: "", // 🔽 ADDED: default empty note
+      })),
     ]);
   };
 
@@ -112,6 +121,11 @@ export default function UploadFileModal({
     setFiles((prev) => prev.map((f, idx) => (idx === i ? { ...f, name } : f)));
   };
 
+  // 🔽 ADDED: Function to update note
+  const updateFileNote = (i: number, note: string) => {
+    setFiles((prev) => prev.map((f, idx) => (idx === i ? { ...f, note } : f)));
+  };
+
   const uploadFiles = async () => {
     if (files.length === 0) {
       setError("Please select at least one file");
@@ -125,6 +139,9 @@ export default function UploadFileModal({
       const fd = new FormData();
       fd.append("ticket_number", ticketData.ticket.ticket_number);
       fd.append("username", username);
+
+      // 🔽 CHANGED: Append file_notes array
+      files.forEach((f) => fd.append("file_notes[]", f.note || ""));
 
       files.forEach((f) => fd.append("files", f.file, f.name));
 
@@ -162,21 +179,25 @@ export default function UploadFileModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4"
-      style={{ ["--accent" as any]: accent, color: accent }}
+      style={{ color: primarycolor }}
     >
       <div
-        className="w-full max-w-125 rounded-2xl bg-[#0A0A0A]"
-        style={{ border: "1px solid" }}
+        className="w-full max-w-125 rounded-2xl"
+        style={{
+          backgroundColor: modalBgColor,
+          border: `1px solid ${borderColor}`,
+        }}
       >
         {/* HEADER */}
         <div className="px-5 sm:px-10 pt-6 sm:pt-8 pb-1">
           <div className="flex items-center justify-between">
-            <h2 className=" font-medium text-xl sm:text-2xl pt-3">
+            <h2 className="font-medium text-xl sm:text-2xl pt-3">
               File Upload
             </h2>
             <button
               onClick={handleClose}
               className="hover:opacity-70 text-xl sm:text-2xl pt-3 cursor-pointer"
+              style={{ color: primarycolor }}
             >
               ✕
             </button>
@@ -184,7 +205,7 @@ export default function UploadFileModal({
 
           <div
             className="mt-4 opacity-40"
-            style={{ borderBottom: "1px solid" }}
+            style={{ borderBottom: `1px solid ${borderColor}` }}
           />
         </div>
 
@@ -233,14 +254,23 @@ export default function UploadFileModal({
                 />
               </motion.svg>
 
-              <p className="w-full mt-6 text-base text-current/70 text-left">
+              <p
+                className="w-full mt-6 text-base text-left"
+                style={{
+                  color: primarycolor,
+                  opacity: 0.7,
+                }}
+              >
                 Files have been uploaded successfully.
               </p>
 
               <button
                 onClick={handleClose}
-                className="w-full py-3 rounded-lg text-sm font-bold text-black cursor-pointer"
-                style={{ backgroundColor: "var(--accent)" }}
+                className="w-full py-3 rounded-lg text-sm font-bold cursor-pointer"
+                style={{
+                  backgroundColor: primarycolor,
+                  color: modalBgColor,
+                }}
               >
                 Close
               </button>
@@ -250,7 +280,7 @@ export default function UploadFileModal({
               {/* STEP 0 */}
               {step === 0 && (
                 <div className="space-y-4">
-                  <h3 className="text-md" style={{ color: "var(--accent)" }}>
+                  <h3 className="text-md" style={{ color: primarycolor }}>
                     Verify your ticket
                   </h3>
 
@@ -258,7 +288,10 @@ export default function UploadFileModal({
                     <label className="block text-sm mb-2">Ticket Number</label>
                     <input
                       className="w-full mb-1 rounded-lg px-4 py-3 text-sm bg-transparent focus:outline-none"
-                      style={{ border: "1px solid" }}
+                      style={{
+                        border: `1px solid ${borderColor}`,
+                        color: primarycolor,
+                      }}
                       placeholder="Enter ticket number"
                       value={ticketNumber}
                       onChange={(e) => {
@@ -278,7 +311,10 @@ export default function UploadFileModal({
                         setUsername(e.target.value);
                         setError(null);
                       }}
-                      style={{ border: "1px solid" }}
+                      style={{
+                        border: `1px solid ${borderColor}`,
+                        color: primarycolor,
+                      }}
                     />
                   </div>
                   {username && !isUsernameValid && (
@@ -289,14 +325,17 @@ export default function UploadFileModal({
                   )}
 
                   {error && (
-                    <p className="text-xs text-red-400 mt-1">{error}</p>
+                    <p className="text-xs text-red-600 mt-1">{error}</p>
                   )}
 
                   <button
                     onClick={verifyTicket}
                     disabled={!isVerifyEnabled || loading}
-                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold text-black mb-5 transition disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ backgroundColor: "var(--accent)" }}
+                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
+                    style={{
+                      backgroundColor: primarycolor,
+                      color: modalBgColor,
+                    }}
                   >
                     {loading ? "Verifying..." : "Verify Ticket →"}
                   </button>
@@ -306,7 +345,13 @@ export default function UploadFileModal({
               {/* STEP 1 */}
               {step === 1 && (
                 <div className="space-y-5">
-                  <p className="text-sm text-current/60">
+                  <p
+                    className="text-sm"
+                    style={{
+                      color: primarycolor,
+                      opacity: 0.6,
+                    }}
+                  >
                     Ticket ID:{" "}
                     <span className="font-mono">
                       {ticketData.ticket.ticket_number}
@@ -316,35 +361,43 @@ export default function UploadFileModal({
                   {ticketData.ticket.files.map((file: any) => (
                     <div
                       key={file._id}
-                      className="flex items-center justify-between px-3 py-2 rounded-lg"
-                      style={{ border: "1px solid" }}
+                      className="flex items-center justify-between px-3 py-2 rounded-lg gap-6"
+                      style={{
+                        border: `1px solid ${borderColor}`,
+                        color: primarycolor,
+                      }}
                     >
                       <a
                         href={file.file_url}
                         target="_blank"
-                        className="text-sm underline"
+                        className="text-sm underline truncate"
+                        style={{ color: primarycolor }}
                       >
                         {file.file_name}
                       </a>
 
                       <button
                         onClick={() => deleteExistingFile(file._id)}
-                        className="text-red-400 hover:text-red-300"
+                        className="text-red-600 hover:text-red-400"
                       >
                         <IconX size={16} />
                       </button>
                     </div>
                   ))}
 
-                  {/* ✅ ONLY LOGIC CHANGE IS HERE */}
                   <div className="flex items-center justify-between text-sm">
                     <span
                       className="font-medium"
-                      style={{ color: "var(--accent)" }}
+                      style={{ color: primarycolor }}
                     >
                       Files:
                     </span>
-                    <span className="opacity-50">
+                    <span
+                      style={{
+                        color: primarycolor,
+                        opacity: 0.5,
+                      }}
+                    >
                       {(ticketData?.ticket?.files?.length || 0) + files.length}
                       /4 files uploaded
                     </span>
@@ -357,7 +410,9 @@ export default function UploadFileModal({
                       addFiles(Array.from(e.dataTransfer.files));
                     }}
                     className="rounded-xl border border-dashed text-center py-10"
-                    style={{ borderColor: "rgba(255,255,255,0.4)" }}
+                    style={{
+                      borderColor: `${primarycolor}AA`,
+                    }}
                   >
                     <input
                       type="file"
@@ -368,7 +423,10 @@ export default function UploadFileModal({
                     />
                     <label
                       htmlFor="upload-files"
-                      className="cursor-pointer flex flex-col items-center gap-2 text-current/70"
+                      className="cursor-pointer flex flex-col items-center gap-2"
+                      style={{
+                        color: primarycolor,
+                      }}
                     >
                       <div className="text-xl">
                         <IconUpload size={18} stroke={2} />
@@ -377,33 +435,67 @@ export default function UploadFileModal({
                         Drag & drop files here or{" "}
                         <span className="underline">browse</span>
                       </p>
-                      <p className="text-xs text-current/40">
+                      <p
+                        className="text-xs"
+                        style={{
+                          color: primarycolor,
+                          opacity: 0.4,
+                        }}
+                      >
                         (PDF/Photo: 10MB • Video: 50MB)
                       </p>
                     </label>
                   </div>
 
                   {files.length > 0 && (
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {files.map((f, i) => (
                         <div
                           key={i}
-                          className="flex items-center gap-2 rounded-lg px-3 py-2"
-                          style={{ border: "1px solid var(--accent)" }}
+                          className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg px-3 py-3"
+                          style={{
+                            border: `1px solid ${borderColor}`,
+                          }}
                         >
-                          <input
-                            value={f.name}
-                            onChange={(e) => updateFileName(i, e.target.value)}
-                            className="flex-1 bg-transparent text-sm focus:outline-none"
-                          />
-                          <button
-                            onClick={() =>
-                              setFiles(files.filter((_, idx) => idx !== i))
-                            }
-                            className="text-red-400 text-xs hover:text-red-300 cursor-pointer"
-                          >
-                            Remove
-                          </button>
+                          <div className="flex-1">
+                            <div
+                              className="text-sm"
+                              style={{ color: primarycolor }}
+                            >
+                              {f.name.slice(0, 15)}
+                              {f.name.length > 15 ? "..." : ""}
+                            </div>
+                            <div
+                              className="text-xs"
+                              style={{ color: theme?.sub_color }}
+                            >
+                              {(f.file.size / (1024 * 1024)).toFixed(2)} MB
+                            </div>
+                          </div>
+                          <div className="flex gap-4 items-center">
+                            <input
+                              value={f.note}
+                              onChange={(e) =>
+                                updateFileNote(i, e.target.value)
+                              }
+                              placeholder="Note (optional, max 15 chars)"
+                              maxLength={15}
+                              className="rounded px-3 py-1.5 text-xs bg-transparent focus:outline-none"
+                              style={{
+                                border: `1px solid ${borderColor}`,
+                                color: theme?.sub_color || primarycolor,
+                                opacity: 0.7,
+                              }}
+                            />
+                            <button
+                              onClick={() =>
+                                setFiles(files.filter((_, idx) => idx !== i))
+                              }
+                              className="text-red-600 text-xs hover:text-red-400 cursor-pointer whitespace-nowrap"
+                            >
+                              Remove
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -416,8 +508,11 @@ export default function UploadFileModal({
                   <button
                     onClick={uploadFiles}
                     disabled={loading || files.length === 0}
-                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
-                    style={{ backgroundColor: "var(--accent)" }}
+                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
+                    style={{
+                      backgroundColor: primarycolor,
+                      color: modalBgColor,
+                    }}
                   >
                     {loading ? "Uploading..." : "Upload Files →"}
                   </button>

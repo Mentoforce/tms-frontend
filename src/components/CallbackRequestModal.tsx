@@ -6,19 +6,23 @@ import { IconUser, IconPhone, IconCheck } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { useOrganisation } from "@/context/OrganisationProvider";
 import { useRouter } from "next/navigation";
+import { ThemeType } from "@/types/context-types";
 
 const DEFAULT_PRIMARY = "#DFD1A1";
 
 export default function RequestCallbackModal({
   open,
   onClose,
-  primarycolor,
+  theme,
 }: {
   open: boolean;
   onClose: () => void;
-  primarycolor?: string;
+  theme?: ThemeType;
 }) {
-  const accent = primarycolor || DEFAULT_PRIMARY;
+  // Extract theme colors with fallbacks
+  const primarycolor = theme?.primary_color || DEFAULT_PRIMARY;
+  const borderColor = theme?.border_color || primarycolor;
+  const modalBgColor = theme?.modal_bg_color || "#0A0A0A";
 
   const [step, setStep] = useState(0);
   const [successModal, setSuccessModal] = useState(false);
@@ -260,21 +264,25 @@ export default function RequestCallbackModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 sm:px-6"
-      style={{ ["--accent" as any]: accent, color: accent }}
+      style={{ color: primarycolor }}
     >
       <div
-        className="w-full max-w-130 rounded-2xl bg-[#0A0A0A] shadow-[0_0_60px_rgba(0,0,0,0.9)]"
-        style={{ border: "1px solid var(--accent)" }}
+        className="w-full max-w-130 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.9)]"
+        style={{
+          backgroundColor: modalBgColor,
+          border: `1px solid ${borderColor}`,
+        }}
       >
         {/* HEADER */}
         <div className="px-5 sm:px-10 pt-6 sm:pt-8 pb-1">
           <div className="flex items-center justify-between">
-            <h2 className=" font-medium text-xl sm:text-2xl pt-3">
+            <h2 className="font-medium text-xl sm:text-2xl pt-3">
               Request Callback
             </h2>
             <button
               onClick={handleClose}
               className="hover:opacity-70 text-xl sm:text-2xl pt-3 cursor-pointer"
+              style={{ color: primarycolor }}
             >
               ✕
             </button>
@@ -283,7 +291,7 @@ export default function RequestCallbackModal({
           <div
             className="mt-4 sm:mt-5 opacity-40"
             style={{
-              borderBottom: "1px solid",
+              borderBottom: `1px solid ${borderColor}`,
               marginInline: "4px",
             }}
           />
@@ -293,6 +301,8 @@ export default function RequestCallbackModal({
           <SuccessScreen
             onClose={handleClose}
             onPrimaryAction={primaryAction}
+            primarycolor={primarycolor}
+            modalBgColor={modalBgColor}
           />
         ) : (
           <>
@@ -301,10 +311,7 @@ export default function RequestCallbackModal({
               {step === 0 && (
                 <div className="space-y-4">
                   {/* Subtitle */}
-                  <p
-                    className="text-sm mb-6"
-                    style={{ color: "var(--accent)" }}
-                  >
+                  <p className="text-sm mb-6" style={{ color: primarycolor }}>
                     Enter your information.
                   </p>
 
@@ -321,10 +328,10 @@ export default function RequestCallbackModal({
                         className="py-3 rounded-lg text-sm font-medium transition cursor-pointer"
                         style={{
                           backgroundColor: !isMember
-                            ? "var(--accent)"
+                            ? primarycolor
                             : "transparent",
-                          color: !isMember ? "#000" : "var(--accent)",
-                          border: "1px solid",
+                          color: !isMember ? modalBgColor : primarycolor,
+                          border: `1px solid ${borderColor}`,
                         }}
                       >
                         No
@@ -337,10 +344,10 @@ export default function RequestCallbackModal({
                         className="py-3 rounded-lg text-sm font-medium transition cursor-pointer"
                         style={{
                           backgroundColor: isMember
-                            ? "var(--accent)"
+                            ? primarycolor
                             : "transparent",
-                          color: isMember ? "#000" : "var(--accent)",
-                          border: "1px solid",
+                          color: isMember ? modalBgColor : primarycolor,
+                          border: `1px solid ${borderColor}`,
                         }}
                       >
                         Yes
@@ -355,9 +362,9 @@ export default function RequestCallbackModal({
 
                     <div
                       className="flex items-center gap-3 px-4 py-3 rounded-lg"
-                      style={{ border: "1px solid" }}
+                      style={{ border: `1px solid ${borderColor}` }}
                     >
-                      <span className="opacity-60">
+                      <span style={{ color: primarycolor, opacity: 0.6 }}>
                         {isMember ? (
                           <IconUser size={18} stroke={1.5} />
                         ) : (
@@ -377,6 +384,7 @@ export default function RequestCallbackModal({
                           })
                         }
                         className="flex-1 bg-transparent text-sm focus:outline-none"
+                        style={{ color: primarycolor }}
                       />
                     </div>
                     {draft.username && !isUsernameValid && (
@@ -391,8 +399,11 @@ export default function RequestCallbackModal({
                   <button
                     onClick={() => setStep(1)}
                     disabled={!canMoveForward}
-                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
-                    style={{ backgroundColor: "var(--accent)" }}
+                    className="cursor-pointer w-full py-3 rounded-lg text-sm font-bold transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
+                    style={{
+                      backgroundColor: primarycolor,
+                      color: modalBgColor,
+                    }}
                   >
                     Move Forward →
                   </button>
@@ -403,7 +414,9 @@ export default function RequestCallbackModal({
               {step === 1 && (
                 <div className="space-y-4">
                   {/* Subtitle */}
-                  <p className="text-sm mb-2">Explain your request</p>
+                  <p className="text-sm mb-2" style={{ color: primarycolor }}>
+                    Explain your request
+                  </p>
 
                   {/* Textarea */}
                   <textarea
@@ -412,21 +425,29 @@ export default function RequestCallbackModal({
                       setDraft({ ...draft, issue: e.target.value })
                     }
                     placeholder="Briefly describe your problem (or record a voice message)..."
-                    className="w-full min-h-35 rounded-lg px-4 py-3 text-sm bg-transparent resize-none focus:outline-none mb-1 "
-                    style={{ border: "1px solid" }}
+                    className="w-full min-h-35 rounded-lg px-4 py-3 text-sm bg-transparent resize-none focus:outline-none mb-1"
+                    style={{
+                      border: `1px solid ${borderColor}`,
+                      backgroundColor:
+                        `${primarycolor}2A` || "rgba(255,255,255,0.02)",
+                      color: primarycolor,
+                    }}
                   />
                   {/* OR */}
                   <div className="flex items-center gap-3">
                     <div
                       className="flex-1 h-px"
-                      style={{ backgroundColor: "var(--accent)" }}
+                      style={{ backgroundColor: borderColor }}
                     />
-                    <span className="text-xs text-current/60 uppercase">
+                    <span
+                      className="text-xs uppercase"
+                      style={{ color: primarycolor }}
+                    >
                       or
                     </span>
                     <div
                       className="flex-1 h-px"
-                      style={{ backgroundColor: "var(--accent)" }}
+                      style={{ backgroundColor: borderColor }}
                     />
                   </div>
 
@@ -435,9 +456,10 @@ export default function RequestCallbackModal({
                   {!isRecording && !draft.audio && (
                     <button
                       onClick={startRecording}
-                      className="w-full border py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
+                      className="w-full border py-3 rounded-lg text-sm font-medium cursor-pointer"
                       style={{
-                        color: "var(--accent)",
+                        borderColor: borderColor,
+                        color: primarycolor,
                       }}
                     >
                       Start Recording
@@ -450,15 +472,18 @@ export default function RequestCallbackModal({
                       <div className="flex gap-3">
                         <button
                           onClick={stopRecording}
-                          className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
-                          style={{ backgroundColor: "var(--accent)" }}
+                          className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer"
+                          style={{
+                            backgroundColor: primarycolor,
+                            color: modalBgColor,
+                          }}
                         >
                           ⏹ Stop Recording
                         </button>
 
                         <button
                           onClick={deleteRecording}
-                          className="flex-1 py-3 rounded-lg text-sm font-medium text-white bg-red-500 cursor-pointer"
+                          className="flex-1 py-3 rounded-lg text-sm font-medium text-white bg-red-600 cursor-pointer"
                         >
                           🗑 Delete
                         </button>
@@ -466,16 +491,22 @@ export default function RequestCallbackModal({
 
                       {/* RECORDING PROGRESS */}
                       <div className="space-y-1">
-                        <div className="h-1 bg-current/30 rounded overflow-hidden">
+                        <div
+                          className="h-1 rounded overflow-hidden"
+                          style={{ backgroundColor: `${primarycolor}7A` }}
+                        >
                           <div
                             className="h-full transition-[width] duration-200"
                             style={{
                               width: `${recordingPercent}%`,
-                              backgroundColor: "var(--accent)",
+                              backgroundColor: primarycolor,
                             }}
                           />
                         </div>
-                        <div className="flex justify-between text-xs text-current/60">
+                        <div
+                          className="flex justify-between text-xs"
+                          style={{ color: primarycolor }}
+                        >
                           <span>{formatTime(recordingElapsed)}</span>
                           <span>{formatTime(MAX_RECORDING_TIME)}</span>
                         </div>
@@ -486,54 +517,39 @@ export default function RequestCallbackModal({
                   {/* PLAYBACK */}
                   {draft.audio && audioUrl && (
                     <>
-                      {/* <div className="flex gap-3">
-                        <button
-                          onClick={togglePlayAudio}
-                          className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer"
-                          style={{ backgroundColor: "var(--accent)" }}
-                        >
-                          {isPlaying ? "⏸ Pause" : "▶ Play Recording"}
-                        </button>
-
-                        <button
-                          onClick={deleteRecording}
-                          className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer"
-                          style={{
-                            border: "1px solid var(--accent)",
-                            color: "var(--accent)",
-                            background: "transparent",
-                          }}
-                        >
-                          Record Again
-                        </button>
-                      </div> */}
                       <div className="grid grid-cols-2 gap-3">
                         <button
                           onClick={togglePlayAudio}
                           disabled={isPlaying}
-                          className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                          style={{ backgroundColor: accent }}
+                          className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                          style={{
+                            backgroundColor: primarycolor,
+                            color: modalBgColor,
+                          }}
                         >
                           {"▶ Play Recording"}
                         </button>
                         <button
                           onClick={togglePlayAudio}
                           disabled={!isPlaying}
-                          className="flex-1 py-3 rounded-lg text-sm font-medium text-black cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                          style={{ backgroundColor: accent }}
+                          className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                          style={{
+                            backgroundColor: primarycolor,
+                            color: modalBgColor,
+                          }}
                         >
                           {"⏸ Pause Recording"}
                         </button>
 
                         <button
                           onClick={deleteRecording}
-                          className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer text-white bg-red-500"
+                          className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer text-white bg-red-600"
                         >
                           Delete Recording
                         </button>
 
                         <button
-                          onClick={deleteRecording}
+                          onClick={startRecording}
                           className="flex-1 py-3 rounded-lg text-sm font-medium cursor-pointer text-white bg-green-600"
                         >
                           Record Again
@@ -542,19 +558,23 @@ export default function RequestCallbackModal({
 
                       {/* PLAYBACK PROGRESS */}
                       <div className="space-y-1">
-                        <div className="h-1 bg-current/30 rounded overflow-hidden">
+                        <div
+                          className="h-1 rounded overflow-hidden"
+                          style={{ backgroundColor: `${primarycolor}7A` }}
+                        >
                           <div
                             className="h-full transition-[width] duration-200"
                             style={{
                               width: `${playPercent}%`,
-                              backgroundColor: "var(--accent)",
+                              backgroundColor: primarycolor,
                             }}
                           />
                         </div>
-                        <div className="flex justify-between text-xs text-current/60">
-                          {/* <span>00:00</span> */}
+                        <div
+                          className="flex justify-between text-xs"
+                          style={{ color: primarycolor }}
+                        >
                           <span>{formatTime(playProgress)}</span>
-
                           <span>{formatTime(recordedDuration)}</span>
                         </div>
                       </div>
@@ -562,7 +582,7 @@ export default function RequestCallbackModal({
                   )}
 
                   {/* Note */}
-                  <p className="text-xs opacity-50 mb-6">
+                  <p className="text-xs mb-6" style={{ color: primarycolor }}>
                     Note: You can submit your request using text (at least 20
                     characters) or audio (5–120 seconds).
                   </p>
@@ -572,14 +592,21 @@ export default function RequestCallbackModal({
                     <button
                       onClick={handleBack}
                       className="border solid mt-2 mb-6 rounded-lg text-md px-5 cursor-pointer"
+                      style={{
+                        borderColor: borderColor,
+                        color: primarycolor,
+                      }}
                     >
                       Back
                     </button>
                     <button
                       disabled={!canContinue}
                       onClick={() => setStep(2)}
-                      className="cursor-pointer w-full py-3 rounded-lg text-md font-bold text-black hover:opacity-90 mt-2 mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
-                      style={{ backgroundColor: "var(--accent)" }}
+                      className="cursor-pointer w-full py-3 rounded-lg text-md font-bold hover:opacity-90 mt-2 mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        backgroundColor: primarycolor,
+                        color: modalBgColor,
+                      }}
                     >
                       Move Forward →
                     </button>
@@ -591,7 +618,12 @@ export default function RequestCallbackModal({
               {step === 2 && (
                 <div className="space-y-6">
                   {/* Title */}
-                  <p className="text-sm font-base mb-3">Preferred Time</p>
+                  <p
+                    className="text-sm font-base mb-3"
+                    style={{ color: primarycolor }}
+                  >
+                    Preferred Time
+                  </p>
 
                   {/* Time slots */}
                   <div className="grid grid-cols-3 gap-3">
@@ -606,11 +638,11 @@ export default function RequestCallbackModal({
                           }
                           className="cursor-pointer py-4 rounded-lg text-sm font-medium transition"
                           style={{
-                            border: "1px solid var(--accent)",
+                            border: `1px solid ${borderColor}`,
                             backgroundColor: selected
-                              ? "var(--accent)"
+                              ? primarycolor
                               : "transparent",
-                            color: selected ? "#000" : "var(--accent)",
+                            color: selected ? modalBgColor : primarycolor,
                           }}
                         >
                           {c}
@@ -622,14 +654,21 @@ export default function RequestCallbackModal({
                     <button
                       onClick={handleBack}
                       className="border solid mb-5 rounded-lg text-md px-5 cursor-pointer"
+                      style={{
+                        borderColor: borderColor,
+                        color: primarycolor,
+                      }}
                     >
                       Back
                     </button>
                     <button
                       onClick={submitCallbackRequest}
                       disabled={!canSubmit}
-                      className="cursor-pointer w-full py-3 rounded-lg text-md font-bold text-black transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
-                      style={{ backgroundColor: "var(--accent)" }}
+                      className="cursor-pointer w-full py-3 rounded-lg text-md font-bold transition disabled:opacity-40 disabled:cursor-not-allowed mb-5"
+                      style={{
+                        backgroundColor: primarycolor,
+                        color: modalBgColor,
+                      }}
                     >
                       Submit Request →
                     </button>
@@ -648,14 +687,18 @@ export default function RequestCallbackModal({
 
 function SuccessScreen({
   onPrimaryAction,
+  primarycolor,
+  modalBgColor,
 }: {
   onClose: () => void;
   onPrimaryAction?: () => void;
+  primarycolor: string;
+  modalBgColor: string;
 }) {
   return (
     <div
       className="px-5 sm:px-10 py-10 sm:py-12 flex flex-col space-y-6"
-      style={{ color: "var(--accent)" }}
+      style={{ color: primarycolor }}
     >
       {/* Success Icon */}
       <div className="flex justify-center items-center">
@@ -708,15 +751,18 @@ function SuccessScreen({
         </motion.svg>
       </div>
 
-      <h1 className="text-base opacity-60 text-left">
+      <h1
+        className="text-base text-left"
+        style={{ color: primarycolor, opacity: 0.6 }}
+      >
         Your callback request has been received. Our team will reach out to you
         at your selected time slot.
       </h1>
 
       <button
         onClick={onPrimaryAction}
-        className="w-full py-3 rounded-lg text-sm font-bold text-black text-center items-center hover:opacity-90 cursor-pointer"
-        style={{ backgroundColor: "var(--accent)" }}
+        className="w-full py-3 rounded-lg text-sm font-bold text-center items-center hover:opacity-90 cursor-pointer"
+        style={{ backgroundColor: primarycolor, color: modalBgColor }}
       >
         Go to the Website →
       </button>

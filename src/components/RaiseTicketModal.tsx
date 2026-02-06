@@ -1125,7 +1125,12 @@ export default function RaiseTicketModal({
                   <div className="grid grid-cols-2">
                     <span style={{ color: `${primarycolor}AA` }}>Subject:</span>
                     <span>
-                      {subjects.find((s) => s._id === draft.subject_id)?.title}
+                      {subjects.find((s) => s._id === draft.subject_id)?.title}{" "}
+                      ›{" "}
+                      {
+                        subSubjects.find((s) => s._id === draft.sub_subject_id)
+                          ?.title
+                      }
                     </span>
                   </div>
 

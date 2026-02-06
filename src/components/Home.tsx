@@ -14,6 +14,7 @@ import UploadFileModal from "./UploadFileModal";
 import Footer from "./Footer";
 import api from "@/lib/axios";
 import NotificationCard from "./NotificationCard";
+import InstallBanner from "./InstallBanner";
 
 export default function Home() {
   const router = useRouter();
@@ -45,6 +46,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: theme.bg_color }}>
+      <InstallBanner />
       <NotificationCard />
       <Navbar config={{ logoUrl: logo }} />
 

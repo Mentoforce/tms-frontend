@@ -355,7 +355,7 @@ export default function RequestCallbackModal({
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-2 mb-5">
+                  <div className="flex flex-col gap-2 mb-9">
                     <label className="text-sm font-base">
                       {isMember ? "Your Username" : "Phone Number"}
                     </label>
@@ -616,7 +616,7 @@ export default function RequestCallbackModal({
 
               {/* STEP 2 */}
               {step === 2 && (
-                <div className="space-y-6">
+                <div className="space-y-8">
                   {/* Title */}
                   <p
                     className="text-sm font-base mb-3"

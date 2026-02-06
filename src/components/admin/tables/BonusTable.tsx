@@ -6,6 +6,7 @@ import { transformStatus } from "@/lib/tableUtils";
 import Td from "./util/Td";
 import Th from "./util/Th";
 import BonusViewModal from "./BonusViewModal";
+import api from "@/lib/axios";
 
 type Bonus = {
   _id: string;
@@ -17,6 +18,13 @@ type Bonus = {
   remarks?: string;
 };
 
+const BONUS_STATUS_CLASS_MAP: Record<string, string> = {
+  pending: "bg-blue-500/15 text-blue-400",
+  review: "bg-yellow-500/15 text-yellow-400",
+  resolved: "bg-green-500/15 text-green-400",
+  rejected: "bg-red-500/15 text-red-400",
+};
+
 export default function BonusTable({
   bonus,
   onBonusUpdated,
@@ -25,6 +33,18 @@ export default function BonusTable({
   onBonusUpdated: (updatedBonus: any) => void;
 }) {
   const [selectedBonus, setSelectedBonus] = useState<any>(null);
+  const updateBonusStatus = async (bonus: Bonus, newStatus: string) => {
+    await api.post("/tickets/update-bonus", {
+      bonus_id: bonus._id,
+      status: newStatus,
+    });
+
+    onBonusUpdated({
+      ...bonus,
+      status: newStatus,
+      updatedAt: new Date().toISOString(),
+    });
+  };
 
   if (!bonus || bonus.length === 0) {
     return (
@@ -73,7 +93,14 @@ export default function BonusTable({
                 <Td className="text-gray-400">{b.bonus_type_id.title}</Td>
 
                 <Td>
-                  <StatusPill status={b.status} />
+                  {b.status !== "resolved" ? (
+                    <BonusStatusDropdown
+                      status={b.status}
+                      onChange={(newStatus) => updateBonusStatus(b, newStatus)}
+                    />
+                  ) : (
+                    <StatusPill status={b.status} />
+                  )}
                 </Td>
 
                 <Td className="text-gray-400">
@@ -98,20 +125,57 @@ export default function BonusTable({
 }
 
 function StatusPill({ status }: { status: Bonus["status"] }) {
-  const map: Record<string, string> = {
-    pending: "bg-blue-500/15 text-blue-400",
-    created: "bg-blue-500/15 text-blue-400",
-    resolved: "bg-green-500/15 text-green-400",
-    rejected: "bg-red-500/15 text-red-400",
-    review: "bg-yellow-500/15 text-yellow-400",
-  };
-
   return (
     <span
-      className={`px-3 py-1 rounded-full text-xs font-medium ${map[status]}`}
+      className={`px-3 py-1 rounded-full text-xs font-medium ${BONUS_STATUS_CLASS_MAP[status]}`}
     >
       {transformStatus(status)}
     </span>
+  );
+}
+
+function BonusStatusDropdown({
+  status,
+  onChange,
+}: {
+  status: string;
+  onChange: (status: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  const STATUSES = ["pending", "review", "resolved", "rejected"];
+
+  return (
+    <div className="relative inline-block">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${BONUS_STATUS_CLASS_MAP[status]}`}
+      >
+        {transformStatus(status)}
+        <span className="opacity-60">▾</span>
+      </button>
+
+      {open && (
+        <div className="absolute z-20 mt-2 w-44 rounded-lg border border-white/10 bg-[#0B0F1A] shadow-lg">
+          {STATUSES.map((s) => (
+            <button
+              key={s}
+              onClick={() => {
+                onChange(s);
+                setOpen(false);
+              }}
+              className="w-full text-left px-3 py-2 hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg"
+            >
+              <span
+                className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${BONUS_STATUS_CLASS_MAP[s]}`}
+              >
+                {transformStatus(s)}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
